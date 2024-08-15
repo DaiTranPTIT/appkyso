@@ -1,4 +1,4 @@
-import { AppModules, EModuleKey, moduleQuanLyVanBan, moduleThuVien } from '@/services/base/constant';
+import { AppModules, EModuleKey, moduleQuanLyVanBan } from '@/services/base/constant';
 import type { Login } from '@/services/base/typing';
 import { UserSwitchOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
@@ -12,7 +12,7 @@ const ModuleView = () => {
 		(permission) => permission.rsname === EModuleKey.CONG_CAN_BO,
 	);
 	const extendModules: Partial<Login.TModule>[] = [];
-	if (moduleThuVien.url) extendModules.push(moduleThuVien);
+	// if (moduleThuVien.url) extendModules.push(moduleThuVien);
 	if (moduleQuanLyVanBan.url && isCanBo) extendModules.push(moduleQuanLyVanBan);
 
 	return (

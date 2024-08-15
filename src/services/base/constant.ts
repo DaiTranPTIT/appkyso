@@ -12,6 +12,7 @@ export enum EModuleKey {
 	QLKH = 'quan-ly-khoa-hoc',
 	KT = 'khao-thi',
 	CSVC = 'co-so-vat-chat',
+	THU_VIEN = 'thu-vien',
 }
 
 export const AppModules: Record<EModuleKey, Login.TModule> = {
@@ -81,13 +82,19 @@ export const AppModules: Record<EModuleKey, Login.TModule> = {
 		url: APP_CONFIG_URL_CSVC,
 		icon: EModuleKey.CSVC + '.svg',
 	},
+	[EModuleKey.THU_VIEN]: {
+		title: APP_CONFIG_TITLE_THU_VIEN,
+		clientId: `${APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID}thuvien`,
+		url: APP_CONFIG_URL_THU_VIEN,
+		icon: EModuleKey.THU_VIEN + '.svg',
+	},
 };
 
-export const moduleThuVien: Partial<Login.TModule> = {
-	title: APP_CONFIG_TITLE_THU_VIEN,
-	url: APP_CONFIG_URL_THU_VIEN,
-	icon: 'thu-vien.svg',
-};
+// export const moduleThuVien: Partial<Login.TModule> = {
+// 	title: APP_CONFIG_TITLE_THU_VIEN,
+// 	url: APP_CONFIG_URL_THU_VIEN,
+// 	icon: 'thu-vien.svg',
+// };
 
 export const moduleQuanLyVanBan: Partial<Login.TModule> = {
 	title: APP_CONFIG_TITLE_QLVB,
