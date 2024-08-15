@@ -84,7 +84,7 @@ export const AppModules: Record<EModuleKey, Login.TModule> = {
 	},
 	[EModuleKey.THU_VIEN]: {
 		title: APP_CONFIG_TITLE_THU_VIEN,
-		clientId: `${APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID}thuvien`,
+		clientId: `${APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID}thu-vien`,
 		url: APP_CONFIG_URL_THU_VIEN,
 		icon: EModuleKey.THU_VIEN + '.svg',
 	},
