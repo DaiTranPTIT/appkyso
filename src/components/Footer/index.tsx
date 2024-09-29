@@ -1,4 +1,4 @@
-import { landingUrl, unitName } from '@/services/base/constant';
+import { landingUrl, tenTruongVietTatTiengAnh, unitName } from '@/services/base/constant';
 import { DefaultFooter } from '@ant-design/pro-layout';
 import { useIntl } from 'umi';
 
@@ -11,7 +11,7 @@ export default () => {
 
 	return (
 		<DefaultFooter
-			copyright={`2023 ${defaultMessage} - ${APP_CONFIG_APP_VERSION}`}
+			copyright={`2024 ${tenTruongVietTatTiengAnh?.toUpperCase() ?? ''} - ${APP_CONFIG_APP_VERSION}`}
 			links={[
 				{
 					key: 'github',
