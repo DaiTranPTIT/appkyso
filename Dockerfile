@@ -3,32 +3,32 @@ FROM node:16-alpine AS development
 
 
 # Set environment variables
-ENV APP_CONFIG_IP_ROOT=https://gw.ript.vn/
-ENV APP_CONFIG_ONE_SIGNAL_ID=f3857a81-2891-49be-87a7-903a4a1a54be
-ENV APP_CONFIG_SENTRY_DSN=https://75869bc5882ff3efdc90da60fc2e9e10@sentry.aisoftech.vn/7
-ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://sso.ript.vn/realms/ript
-ENV APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID=ript-
-ENV APP_CONFIG_APP_VERSION=231115
+ENV APP_CONFIG_IP_ROOT=https://ais.aisenote.com/ptit/
+ENV APP_CONFIG_ONE_SIGNAL_ID=
+ENV APP_CONFIG_SENTRY_DSN=
+ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://ais.aisenote.com/ptit/keycloak/realms/ptit
+ENV APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID=ptit-
+ENV APP_CONFIG_APP_VERSION=241002.1430
 
-ENV APP_CONFIG_CO_QUAN_CHU_QUAN='HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG'
-ENV APP_CONFIG_TEN_TRUONG='VIỆN KHOA HỌC KỸ THUẬT BƯU ĐIỆN'
+ENV APP_CONFIG_CO_QUAN_CHU_QUAN='BỘ THÔNG TIN VÀ TRUYỀN THÔNG'
+ENV APP_CONFIG_TEN_TRUONG='HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG'
 ENV APP_CONFIG_TIEN_TO_TRUONG='Học viện'
-ENV APP_CONFIG_TEN_TRUONG_VIET_TAT_TIENG_ANH=RIPT
+ENV APP_CONFIG_TEN_TRUONG_VIET_TAT_TIENG_ANH=PTIT
 ENV APP_CONFIG_PRIMARY_COLOR=#CC0D00
 
-ENV APP_CONFIG_URL_LANDING=https://ript.vn/
-ENV APP_CONFIG_URL_CONNECT=https://sinhvien.ript.vn/
-ENV APP_CONFIG_URL_CAN_BO=https://canbo.ript.vn/
-ENV APP_CONFIG_URL_DAO_TAO=https://daotao.ript.vn/
-ENV APP_CONFIG_URL_NHAN_SU=https://nhansu.ript.vn/
-ENV APP_CONFIG_URL_TAI_CHINH=https://thanhtoan.ript.vn/
-ENV APP_CONFIG_URL_CTSV=https://ctsv.ript.vn/
+ENV APP_CONFIG_URL_LANDING=https://ptit.edu.vn/
+ENV APP_CONFIG_URL_CONNECT=https://slink-ptit.vercel.app/
+ENV APP_CONFIG_URL_CAN_BO=https://canbo.ptit.edu.vn/
+ENV APP_CONFIG_URL_DAO_TAO=https://daotao-ptit.vercel.app/
+ENV APP_CONFIG_URL_NHAN_SU=https://nhansu-ptit.vercel.app/
+ENV APP_CONFIG_URL_TAI_CHINH=https://thanhtoan-ptit.vercel.app/
+ENV APP_CONFIG_URL_CTSV=https://ctsv-ptit.vercel.app/
 ENV APP_CONFIG_URL_QLKH=
-ENV APP_CONFIG_URL_VPS=https://vanphong.ript.vn/
+ENV APP_CONFIG_URL_VPS=https://vanphong-ptit.vercel.app/
 ENV APP_CONFIG_URL_KHAO_THI=
-ENV APP_CONFIG_URL_CORE=https://core.ript.vn/
+ENV APP_CONFIG_URL_CORE=https://core-ptit.vercel.app/
 ENV APP_CONFIG_URL_CSVC=
-ENV APP_CONFIG_URL_THU_VIEN=
+ENV APP_CONFIG_URL_THU_VIEN=https://thuvien-ptit.vercel.app/
 ENV APP_CONFIG_URL_QLVB=
 
 ENV APP_CONFIG_TITLE_LANDING='Cổng thông tin'
