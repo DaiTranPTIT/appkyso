@@ -1,4 +1,10 @@
-import { AppModules, EModuleKey, moduleQuanLyVanBan } from '@/services/base/constant';
+import {
+	AppModules,
+	EModuleKey,
+	moduleCongThongTin,
+	moduleQuanLyVanBan,
+	moduleThuVien,
+} from '@/services/base/constant';
 import type { Login } from '@/services/base/typing';
 import { UserSwitchOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
@@ -12,8 +18,9 @@ const ModuleView = () => {
 		(permission) => permission.rsname === EModuleKey.CONG_CAN_BO,
 	);
 	const extendModules: Partial<Login.TModule>[] = [];
-	// if (moduleThuVien.url) extendModules.push(moduleThuVien);
 	if (moduleQuanLyVanBan.url && isCanBo) extendModules.push(moduleQuanLyVanBan);
+	if (moduleThuVien.url) extendModules.push(moduleThuVien);
+	if (moduleCongThongTin.url) extendModules.push(moduleCongThongTin);
 
 	return (
 		<div className='module-view'>
@@ -42,7 +49,7 @@ const ModuleView = () => {
 						<a href={mod.url} target='_blank' rel='noreferrer'>
 							<div className='module-item'>
 								{mod.icon ? (
-									<img src={`${AppModules[EModuleKey.CORE].url}modules/${mod.icon}`} />
+									<img src={`${AppModules[EModuleKey.QLDT].url}modules/${mod.icon}`} />
 								) : (
 									<UserSwitchOutlined />
 								)}

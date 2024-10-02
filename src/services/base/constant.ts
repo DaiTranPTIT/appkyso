@@ -90,16 +90,22 @@ export const AppModules: Record<EModuleKey, Login.TModule> = {
 	},
 };
 
-// export const moduleThuVien: Partial<Login.TModule> = {
-// 	title: APP_CONFIG_TITLE_THU_VIEN,
-// 	url: APP_CONFIG_URL_THU_VIEN,
-// 	icon: 'thu-vien.svg',
-// };
+export const moduleThuVien: Partial<Login.TModule> = {
+	title: APP_CONFIG_TITLE_THU_VIEN,
+	url: APP_CONFIG_URL_THU_VIEN,
+	icon: 'thu-vien.svg',
+};
 
 export const moduleQuanLyVanBan: Partial<Login.TModule> = {
 	title: APP_CONFIG_TITLE_QLVB,
 	url: APP_CONFIG_URL_QLVB,
 	icon: 'quan-ly-van-ban.svg',
+};
+
+export const moduleCongThongTin: Partial<Login.TModule> = {
+	title: APP_CONFIG_TITLE_LANDING,
+	url: APP_CONFIG_URL_LANDING,
+	icon: 'cong-thong-tin.svg',
 };
 
 /** Đường link landing page */
