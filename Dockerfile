@@ -6,7 +6,7 @@ FROM node:16-alpine AS development
 ENV APP_CONFIG_IP_ROOT=https://ais.aisenote.com/ptit/
 ENV APP_CONFIG_ONE_SIGNAL_ID=
 ENV APP_CONFIG_SENTRY_DSN=
-ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://ais.aisenote.com/ptit/keycloak/realms/ptit
+ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://gwdu.ptit.edu.vn/sso/realms/ptit
 ENV APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID=ptit-
 ENV APP_CONFIG_APP_VERSION=241002.1430
 
@@ -28,7 +28,8 @@ ENV APP_CONFIG_URL_VPS=https://vanphong-ptit.vercel.app/
 ENV APP_CONFIG_URL_KHAO_THI=
 ENV APP_CONFIG_URL_CORE=https://core-ptit.vercel.app/
 ENV APP_CONFIG_URL_CSVC=
-ENV APP_CONFIG_URL_THU_VIEN=https://thuvien-ptit.vercel.app/
+ENV APP_CONFIG_URL_THU_VIEN=
+# https://thuvien-ptit.vercel.app/
 ENV APP_CONFIG_URL_QLVB=
 
 ENV APP_CONFIG_TITLE_LANDING='Cổng thông tin'
