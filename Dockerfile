@@ -3,7 +3,7 @@ FROM node:16-alpine AS development
 
 
 # Set environment variables
-ENV APP_CONFIG_IP_ROOT=https://ais.aisenote.com/ptit/
+ENV APP_CONFIG_IP_ROOT=https://gwdu.ptit.edu.vn/
 ENV APP_CONFIG_ONE_SIGNAL_ID=
 ENV APP_CONFIG_SENTRY_DSN=
 ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://gwdu.ptit.edu.vn/sso/realms/ptit
@@ -17,7 +17,7 @@ ENV APP_CONFIG_TEN_TRUONG_VIET_TAT_TIENG_ANH=PTIT
 ENV APP_CONFIG_PRIMARY_COLOR=#CC0D00
 
 ENV APP_CONFIG_URL_LANDING=https://ptit.edu.vn/
-ENV APP_CONFIG_URL_CONNECT=https://slink-ptit.vercel.app/
+ENV APP_CONFIG_URL_CONNECT=https://slink.ptit.edu.vn/
 ENV APP_CONFIG_URL_CAN_BO=https://canbo.ptit.edu.vn/
 ENV APP_CONFIG_URL_DAO_TAO=https://daotao-ptit.vercel.app/
 ENV APP_CONFIG_URL_NHAN_SU=https://nhansu-ptit.vercel.app/
