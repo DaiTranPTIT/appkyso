@@ -28,8 +28,7 @@ ENV APP_CONFIG_URL_VPS=https://vanphong.ptit.edu.vn/
 ENV APP_CONFIG_URL_KHAO_THI=
 ENV APP_CONFIG_URL_CORE=https://core-ptit.vercel.app/
 ENV APP_CONFIG_URL_CSVC=
-ENV APP_CONFIG_URL_THU_VIEN=
-# https://thuvien-ptit.vercel.app/
+ENV APP_CONFIG_URL_THU_VIEN=https://thuvien-ptit.vercel.app/
 ENV APP_CONFIG_URL_QLVB=
 
 ENV APP_CONFIG_TITLE_LANDING='Cổng thông tin'

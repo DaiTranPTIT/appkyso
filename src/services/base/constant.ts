@@ -90,12 +90,6 @@ export const AppModules: Record<EModuleKey, Login.TModule> = {
 	},
 };
 
-export const moduleThuVien: Partial<Login.TModule> = {
-	title: APP_CONFIG_TITLE_THU_VIEN,
-	url: APP_CONFIG_URL_THU_VIEN,
-	icon: 'thu-vien.svg',
-};
-
 export const moduleQuanLyVanBan: Partial<Login.TModule> = {
 	title: APP_CONFIG_TITLE_QLVB,
 	url: APP_CONFIG_URL_QLVB,

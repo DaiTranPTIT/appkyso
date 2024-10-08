@@ -1,10 +1,4 @@
-import {
-	AppModules,
-	EModuleKey,
-	moduleCongThongTin,
-	moduleQuanLyVanBan,
-	moduleThuVien,
-} from '@/services/base/constant';
+import { AppModules, EModuleKey, moduleCongThongTin, moduleQuanLyVanBan } from '@/services/base/constant';
 import type { Login } from '@/services/base/typing';
 import { UserSwitchOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
@@ -19,7 +13,6 @@ const ModuleView = () => {
 	);
 	const extendModules: Partial<Login.TModule>[] = [];
 	if (moduleQuanLyVanBan.url && isCanBo) extendModules.push(moduleQuanLyVanBan);
-	if (moduleThuVien.url) extendModules.push(moduleThuVien);
 	if (moduleCongThongTin.url) extendModules.push(moduleCongThongTin);
 
 	return (
