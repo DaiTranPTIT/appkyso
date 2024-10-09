@@ -48,7 +48,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 			key: 'office',
 			icon: <FileWordOutlined />,
 			label: 'Office 365',
-			onClick: () => window.open('https://office.com/'),
+			onClick: () => window.open('https://mail.ptit.edu.vn/'),
 		},
 		{
 			key: 'portal',
