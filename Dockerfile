@@ -23,7 +23,7 @@ ENV APP_CONFIG_URL_DAO_TAO=https://daotao-ptit.vercel.app/
 ENV APP_CONFIG_URL_NHAN_SU=https://nhansu-ptit.vercel.app/
 ENV APP_CONFIG_URL_TAI_CHINH=https://thanhtoan.ptit.edu.vn/
 ENV APP_CONFIG_URL_CTSV=https://ctsv.ptit.edu.vn/
-ENV APP_CONFIG_URL_QLKH=
+ENV APP_CONFIG_URL_QLKH=https://khoahoc-ptit.vercel.app/
 ENV APP_CONFIG_URL_VPS=https://vanphong.ptit.edu.vn/
 ENV APP_CONFIG_URL_KHAO_THI=
 ENV APP_CONFIG_URL_CORE=https://core-ptit.vercel.app/
@@ -56,7 +56,7 @@ RUN yarn install
 COPY . /app
 
 FROM development AS build
-RUN npm run build
+RUN yarn build
 
 FROM nginx:alpine
 COPY --from=build /app/.nginx/nginx.conf /etc/nginx/conf.d/default.conf
