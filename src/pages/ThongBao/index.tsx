@@ -3,7 +3,7 @@ import TableBase from '@/components/Table';
 import ButtonExtend from '@/components/Table/ButtonExtend';
 import { EOperatorType } from '@/components/Table/constant';
 import { type IColumn } from '@/components/Table/typing';
-import { NotificationType } from '@/services/ThongBao/constant';
+import { type ESourceTypeNotification, mapModuleKeyToSourceType, NotificationType } from '@/services/ThongBao/constant';
 import { type ThongBao } from '@/services/ThongBao/typing';
 import { DeleteOutlined, EyeOutlined, LeftOutlined, PlusCircleOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Modal, Popconfirm, Segmented, Space, Tabs } from 'antd';
@@ -15,6 +15,7 @@ import Form from './components/Form';
 import CardFormThongBaoTuyChinh from './ThongBaoTuyChinh/CardForm';
 import ViewThongBao from './ViewThongBao/CardView';
 import TableReceiverThongBao from './ViewThongBao/TableReceiver';
+import { currentRole } from '@/utils/ip';
 
 const ThongBaoPage = (props: { notiType: NotificationType }) => {
 	const { notiType = NotificationType.ONESIGNAL } = props; //Nếu sử dụng luôn, không truyền vào mặc định là thông báo thường
@@ -68,6 +69,7 @@ const ThongBaoPage = (props: { notiType: NotificationType }) => {
 			{
 				notificationInternal: activeKey === 'tu_dong',
 				type: notiType,
+				sourceType: mapModuleKeyToSourceType[currentRole] as ESourceTypeNotification,
 			},
 			[{ active: true, field: 'createdAt', operator: EOperatorType.BETWEEN, values: value }],
 		);
