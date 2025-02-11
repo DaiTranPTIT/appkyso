@@ -85,6 +85,7 @@ const ModalImport = (props: ModalImportProps) => {
 							onCancel={onCancelModal}
 							onBack={() => setCurrentStep(2)}
 							modelName={modelName}
+							importHeaders={importHeaders}
 						/>
 					)}
 				</>
