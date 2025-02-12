@@ -8,9 +8,10 @@ const useInitService = (url: string, ip?: string) => {
 		payload: { page?: number; limit?: number; condition?: any },
 		path?: string,
 		isAbsolutePath?: boolean,
+		headers?: any,
 	) => {
 		const finalPath = isAbsolutePath ? `${finalIp}/${path}` : `${finalIp}/${url}/${path ?? ''}`;
-		return axios.get(finalPath, { params: payload });
+		return axios.get(finalPath, { params: payload, headers });
 	};
 
 	const postService = (payload: any) => {
@@ -33,8 +34,8 @@ const useInitService = (url: string, ip?: string) => {
 		return axios.delete(`${finalIp}/${url}/many/ids`, { data: { silent, ids } });
 	};
 
-	const getAllService = (payload?: { condition?: any; sort?: any }, path?: string) => {
-		return axios.get(`${finalIp}/${url}/${path || 'many'}`, { params: payload });
+	const getAllService = (payload?: { condition?: any; sort?: any }, path?: string, headers?: any) => {
+		return axios.get(`${finalIp}/${url}/${path || 'many'}`, { params: payload, headers });
 	};
 
 	const getByIdService = (id: string | number) => {

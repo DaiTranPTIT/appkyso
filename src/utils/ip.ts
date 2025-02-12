@@ -8,6 +8,7 @@ const ip3 = ipRoot + 'tcns'; // ip dev
 // Ip khác
 const ipNotif = ipRoot + 'notification'; // ip dev
 const ipSlink = ipRoot + 'slink'; // ip dev
+const ipCore = ipRoot + 'core'; // ip dev
 
 const currentRole = EModuleKey.TCNS;
 const oneSignalRole = EModuleKey.CONG_CAN_BO;
@@ -23,17 +24,18 @@ const sentryDSN = APP_CONFIG_SENTRY_DSN;
 const oneSignalClient = APP_CONFIG_ONE_SIGNAL_ID;
 
 export {
+	currentRole,
 	ip3,
+	ipCore,
 	ipNotif,
 	ipSlink,
-	currentRole,
-	oneSignalRole,
-	keycloakClientID,
-	resourceServerClientId,
 	keycloakAuthEndpoint,
+	keycloakAuthority,
+	keycloakClientID,
 	keycloakTokenEndpoint,
 	keycloakUserInfoEndpoint,
-	keycloakAuthority,
-	sentryDSN,
 	oneSignalClient,
+	oneSignalRole,
+	resourceServerClientId,
+	sentryDSN,
 };
