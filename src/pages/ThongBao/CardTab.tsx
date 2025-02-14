@@ -1,0 +1,26 @@
+import { TabViewPage } from '@/components/TabViewPage';
+import ThongBaoPage from '.';
+import type { NotificationType } from '@/services/ThongBao/constant';
+
+const CardTabThongBao = (props: { notiType: NotificationType }) => {
+	const { notiType } = props;
+	const paths = ['ban-hanh', 'tu-dong'];
+	const titles = ['Ban hành thông báo', 'Thông báo tự động'];
+
+	const menus = [
+		{
+			title: titles[0],
+			menuKey: paths[0],
+			content: <ThongBaoPage notiType={notiType} activeKey='ban_hanh' />,
+		},
+		{
+			title: titles[1],
+			menuKey: paths[1],
+			content: <ThongBaoPage notiType={notiType} activeKey='tu_dong' />,
+		},
+	];
+
+	return <TabViewPage hideCard menu={menus} />;
+};
+
+export default CardTabThongBao;
