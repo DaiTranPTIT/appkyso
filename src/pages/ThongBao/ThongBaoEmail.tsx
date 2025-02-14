@@ -1,11 +1,11 @@
 import { NotificationType } from '@/services/ThongBao/constant';
 import { Card } from 'antd';
-import CardTabThongBao from './CardTab';
+import TabViewThongBao from './TabViewThongBao';
 
 const ThongBaoEmailPage = () => {
 	return (
 		<Card title='Thông báo Email'>
-			<CardTabThongBao notiType={NotificationType.EMAIL} />;
+			<TabViewThongBao notiType={NotificationType.EMAIL} />;
 		</Card>
 	);
 };
