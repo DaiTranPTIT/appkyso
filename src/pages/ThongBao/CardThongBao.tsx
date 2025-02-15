@@ -123,7 +123,6 @@ const CardThongBao = (props: { notiType: NotificationType; activeKey: string }) 
 			width: 90,
 			render: (val, rec) => (
 				<a
-					href='#'
 					onClick={() => {
 						setRecord(rec);
 						setVisibleNguoiNhan(true);
