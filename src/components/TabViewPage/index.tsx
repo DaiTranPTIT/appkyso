@@ -19,8 +19,10 @@ export const TabViewPage = (props: {
 	hideCard?: boolean;
 	onChange?: (key: string) => void;
 	children?: React.ReactNode;
+	/** Destroy Inactive Tab? Default: `true` */
+	destroyInactiveTab?: boolean;
 }) => {
-	const { menu, hideCard, children, onChange, cardTitle } = props;
+	const { menu, hideCard, children, onChange, cardTitle, destroyInactiveTab = true } = props;
 	const [tabActive, setTabActive] = useState<string | undefined>(menu[0]?.menuKey);
 	const [currentTitle, setCurrentTitle] = useState(getTitle(cardTitle, menu[0]?.title));
 	const paths = menu.map((item) => item.menuKey);
@@ -46,7 +48,7 @@ export const TabViewPage = (props: {
 					activeKey={tabActive}
 					onChange={(key) => onChangeTab(key)}
 					style={{ background: 'white' }}
-					destroyInactiveTabPane
+					destroyInactiveTabPane={destroyInactiveTab}
 				>
 					{menu.map((item) => (
 						<Tabs.TabPane
