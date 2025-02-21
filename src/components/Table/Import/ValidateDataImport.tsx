@@ -8,7 +8,7 @@ import TableStaticData from '../TableStaticData';
 import type { TImportHeader, IColumn, TImportResponse, TImportRowResponse } from '../typing';
 
 const ValidateDataImport = (props: {
-	onOk: () => void;
+	onOk?: () => void;
 	onCancel: () => void;
 	onBack: any;
 	modelName: any;
@@ -66,8 +66,6 @@ const ValidateDataImport = (props: {
 				setIsError(res.error);
 				const temp = res.validate?.map((item) => ({ ...item, rowIndex: item.index + startLine }));
 				setImportResponses(temp ?? []);
-
-				onOk(); // Get data
 			})
 			.catch((err: any) => console.log(err));
 	};
@@ -93,6 +91,18 @@ const ValidateDataImport = (props: {
 			<Col span={24}>
 				<div className='fw500'>Kết quả kiểm tra</div>
 				<i>Dữ liệu đã được kiểm tra trên hệ thống. Vui lòng xem danh sách chi tiết dưới đây.</i>
+				<br />
+
+				{importResponses.length ? (
+					<ButtonExtend
+						size='small'
+						icon={<DownloadOutlined />}
+						onClick={() => genExcelFile(transformDataToExcelFormat(), 'Kết quả Import.xlsx')}
+						loading={formSubmiting}
+					>
+						Tải xuống kết quả
+					</ButtonExtend>
+				) : null}
 			</Col>
 
 			{!formSubmiting ? (
@@ -136,14 +146,6 @@ const ValidateDataImport = (props: {
 					<Spin spinning />
 				</div>
 			)}
-
-			<ButtonExtend
-				size='small'
-				icon={<DownloadOutlined />}
-				onClick={() => genExcelFile(transformDataToExcelFormat(), 'Kết quả Import.xlsx')}
-			>
-				Tải xuống kết quả
-			</ButtonExtend>
 
 			{importResponses.length ? (
 				<Col span={24}>
@@ -211,7 +213,14 @@ const ValidateDataImport = (props: {
 							</Button>
 						</Popconfirm>
 					) : (
-						<Button onClick={onCancel}>Hoàn thành</Button>
+						<Button
+							onClick={() => {
+								if (onOk) onOk(); // Get data
+								onCancel();
+							}}
+						>
+							Hoàn thành
+						</Button>
 					)}
 				</Space>
 			</Col>

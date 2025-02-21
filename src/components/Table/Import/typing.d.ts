@@ -5,8 +5,8 @@ export type ModalImportProps = {
 	/** Đóng modal hoặc làm gì đó */
 	onCancel: () => void;
 
-	/** Get data hoặc làm gì đó */
-	onOk: () => void;
+	/** Sau khi ấn Hoàn thành import: Get data hoặc làm gì đó */
+	onOk?: () => void;
 
 	/** Tên model kế thừa initModel */
 	modelName: any;
