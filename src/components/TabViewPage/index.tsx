@@ -50,17 +50,19 @@ export const TabViewPage = (props: {
 					style={{ background: 'white' }}
 					destroyInactiveTabPane={destroyInactiveTab}
 				>
-					{menu.map((item) => (
-						<Tabs.TabPane
-							tab={
-								<span>
-									{item.icon}
-									{item.title}
-								</span>
-							}
-							key={item.menuKey}
-						/>
-					))}
+					{menu
+						?.filter((i) => i.hide !== true)
+						.map((item) => (
+							<Tabs.TabPane
+								tab={
+									<span>
+										{item.icon}
+										{item.title}
+									</span>
+								}
+								key={item.menuKey}
+							/>
+						))}
 				</Tabs>
 			</Affix>
 

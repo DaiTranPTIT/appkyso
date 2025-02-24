@@ -18,4 +18,7 @@ export type TabViewPageProps = {
 
 	/** Mã quyền để kiểm tra xem có được phép truy cập vào tab này không */
 	accessCode?: string;
+
+	/** Ẩn tab view */
+	hide?: boolean;
 };
