@@ -2,13 +2,15 @@ import useCheckAccess from '@/hooks/useCheckAccess';
 import NotAccessible from '@/pages/exception/403';
 import { Affix, Card, Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
+import './style.less';
 import type { TabViewPageProps } from './typing';
 
 const PermissionWrapper = (props: { content: JSX.Element; accessCode?: string }) => {
 	const { accessCode, content } = props;
 	const allowAccessCode = useCheckAccess(accessCode!);
 	const allow = accessCode ? allowAccessCode : true;
-	return allow ? content : <NotAccessible />;
+
+	return allow ? <div style={{ marginTop: 12 }}>{content}</div> : <NotAccessible />;
 };
 
 const getTitle = (title?: string, menuTitle?: string) => [title, menuTitle].filter(Boolean).join(' - ');
@@ -19,10 +21,8 @@ export const TabViewPage = (props: {
 	hideCard?: boolean;
 	onChange?: (key: string) => void;
 	children?: React.ReactNode;
-	/** Destroy Inactive Tab? Default: `true` */
-	destroyInactiveTab?: boolean;
 }) => {
-	const { menu, hideCard, children, onChange, cardTitle, destroyInactiveTab = true } = props;
+	const { menu = [], hideCard, children, onChange, cardTitle } = props;
 	const [tabActive, setTabActive] = useState<string | undefined>(menu[0]?.menuKey);
 	const [currentTitle, setCurrentTitle] = useState(getTitle(cardTitle, menu[0]?.title));
 	const paths = menu.map((item) => item.menuKey);
@@ -43,22 +43,18 @@ export const TabViewPage = (props: {
 		<>
 			{children}
 
+			{/* Chiều cao của header => Có thể tùy chỉnh tùy tenant */}
 			<Affix offsetTop={60}>
-				<Tabs
-					activeKey={tabActive}
-					onChange={(key) => onChangeTab(key)}
-					style={{ background: 'white' }}
-					destroyInactiveTabPane={destroyInactiveTab}
-				>
+				<Tabs activeKey={tabActive} onChange={(key) => onChangeTab(key)} className='tab-view-menu'>
 					{menu
 						?.filter((i) => i.hide !== true)
 						.map((item) => (
 							<Tabs.TabPane
 								tab={
-									<span>
+									<>
 										{item.icon}
 										{item.title}
-									</span>
+									</>
 								}
 								key={item.menuKey}
 							/>
