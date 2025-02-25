@@ -10,7 +10,7 @@ const PermissionWrapper = (props: { content: JSX.Element; accessCode?: string })
 	const allowAccessCode = useCheckAccess(accessCode!);
 	const allow = accessCode ? allowAccessCode : true;
 
-	return allow ? <div style={{ marginTop: 12 }}>{content}</div> : <NotAccessible />;
+	return allow ? <div style={{ marginTop: 16 }}>{content}</div> : <NotAccessible />;
 };
 
 const getTitle = (title?: string, menuTitle?: string) => [title, menuTitle].filter(Boolean).join(' - ');
