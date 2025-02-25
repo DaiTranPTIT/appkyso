@@ -109,7 +109,7 @@ const TableSelectUser = (props: {
 		type === EVaiTroKhaoSat.SINH_VIEN
 			? {
 					title: 'Trạng thái học',
-					dataIndex: 'trangThaiHoc',
+					dataIndex: 'trangThaiSinhVien',
 					align: 'center',
 					width: 120,
 					// filterType: 'select',
