@@ -104,7 +104,10 @@ const FormThongBaoTuyChinh = (props: any) => {
 									Các giá trị trong cú pháp <strong>{'{{..}}'}</strong> tương ứng với tên cột trong file Excel bạn tải
 									lên.
 								</li>
-								<li>Đảm bảo file Excel có tiêu đề cột chính xác và đầy đủ ở hàng đầu tiên (A1, B1, ...).</li>
+								<li>
+									Đảm bảo file Excel có tiêu đề cột chính xác và đầy đủ ở hàng đầu tiên (A1, B1, ...). Lưu ý viết liền
+									không dấu
+								</li>
 								<li>
 									Ví dụ: Nếu file Excel có cột <strong>HOTEN</strong>, bạn có thể sử dụng <strong>{'{{HOTEN}}'}</strong>{' '}
 									để hiển thị giá trị từ cột đó.
