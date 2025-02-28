@@ -68,3 +68,8 @@ export interface IFile {
 	};
 	url: string;
 }
+
+export type ColorType = {
+	name: string;
+	hexColor: string;
+};

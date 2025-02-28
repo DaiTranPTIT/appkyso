@@ -1,4 +1,4 @@
-import { type Login } from './typing';
+import type { ColorType, Login } from './typing';
 
 export enum EModuleKey {
 	CONNECT = 'cong-hoc-vien',
@@ -147,3 +147,37 @@ export enum EStorageFile {
 	DATABASE = 'Database',
 	S3 = 'S3',
 }
+
+/** Tên các màu mặc định của Tag's antd */
+export enum ETagColor {
+	MAGENTA = 'magenta',
+	RED = 'red',
+	VOLCANO = 'volcano',
+	ORANGE = 'orange',
+	GOLD = 'gold',
+	YELLOW = 'yellow',
+	LIME = 'lime',
+	GREEN = 'green',
+	CYAN = 'cyan',
+	BLUE = 'blue',
+	GEEKBLUE = 'geekblue',
+	PURPLE = 'purple',
+	DEFAULT = 'default',
+}
+
+/** Mapping từ màu tag antd sang color code */
+export const colorList: { [key in keyof typeof ETagColor]: ColorType } = {
+	MAGENTA: { name: 'magenta', hexColor: '#eb2f96' },
+	RED: { name: 'red', hexColor: '#f5222d' },
+	VOLCANO: { name: 'volcano', hexColor: '#fa541c' },
+	ORANGE: { name: 'orange', hexColor: '#fa8c16' },
+	GOLD: { name: 'gold', hexColor: '#faad14' },
+	YELLOW: { name: 'yellow', hexColor: '#fadb14' },
+	LIME: { name: 'lime', hexColor: '#a0d911' },
+	GREEN: { name: 'green', hexColor: '#52c41a' },
+	CYAN: { name: 'cyan', hexColor: '#13c2c2' },
+	BLUE: { name: 'blue', hexColor: '#1890ff' },
+	GEEKBLUE: { name: 'geekblue', hexColor: '#2f54eb' },
+	PURPLE: { name: 'purple', hexColor: '#722ed1' },
+	DEFAULT: { name: 'default', hexColor: '#bfbfbf' },
+};
