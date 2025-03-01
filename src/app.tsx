@@ -87,8 +87,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 				if (location.pathname === '/') {
 					history.replace('/dashboard');
 				} else if (
-					!unCheckPermissionPaths.includes(window.location.pathname) &&
-					currentRole
+					false
+					// !unCheckPermissionPaths.includes(window.location.pathname) &&
+					// currentRole
 					//  &&
 					// initialState?.authorizedPermissions?.length &&
 					// !initialState?.authorizedPermissions?.find((item) => item.rsname === currentRole)

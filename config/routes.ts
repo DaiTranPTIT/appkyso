@@ -74,6 +74,10 @@
 		hideInMenu: true,
 	},
 	{
+		path: '/sign/:id',
+		component: './KySo/Service',
+	},
+	{
 		path: '/',
 	},
 	{
