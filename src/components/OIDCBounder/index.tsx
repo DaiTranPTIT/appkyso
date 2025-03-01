@@ -30,8 +30,8 @@ const OIDCBounder_: FC = ({ children }) => {
 				const permissions: Login.IPermission[] = getPermissionsResponse.data;
 
 				if (
-					unCheckPermissionPaths.includes(window.location.pathname) ||
-					(currentRole && permissions.length && !permissions.find((item) => item.rsname === currentRole))
+					!unCheckPermissionPaths.includes(window.location.pathname)
+					// || (currentRole && permissions.length && !permissions.find((item) => item.rsname === currentRole))
 				) {
 					history.replace('/403');
 				} else {

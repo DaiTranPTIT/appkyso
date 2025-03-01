@@ -1,4 +1,5 @@
-import { message, type FormInstance } from 'antd';
+import { message, TablePaginationConfig, type FormInstance } from 'antd';
+import { FilterValue } from 'antd/lib/table/interface';
 import { type AxiosResponse } from 'axios';
 import type { Moment } from 'moment';
 import moment from 'moment';
@@ -434,3 +435,11 @@ export const compareFullname = (a: any, b: any): number => {
 
 	return compareTen === 0 ? a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()) : compareTen;
 };
+
+export interface ITableParams {
+	pagination?: TablePaginationConfig;
+	sortField?: string;
+	sortOrder?: string;
+	filters?: Record<string, FilterValue>;
+}
+  

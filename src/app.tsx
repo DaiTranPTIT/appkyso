@@ -88,9 +88,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 					history.replace('/dashboard');
 				} else if (
 					!unCheckPermissionPaths.includes(window.location.pathname) &&
-					currentRole &&
-					initialState?.authorizedPermissions?.length &&
-					!initialState?.authorizedPermissions?.find((item) => item.rsname === currentRole)
+					currentRole
+					//  &&
+					// initialState?.authorizedPermissions?.length &&
+					// !initialState?.authorizedPermissions?.find((item) => item.rsname === currentRole)
 				)
 					history.replace('/403');
 		},

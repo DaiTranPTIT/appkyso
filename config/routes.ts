@@ -30,6 +30,12 @@
 		component: './TienIch/GioiThieu',
 		hideInMenu: true,
 	},
+	{
+		icon: 'SubnodeOutlined',
+		path: '/log-ky',
+		name: 'logKy',
+		component: './LogKy'
+	},
 
 	// DANH MUC HE THONG
 	{
