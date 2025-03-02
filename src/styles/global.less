@@ -235,21 +235,16 @@ canvas {
 	font-weight: 600;
 }
 
-.ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-nav-list,
-.ant-tabs-card.ant-tabs-top>div>.ant-tabs-nav .ant-tabs-nav-list {
-	display: block;
-}
+.ant-tabs-card>.ant-tabs-nav {
+	&>.ant-tabs-nav-wrap>.ant-tabs-nav-list {
+		&>.ant-tabs-tab {
+			border-radius: 4px 4px 0 0;
 
-.ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-nav-wrap,
-.ant-tabs-card.ant-tabs-top>div>.ant-tabs-nav .ant-tabs-nav-wrap {
-	white-space: inherit;
-}
-
-.ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-tab,
-.ant-tabs-card.ant-tabs-top>div>.ant-tabs-nav .ant-tabs-tab {
-	margin-bottom: 4px;
-	font-weight: 600;
-	border-radius: 4px 4px 0 0;
+			// >.ant-tabs-tab-btn {
+			// 	text-wrap-mode: nowrap;
+			// }
+		}
+	}
 }
 
 .ant-divider-with-text-center {

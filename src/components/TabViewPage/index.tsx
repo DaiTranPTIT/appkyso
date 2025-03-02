@@ -45,7 +45,7 @@ export const TabViewPage = (props: {
 
 			{/* Chiều cao của header => Có thể tùy chỉnh tùy tenant */}
 			<Affix offsetTop={60}>
-				<Tabs activeKey={tabActive} onChange={(key) => onChangeTab(key)} className='tab-view-menu'>
+				<Tabs activeKey={tabActive} onChange={(key) => onChangeTab(key)} className='tab-view-menu' type='card'>
 					{menu
 						?.filter((i) => i.hide !== true)
 						.map((item) => (
