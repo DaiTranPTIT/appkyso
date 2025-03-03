@@ -12,7 +12,7 @@ export default () => {
         } 
     }, []);
 
-    const getSignInfo = async(id: string) => {
+    const getSignInfo = async(id: string) => { 
         try {
             const res: any = await axios.get(`${apiGateway}/api/v1/sign-info/${id}`);
             await sign({
@@ -21,7 +21,7 @@ export default () => {
                 JWTToken: "",
                 SessionId: res.data.session_id,
                 MetaData: res.data.meta_data
-            });
+            }, res.data.type, res.data.function);
         } catch(err) {
             console.log(err);
         }
@@ -36,11 +36,9 @@ export default () => {
             DocNumber?: string,
             IssuedDate?: string,
             MetaData: any
-        }
+        }, type?: string, functionName?: string
     ) => {
-        var json_prms = JSON.stringify(params);
-        // @ts-ignore
-        await vgca_sign_approved(json_prms, SignFileCallBack1);
+        if(type === "vgca_usb_token") eval(`${functionName}(${JSON.stringify({...params, ...SignFileCallBack1})})`);
     }
 
     return <>
