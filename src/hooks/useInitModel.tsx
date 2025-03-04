@@ -87,10 +87,9 @@ const useInitModel = <T,>(
 				...condition,
 				...paramCondition,
 			},
-			filters: [
-				...(filters?.filter((item) => item.active !== false)?.map(({ active, ...item }) => item) || []),
-				...(filterParams || []),
-			],
+			filters: [...(filters ?? []), ...(filterParams || [])]
+				.filter((item) => item.active !== false)
+				.map(({ active, ...item }) => item),
 			select: selectParams?.join(' '),
 			...(otherQuery ?? {}),
 		};
