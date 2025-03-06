@@ -3,7 +3,7 @@ import type { IFile } from '@/services/base/typing';
 import { getFileInfo } from '@/services/uploadFile';
 import { ip3 } from '@/utils/ip';
 import { getFileType, getNameFile } from '@/utils/utils';
-import { CopyOutlined, DownloadOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+import { CopyOutlined, DownloadOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { message, Space } from 'antd';
 import fileDownload from 'js-file-download';
 import { useEffect, useState } from 'react';
@@ -118,7 +118,7 @@ const PreviewFile = (props: {
 					<ButtonExtend
 						type='link'
 						tooltip='Mở rộng'
-						icon={<FullscreenExitOutlined />}
+						icon={<FullscreenOutlined />}
 						onClick={() => window.open(iframeSrc, '_blank')}
 					/>
 					{children}
