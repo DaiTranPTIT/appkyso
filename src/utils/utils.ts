@@ -356,7 +356,7 @@ export const disabledRangeTime = (current: Moment, type: 'start' | 'end', hour: 
 				disabledHours: () => range(0, Number(hour)),
 				disabledMinutes: () => range(0, hour === current.format('HH') ? Number(minute) : 0),
 				disabledSeconds: () => [55, 56],
-		  }
+			}
 		: {};
 };
 
@@ -593,12 +593,66 @@ export const copyToClipboard = (text: string, callBack?: () => void) => {
  * @param targetBlank
  * @returns HTML contains a tag
  */
-export const createTextLinks = (text: string, targetBlank: boolean = true) => {
-	return removeHtmlTags(text || '').replace(
+export const createTextLinks = (text: string, targetBlank: boolean = true, breakLines = true) => {
+	let html = removeHtmlTags(text || '').replace(
 		/((https?:\/\/(www\.)?)|(www\.))(\S+)/gi,
 		function (match, temp, protocol, www1, www2, url) {
 			const hyperlink = (protocol ?? 'https://') + url;
 			return `<a href="${hyperlink}"${targetBlank ? 'target="_blank" rel="noreferrer"' : ''}>${url}</a>`;
 		},
 	);
+	if (breakLines) html = html.replace('\n', '<br />');
+
+	return html;
+};
+
+/**
+ * Hiển thị số bằng chữ
+ * @param num
+ * @returns
+ */
+export const numberToVietnameseWords = (num: number, capitalizeFirst?: boolean): string => {
+	const units = ['', 'nghìn', 'triệu', 'tỷ', 'nghìn tỷ'];
+	const digits = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+
+	const readThreeDigits = (n: number): string => {
+		let str = '';
+		const hundred = Math.floor(n / 100);
+		const ten = Math.floor((n % 100) / 10);
+		const unit = n % 10;
+
+		if (hundred) str += `${digits[hundred]} trăm `;
+		if (ten > 1) str += `${digits[ten]} mươi `;
+		else if (ten === 1) str += 'mười ';
+
+		if (unit > 0) {
+			if (ten === 0 && hundred > 0) str += 'lẻ ';
+			if (unit === 1 && ten > 1) str += 'mốt';
+			else if (unit === 5 && ten > 0) str += 'lăm';
+			else str += digits[unit];
+		}
+
+		return str.trim();
+	};
+
+	if (num === 0) return 'Không';
+	let result = '';
+	let i = 0;
+
+	while (num > 0) {
+		const chunk = num % 1000;
+		if (chunk > 0) {
+			result = `${readThreeDigits(chunk)} ${units[i]} ` + result;
+		}
+		// eslint-disable-next-line no-param-reassign
+		num = Math.floor(num / 1000);
+		i++;
+	}
+
+	// Viết hoa chữ cái đầu
+	let finalResult = result.trim();
+	finalResult = capitalizeFirst
+		? finalResult.replace(/^\w/, (c) => c.toUpperCase())
+		: finalResult.charAt(0).toUpperCase() + finalResult.slice(1);
+	return finalResult;
 };
