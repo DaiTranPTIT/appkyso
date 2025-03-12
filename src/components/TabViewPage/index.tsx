@@ -23,20 +23,23 @@ export const TabViewPage = (props: {
 	children?: React.ReactNode;
 }) => {
 	const { menu = [], hideCard, children, onChange, cardTitle } = props;
-	const [tabActive, setTabActive] = useState<string | undefined>(menu[0]?.menuKey);
-	const [currentTitle, setCurrentTitle] = useState(getTitle(cardTitle, menu[0]?.title));
-	const paths = menu.map((item) => item.menuKey);
+	const activeMenu = menu?.filter((i) => !i.hide);
+
+	const [tabActive, setTabActive] = useState<string | undefined>(activeMenu[0]?.menuKey);
+	const [currentTitle, setCurrentTitle] = useState(getTitle(cardTitle, activeMenu[0]?.title));
+
+	const paths = activeMenu?.map((item) => item.menuKey);
 	const hash = window.location.hash?.replace('#', '') ?? paths[0];
 
 	useEffect(() => {
 		if (hash && paths.includes(hash)) setTabActive(hash);
 		else setTabActive(paths[0]);
-	}, [hash]);
+	}, [hash, menu]);
 
 	const onChangeTab = (tab: string) => {
 		if (onChange) onChange(tab);
-		setCurrentTitle(getTitle(cardTitle, menu.find((item) => item.menuKey === tab)?.title));
-		window.location.hash = tab === menu[0]?.menuKey ? '' : tab;
+		setCurrentTitle(getTitle(cardTitle, activeMenu.find((item) => item.menuKey === tab)?.title));
+		window.location.hash = tab === activeMenu[0]?.menuKey ? '' : tab;
 	};
 
 	const mainContent = () => (
@@ -46,23 +49,21 @@ export const TabViewPage = (props: {
 			{/* Chiều cao của header => Có thể tùy chỉnh tùy tenant */}
 			<Affix offsetTop={60}>
 				<Tabs activeKey={tabActive} onChange={(key) => onChangeTab(key)} className='tab-view-menu' type='card'>
-					{menu
-						?.filter((i) => i.hide !== true)
-						.map((item) => (
-							<Tabs.TabPane
-								tab={
-									<>
-										{item.icon}
-										{item.title}
-									</>
-								}
-								key={item.menuKey}
-							/>
-						))}
+					{activeMenu.map((item) => (
+						<Tabs.TabPane
+							tab={
+								<>
+									{item.icon}
+									{item.title}
+								</>
+							}
+							key={item.menuKey}
+						/>
+					))}
 				</Tabs>
 			</Affix>
 
-			{menu.map((item) => {
+			{activeMenu.map((item) => {
 				if (tabActive === item.menuKey) {
 					return <PermissionWrapper key={item.menuKey} content={item.content} accessCode={item.accessCode} />;
 				}
