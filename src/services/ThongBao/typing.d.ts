@@ -105,4 +105,9 @@ declare module ThongBao {
 		pathWeb?: string;
 		phanHe?: ESourceTypeNotification;
 	} & Record<string, any>;
+
+	export interface Tags {
+		ten: string;
+		[key: string]: any;
+	}
 }
