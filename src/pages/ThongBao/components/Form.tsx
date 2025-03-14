@@ -18,6 +18,7 @@ import { resetFieldsForm } from '@/utils/utils';
 import { Button, Card, Col, Form, Input, message, Modal, Row, Segmented, Select, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { useModel } from 'umi';
+import SelectTag from '../Tags/components/Select';
 import GroupTagVaiTro from './GroupTagVaiTro';
 import TableSelectUser from './TableSelect';
 
@@ -128,7 +129,7 @@ const FormThongBao = (props: any) => {
 							{notiType === NotificationType.EMAIL && (
 								<Col span={12}>
 									<Form.Item name='idTagEmail' label='Nhãn dán' rules={[...rules.required]}>
-										{/* <SelectTag />  Tùy chỉnh trong từng phân hệ */}
+										<SelectTag />
 									</Form.Item>
 								</Col>
 							)}
@@ -190,7 +191,6 @@ const FormThongBao = (props: any) => {
 						<Col span={24} md={8}>
 							<Form.Item name='loaiNguoiDung' label='Danh sách người dùng'>
 								<Segmented
-									onChange={() => setDanhSachNhanSu([])}
 									options={[
 										{ value: EReceiverType.All, label: 'Tất cả' },
 										{ value: EReceiverType.User, label: 'Người dùng cụ thể' },
