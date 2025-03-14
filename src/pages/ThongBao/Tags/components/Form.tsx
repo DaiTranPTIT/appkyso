@@ -3,6 +3,7 @@ import { useModel } from 'umi';
 import { useEffect } from 'react';
 import rules from '@/utils/rules';
 const { TextArea } = Input;
+
 const FormTags = () => {
 	const { setVisibleForm, edit, record, postModel, putModel } = useModel('thongbao.tags');
 	const [form] = Form.useForm();
@@ -22,6 +23,7 @@ const FormTags = () => {
 			form.setFieldsValue({ ...record });
 		}
 	}, [record, edit]);
+
 	return (
 		<Card title={edit ? 'Chỉnh sửa' : 'Thêm mới'}>
 			<Form onFinish={handleFinish} form={form} layout={'vertical'}>

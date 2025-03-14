@@ -5,10 +5,11 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, Tooltip } from 'antd';
 import { useModel } from 'umi';
 import FormTags from './components/Form';
+import { ThongBao } from '@/services/ThongBao/typing';
 
 const Tags = () => {
 	const { page, limit, handleEdit, deleteModel } = useModel('thongbao.tags');
-	const columns: IColumn<Tags.IRecord>[] = [
+	const columns: IColumn<ThongBao.Tags>[] = [
 		{
 			title: 'Tên',
 			dataIndex: 'ten',
@@ -26,7 +27,7 @@ const Tags = () => {
 			align: 'center',
 			width: 60,
 			fixed: 'right',
-			render: (recordVal: Tags.IRecord) => (
+			render: (recordVal: ThongBao.Tags) => (
 				<>
 					<Tooltip title='Sửa'>
 						<Button
