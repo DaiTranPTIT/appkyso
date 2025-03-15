@@ -83,11 +83,15 @@ const OIDCBounder_: FC = ({ children }) => {
 		// history.replace('/hold-on');
 		// return;
 
-		if (isUnauth || auth.isLoading) return;
+		// Trong trường hợp các trang Public muốn đăng nhập thì dùng
+		// <Button onClick={() => signinPopup()}>Đăng nhập</Button>
+		// Sau khi đăng nhập popup sẽ nhảy về đây và xử lý như bình thường
+
+		if (auth.isLoading) return;
 
 		// Chưa login + chưa có auth params ==> Cần redirect keycloak để lấy auth params + cookie
-		if (!hasAuthParams() && !auth.isAuthenticated) {
-			auth.signinRedirect();
+		if (!hasAuthParams() && !auth.isAuthenticated && initialState?.permissionLoading) {
+			if (!isUnauth) auth.signinRedirect();
 			return;
 		}
 
