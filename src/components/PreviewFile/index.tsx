@@ -26,7 +26,7 @@ const PreviewFile = (props: {
 	};
 
 	const getFileTypeFromUrl = async (url: string) => {
-		const idFile = url.split('/')[5];
+		const idFile = url.split('/')[url.length - 2];
 		let mime = '';
 
 		try {
