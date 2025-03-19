@@ -7,16 +7,23 @@ declare module AuditLog {
 		uCode: string;
 		uEmail: string;
 		uName: string;
-		requestType: string;
+
 		action: ELogAction;
-		logResponse: true;
-		ip: string;
+		description?: string;
+		sourceId?: string;
+		logResponse?: boolean;
+
 		data: any;
 		query: any;
 		param: any;
+		response: any;
+		error: any;
+
+		requestType: string;
+		ip: string;
 		ua: any;
 		userAgent: string;
-		response: any;
+
 		createdAt: string;
 	}
 }
