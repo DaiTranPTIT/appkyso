@@ -6,7 +6,7 @@
 	flex: 0 0 auto;
 	width: 12px !important;
 	margin: 0 5px !important;
-	background: #0004 !important;
+	background: #00000054 !important;
 	-moz-background-clip: padding !important;
 	-webkit-background-clip: padding !important;
 	background-clip: padding-box !important;
@@ -17,14 +17,14 @@
 		left: 50%;
 		z-index: 12;
 		display: block;
-		width: 10px;
-		height: 20px;
+		width: 12px;
+		height: 24px;
 		color: #000e;
 		font-size: 12px;
-		line-height: 15px;
+		line-height: 17px;
 		text-align: center;
 		background: #f0f0f0;
-		border: 1px solid #0006 !important;
+		border: 2px solid #0006 !important;
 		border-radius: 20px;
 
 		transform: translate(-50%, -50%);
@@ -39,6 +39,7 @@
 	}
 
 	&[data-attribute='vertical'] {
+
 		&:hover,
 		&:active {
 			background-color: var(--primary-color) !important;
@@ -57,7 +58,7 @@
 }
 
 [data-type='SplitPane'] {
-	&[data-split='horizontal'] > div {
+	&[data-split='horizontal']>div {
 		height: auto !important;
 		max-height: 100% !important;
 	}
