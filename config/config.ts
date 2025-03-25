@@ -22,7 +22,10 @@ export default defineConfig({
 		default: 'vi-VN',
 		antd: true,
 		// default true, when it is true, will use `navigator.language` overwrite default
+		// Có sử dụng ngôn ngữ mặc định của trình duyệt?
 		baseNavigator: false,
+
+		// Default: '-' => 'vi-VN'
 		// baseSeparator: '_',
 	},
 	dynamicImport: {

@@ -3,6 +3,7 @@ import { BellOutlined } from '@ant-design/icons';
 import { Badge, Spin, Tabs, Tooltip } from 'antd';
 import useMergedState from 'rc-util/es/hooks/useMergedState';
 import React from 'react';
+import { useIntl } from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 import type { NoticeIconTabProps } from './NoticeList';
 import NoticeList from './NoticeList';
@@ -31,6 +32,8 @@ export type NoticeIconProps = {
 const NoticeIcon: React.FC<NoticeIconProps> & {
 	Tab: typeof NoticeList;
 } = (props) => {
+	const intl = useIntl();
+
 	const getNotificationBox = (): React.ReactNode => {
 		const { children, loading, onClear, onTabChange, onItemClick, onViewMore, clearText, viewMoreText } = props;
 		if (!children) {
@@ -92,7 +95,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
 			onVisibleChange={setVisible}
 			arrow
 		>
-			<Tooltip title='Thông báo' placement='bottom'>
+			<Tooltip title={intl.formatMessage({ id: 'app.header.notice', defaultMessage: 'Thông báo' })} placement='bottom'>
 				<a className={styles.badge}>
 					<Badge count={count ? (count < 100 ? count : '99+') : undefined} style={{ boxShadow: 'none' }}>
 						{bell || <BellOutlined />}

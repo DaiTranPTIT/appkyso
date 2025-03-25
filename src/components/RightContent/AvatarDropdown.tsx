@@ -2,17 +2,13 @@ import { landingUrl } from '@/services/base/constant';
 import { FileWordOutlined, GlobalOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { type ItemType } from 'antd/lib/menu/hooks/useItems';
-import React from 'react';
-import { useModel } from 'umi';
+import { useIntl, useModel } from 'umi';
 import { OIDCBounder } from '../OIDCBounder';
 import HeaderDropdown from './HeaderDropdown';
 import styles from './index.less';
 
-export type GlobalHeaderRightProps = {
-	menu?: boolean;
-};
-
-const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
+const AvatarDropdown = () => {
+	const intl = useIntl();
 	const { initialState } = useModel('@@initialState');
 
 	const loginOut = () => OIDCBounder?.getActions()?.dangXuat();
@@ -53,24 +49,25 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 		{
 			key: 'portal',
 			icon: <GlobalOutlined />,
-			label: APP_CONFIG_TITLE_LANDING ?? 'Cổng thông tin',
+			label:
+				APP_CONFIG_TITLE_LANDING ?? intl.formatMessage({ id: 'app.header.portal', defaultMessage: 'Cổng thông tin' }),
 			onClick: () => window.open(landingUrl),
 		},
 		{ type: 'divider', key: 'divider' },
 		{
 			key: 'logout',
 			icon: <LogoutOutlined />,
-			label: 'Đăng xuất',
+			label: intl.formatMessage({ id: 'app.header.logout', defaultMessage: 'Đăng xuất' }),
 			onClick: loginOut,
 			danger: true,
 		},
 	];
 
-	if (menu && !initialState.currentUser.realm_access?.roles?.includes('QUAN_TRI_VIEN')) {
+	if (!initialState.currentUser.realm_access?.roles?.includes('QUAN_TRI_VIEN')) {
 		// items.splice(1, 0, {
 		//   key: 'center',
 		//   icon: <UserOutlined />,
-		//   label: 'Trang cá nhân',
+		//   label: intl.formatMessage({ id: 'app.header.userpage', defaultMessage: 'Trang cá nhân' }),
 		//   onClick: () => history.push('/account/center'),
 		// });
 	}
