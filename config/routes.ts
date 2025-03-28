@@ -36,7 +36,17 @@
 		name: 'logKy',
 		component: './LogKy'
 	},
-
+	{
+		path: '/ky-so',
+		component: './GiaoDienKy',
+		layout: false,
+	},
+	{
+		icon: 'AppstoreAddOutlined',
+		path: '/quan-ly-chu-ky',
+		name: 'QuanLyChuKy',
+		component: './QuanLyChuKy'
+	},
 	// DANH MUC HE THONG
 	{
 		name: 'DanhMuc',

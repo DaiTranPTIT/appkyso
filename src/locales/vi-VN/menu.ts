@@ -4,6 +4,7 @@ export default {
 	'menu.account.center': 'Cá nhân',
 	'menu.Dashboard': 'Trang chủ',
 	'menu.logKy': 'Log ký số',
+	'menu.QuanLyChuKy': 'Quản lý chữ ký',
 	'menu.About': `Giới thiệu ${APP_CONFIG_TIEN_TO_TRUONG.toLowerCase()}`,
 	'menu.News': 'Tin tức',
 	'menu.DanhMuc': 'Danh mục',
