@@ -1,4 +1,4 @@
-import { MenuOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { MenuOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { AutoComplete, Drawer, Input, Modal, Table, Tooltip, type InputRef } from 'antd';
 import classNames from 'classnames';
 import _ from 'lodash';
@@ -203,6 +203,18 @@ const TableStaticData = (props: TableStaticProps) => {
 				</div>
 
 				<div className='extra'>
+					{!!props.onReload ? (
+						<ButtonExtend
+							size={props?.size}
+							icon={<ReloadOutlined />}
+							onClick={() => (props.onReload ? props.onReload() : null)}
+							loading={props.loading}
+							tooltip='Tải lại dữ liệu'
+						>
+							Tải lại
+						</ButtonExtend>
+					) : null}
+
 					{hasTotal ? (
 						<Tooltip title='Tổng số dữ liệu'>
 							<div className={classNames({ total: true, small: props?.size === 'small' })}>

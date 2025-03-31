@@ -481,7 +481,7 @@ const TableBase = (props: TableBaseProps) => {
 						<ButtonExtend
 							size={props?.otherProps?.size}
 							icon={<ReloadOutlined />}
-							onClick={() => getData(params)}
+							onClick={() => (props.onReload ? props.onReload(params) : getData(params))}
 							loading={loading}
 							tooltip='Tải lại dữ liệu'
 						>
