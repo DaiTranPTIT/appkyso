@@ -4,3 +4,33 @@
     justify-content: center;
     flex-direction: column;
 }
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	backdrop-filter: brightness(0.5);
+	z-index: 5;
+	transition: .2s;
+}
+
+.container-drag {
+	position: relative;
+	z-index: 10;
+}
+
+.close-button {
+	right: -6px;
+    top: -8px;
+    height: 15px;
+    line-height: 0px;
+    padding: 3px;
+    border-radius: 90%;
+    width: 15px;
+    background-color: red;
+	color: white;
+	cursor: pointer;
+}
+    

@@ -1,17 +1,24 @@
-import React, { useState, useRef, useEffect, RefObject } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Button, Card, Col, Modal, Pagination, Row, Spin } from "antd";
-import { getFileFromUrl } from "@/utils/function";
+import { Button, Card, Col, Modal, notification, Pagination, Row, Spin } from "antd";
+import { base64ToFile } from "@/utils/function";
 import Draggable from "react-draggable";
 import { FileInfo } from "@/services/GiaoDienKy/typing";
 import { apiKy, getDsKyApi } from "@/services/GiaoDienKy/api";
 import { AuditOutlined, CloseOutlined } from "@ant-design/icons";
 import { SignHashRequest } from "@/services/GiaoDienKy/constant";
 import './style.less';
+import axios from "axios";
+import { apiGateway } from "@/utils/ip";
+import { useParams } from "react-router";
+type ParamsType = {
+  id: string;
+};
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const PDFSignatureApp: React.FC = () => {
+  const { id } = useParams<ParamsType>();
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -23,23 +30,29 @@ const PDFSignatureApp: React.FC = () => {
   const [chuKyDrop, setChuKyDrop] = useState<FileInfo>();
   const [chuKySelected, setChuKySelected] = useState<FileInfo>();
   const [loading, setLoading] = useState(false);
-  const [visibleForm, setVisibleForm] = useState(false);
-  const [loadingKy, setLoadingKy] = useState<false | true | 'cancel'>(false);
-
+  const [loadingKy, setLoadingKy] = useState<boolean>(false);
+  
   useEffect(() => {
     getDsKy();
-    const handleFileChange = async () => {
-      try {
-        const file = await getFileFromUrl("https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf", "sample-local-pdf.pdf");
-        if (file) {
-          setPdfFile(file);
-        }
-      } catch (error) {
-        console.error("Lỗi tải PDF:", error);
-      }
-    };
-    handleFileChange();
+    getSignInfo(id);
   }, []);
+
+  const getSignInfo = async (id: string) => {
+    try {
+      const res: any = await axios.get(`${apiGateway}/api/v1/sign-info/${id}`);
+      if (!res.data) return;
+      const getFile = await axios.get(`${apiGateway}/api/v1/signature/get_pdf/`, {
+        params: res.data
+      })
+      if(!getFile) return;
+      const file = await base64ToFile(getFile.data.pdf_base64, "sample-local-pdf.pdf");
+      if (file) {
+        setPdfFile(file);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   const handleDragStart = (e: React.DragEvent, chuKy: FileInfo) => {
     setChuKySelected(chuKy);
@@ -48,11 +61,11 @@ const PDFSignatureApp: React.FC = () => {
 
   const sign = async (req: SignHashRequest) => {
     const formData = new FormData();
+    formData.append("sign_info_id", req.sign_info_id);
     formData.append("signature_id", req.signature_id);
     formData.append("credential_id", req.credential_id);
     formData.append("os", req.os);
     formData.append("width", req.width.toString());
-    formData.append("file_upload", req.file_upload || '');
     formData.append("height", req.height.toString());
     formData.append("point_x", req.point_x.toString());
     formData.append("point_y", req.point_y.toString());
@@ -62,7 +75,7 @@ const PDFSignatureApp: React.FC = () => {
     formData.append("merchant_id", req.merchant_id);
     formData.append("password", req.password);
     formData.append("user_Name", req.user_Name);
-    setVisibleForm(true);
+    setLoadingKy(true);
     try {
       setLoadingKy(true);
       const res = await apiKy(formData);
@@ -90,8 +103,8 @@ const PDFSignatureApp: React.FC = () => {
     setIsDragging(false);
     if (pdfContainerRef.current) {
       const containerRect = pdfContainerRef.current.getBoundingClientRect();
-      const x = e.clientX - containerRect.left;
-      const y = e.clientY - containerRect.top;
+      const x = e.clientX - containerRect.left - 60;
+      const y = e.clientY - containerRect.top - 60;
 
       // Kiểm tra xem có thả vào vùng PDF không
       if (x >= 0 && x <= containerRect.width && y >= 0 && y <= containerRect.height) {
@@ -112,28 +125,43 @@ const PDFSignatureApp: React.FC = () => {
       const signatureRect = signatureRef.current.getBoundingClientRect();
 
       const x = signatureRect.left - containerRect.left;
-      const y = signatureRect.top - containerRect.top;
-      const width = signatureRect.width;
-      const height = signatureRect.height;
+      const y = containerRect.bottom - signatureRect.bottom;
+      const container_width = containerRect.width;
+      const container_height = containerRect.height;
+      const sign_width = signatureRect.width;
+      const sign_height = signatureRect.height;
+
+      const point_x = x/container_width * 100;
+      const point_y = y/container_height * 100;
+      const width = sign_width/container_width * 100;
+      const height = sign_height/container_height * 100;
+       
+      console.log(point_x, ' - ', point_y, ' - ', width, ' - ', height);
 
       const req = {
-        "signature_id": "d6535d55-81a1-4d54-8f81-18a220e49db2",
-        "credential_id": "240205163135504x5TKhINaXb4g8Luk7P",
-        "os": "Win10",
-        "file_upload": pdfFile || undefined,
-        "width": width,
-        "height": height,
-        "point_x": x,
-        "point_y": y,
-        "page_sign": currentPage,
-        "computer_name": "Computer",
-        "mac": "BC-E9-2F-A5-27-F0",
-        "merchant_id": "VIETTEL",
-        "password": "92046906",
-        "user_Name": "tuanda@ptit.edu.vn"
+        sign_info_id: id,
+        signature_id: chuKySelected?.id || '',
+        credential_id: chuKySelected?.credential_id || '',
+        os: window.navigator.userAgent,
+        width: width,
+        height: height,
+        point_x: point_x,
+        point_y: point_y,
+        page_sign: currentPage,
+        computer_name: "Computer",
+        mac: "BC-E9-2F-A5-27-F0",
+        merchant_id: "VIETTEL",
+        password: "92046906",
+        user_Name: "tuanda@ptit.edu.vn"
       }
-      
+
       await sign(req);
+      notification.success({
+				message: 'Ký thành công',
+				description: 'Văn bản của bạn đã được ký số!',
+			});
+      setLoading(false);
+      getSignInfo(id);
     }
   };
 
@@ -146,8 +174,8 @@ const PDFSignatureApp: React.FC = () => {
       {isDragging && <div className="overlay"></div>}
       <div className="flex justify-between gap-[40px]">
         <div className="w-[400px] bg-white border-gray-500 p-4 rounded shadow-md">
-          <h2>Mẫu chữ ký</h2>
-          <Card style={{height: 'auto', marginBottom: '20px'}}>
+          <h2 className="mb-4"><strong>Mẫu chữ ký</strong></h2>
+          <Card style={{ height: 'auto', marginBottom: '20px' }}>
             <Spin spinning={loading}>
               <Row gutter={[10, 10]}>
                 {
@@ -159,7 +187,7 @@ const PDFSignatureApp: React.FC = () => {
                         className="cursor-move rounded shadow-md"
                         draggable="true"
                       >
-                        <img src={`http://10.99.3.126:6700/files/${item.file_path.replace('datas', '')}`} width={'100%'} alt="Signature" />
+                        <img src={`https://digital-signature.ript.vn/api/files/${item.file_path.replace('datas', '')}`} width={'100%'} alt="Signature" />
                       </div>
                     </div>
                   </Col>)
@@ -174,7 +202,7 @@ const PDFSignatureApp: React.FC = () => {
         </div>
 
         <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto py-4">
-          <Pagination simple current={currentPage} total={numPages} className="mb-[20px]" onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
+          <Pagination simple current={currentPage} total={numPages} className="mb-[20px] flex justify-center mb-4" onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
           <div
             className={`relative border-2 border-dashed border-${isDragging ? 'blue-500' : 'grey'} p-2 container-drag w-[max-content] bg-${isDragging ? 'blue-50' : ''} mx-[auto]`}
 
@@ -189,29 +217,29 @@ const PDFSignatureApp: React.FC = () => {
             )}
 
             {signaturePosition && <Draggable
-              nodeRef={signatureRef as RefObject<HTMLElement>}
               onStop={() => setIsDragging(false)}
               onStart={() => setIsDragging(true)}
               bounds={"parent"}
+              handle=".cursor-move"
               defaultPosition={{ x: signaturePosition.x, y: signaturePosition.y - 792 }}
             >
-              
+
               <div id="chuKy"
                 ref={signatureRef}
                 className="absolute"
               >
-                <div className="absolute close-button" onClick={removeChuKy}><CloseOutlined style={{fontSize: '8px'}}/></div> 
-                <img className="cursor-move" src={`http://10.99.3.126:6700/files/${chuKyDrop?.file_path.replace('datas', '')}`} width={100} alt="Signature" />
+                <div className="absolute close-button" onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
+                <img className="cursor-move" src={`https://digital-signature.ript.vn/api/files/${chuKyDrop?.file_path.replace('datas', '')}`} width={100} alt="Signature" />
               </div>
             </Draggable>}
           </div>
         </div>
       </div>
-      <Modal title="Văn bản đã ký" visible={visibleForm} footer={false} onCancel={() => setVisibleForm(false)}> 
-          {loadingKy && <div className="signing">
-              <img src="/kyso/signing.gif" width={150}/>
-              <strong>Đang chờ xác nhận...</strong>
-          </div>}
+      <Modal title="Xác nhận ký" visible={loadingKy} footer={false} onCancel={() => setLoadingKy(false)}>
+        {loadingKy && <div className="signing">
+          <img src="/kyso/signing.gif" width={150} />
+          <strong>Đang chờ xác nhận...</strong>
+        </div>}
       </Modal>
     </div>
 

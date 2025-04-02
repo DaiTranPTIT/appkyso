@@ -37,7 +37,7 @@
 		component: './LogKy'
 	},
 	{
-		path: '/ky-so',
+		path: '/ky-so/:id',
 		component: './GiaoDienKy',
 		layout: false,
 	},

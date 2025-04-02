@@ -8,6 +8,7 @@ interface FileInfo {
     updated_at: string;
     user_id: string;
     name: string;
+    credential_id: string;
 }
 
 export interface IGetSign {
@@ -18,4 +19,16 @@ export interface IGetSign {
         page_size: number
         total_count: number
     }
+}
+
+interface ICredential {
+    credential_id: string;
+    authorization_email: string | null;
+    authorization_phone: string | null;
+    valid_from: string | null;
+    valid_to: string | null;
+    purpose: string | null;
+    version: number;
+    status: "OPERATED" | string;
+    status_desc: string;
 }

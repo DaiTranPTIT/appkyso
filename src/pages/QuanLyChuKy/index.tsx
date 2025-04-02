@@ -1,25 +1,28 @@
 import UploadFile from "@/components/Upload/UploadFile";
-import { getDsKyApi, suaChuKy, taoChuKy, xoaChuKy } from "@/services/GiaoDienKy/api";
+import { getDsKyApi, getListCredentialApi, suaChuKy, taoChuKy, xoaChuKy } from "@/services/GiaoDienKy/api";
 import { CKieuHienThi, CLoaiChuKy, EKieuHienThi, ELoaiChuKy } from "@/services/GiaoDienKy/constant";
-import { FileInfo } from "@/services/GiaoDienKy/typing";
+import { FileInfo, ICredential } from "@/services/GiaoDienKy/typing";
 import rules from "@/utils/rules";
 import { DeleteOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons"
 import { Button, Card, Col, Form, Input, Modal, notification, Popconfirm, Row, Select, Spin, Table, Tooltip } from "antd"
 import { useForm } from "antd/lib/form/Form";
+import Password from "antd/lib/input/Password";
 import { ColumnsType } from "antd/lib/table";
 import moment from "moment";
 import { useEffect, useState } from "react"
 
 export default () => {
-    const [visibleForm, setVisibleForm] = useState(false);
+    const [visibleForm, setVisibleForm] = useState<'NEW' | 'EDIT'>();
+    const [credForm] = useForm();
     const [loading, setLoading] = useState(false);
     const [form] = useForm();
     const [dsKy, setDsKy] = useState<FileInfo[]>();
     const [idEdit, setIdEdit] = useState<string>();
+    const [listCred, setListCred] = useState<ICredential[]>();
 
     const onClose = () => {
         form.resetFields();
-        setVisibleForm(false);
+        setVisibleForm(undefined);
         setIdEdit(undefined);
     }
 
@@ -64,7 +67,7 @@ export default () => {
         { title: 'Loại', dataIndex: 'type', key: 'type', render: (val: ELoaiChuKy) => ELoaiChuKy[val]},
         { title: 'Kiểu hiển thị', dataIndex: 'display', key: 'display', render: (val: EKieuHienThi) => EKieuHienThi[val]},
         { title: 'Ngày tạo', dataIndex: 'created_at', key: 'created_at', render: (val) => moment(val).format('HH:mm DD/MM/YYYY') },
-        { title: 'Hình chữ ký', render: (val, rec) => <img height={40} src={`http://10.99.3.126:6700/files/${rec.file_path.replace('datas', '')}`}/>},
+        { title: 'Hình chữ ký', render: (val, rec) => <img style={{height: '40px'}} src={`https://digital-signature.ript.vn/api/files/${rec.file_path.replace('datas', '')}`}/>},
         {
             title: 'Thao tác',
             align: 'center',
@@ -75,12 +78,13 @@ export default () => {
                     <Tooltip title="Chỉnh sửa">
                         <Button onClick={() => {
                             setIdEdit(record.id);
-                            setVisibleForm(true);
+                            setVisibleForm('EDIT');
                             form.setFieldsValue({
                                 name: record.name,
                                 type: record.type,
                                 displayType: record.display,
-                                file: record.file_name
+                                file: record.file_name,
+                                credential_id: record.credential_id
                             })
                         }} type="link" icon={<EditOutlined />} />
                     </Tooltip>
@@ -102,13 +106,14 @@ export default () => {
         getDsKy();
     }, [])
 
-    const submit = async (payload: any) => {
+    const submit = async (payload: any, credential_id?: string) => {
         try {
             setLoading(true);
             const signature = {
                 name: payload.name,
                 type: payload.type,
-                display: payload.displayType
+                display: payload.displayType,
+                credential_id: credential_id
             }
             const formData = new FormData();
             formData.append('signature', JSON.stringify(signature));
@@ -137,24 +142,86 @@ export default () => {
         }
     }
 
+    const getListCredential = async (val: any) => {
+        try {
+            setLoading(true);
+            const res = await getListCredentialApi(val);
+            setListCred(res.data.result);
+            if(res.data.code === 400) {
+                notification.error({
+                    message: "Thất bại",
+                    description: "Tài khoản không tồn tại",
+                });
+                return;
+            }
+            const list = res.data.result?.map((item: any) => {
+                return {
+                    label: item.credential_id,
+                    value: item.credential_id
+                }
+            })
+            
+            Modal.confirm({
+                title: 'Chọn CRED',
+                onOk: () => {
+                    return new Promise((resolve, reject) => {
+                        credForm
+                            .validateFields()
+                            .then(values => {
+                                submit(val, values.credential_id); 
+                                resolve(null);
+                            })
+                            .catch(() => reject());
+                    });
+                },
+                content: (
+                    <Form form={credForm} onFinish={val => submit(val)}>
+                        <Form.Item name="credential_id" rules={[...rules.required]}>
+                            <Select options={list} placeholder="Chọn CRED" />
+                        </Form.Item>
+                    </Form>
+                )
+            });
+            onClose();
+        } catch (err) {
+        } finally {
+            setLoading(false);
+            
+        }
+    }
+
     return <>
         <h1>Quản lý chữ ký số</h1>
         <Card>
-            <Button icon={<FileAddOutlined />} type="primary" className="mb-4" onClick={() => setVisibleForm(true)}>Thêm chữ ký</Button>
+            <Button icon={<FileAddOutlined />} type="primary" className="mb-4" onClick={() => setVisibleForm('NEW')}>Thêm chữ ký</Button>
             <Spin spinning={loading}><Table dataSource={dsKy} columns={columns} /></Spin>
         </Card>
 
         <Modal
             width={800}
             title={`Cập nhật thông tin chữ ký`}
-            visible={visibleForm}
+            visible={Boolean(visibleForm)}
             onCancel={onClose}
             okButtonProps={{ loading: loading }}
             onOk={form.submit}
 
         >
-            <Form form={form} onFinish={submit} layout="vertical">
+            <Form form={form} onFinish={visibleForm === 'NEW' && getListCredential || submit} layout="vertical">
                 <Row gutter={[16, 16]}>
+                    {visibleForm === 'NEW' && <Col span={24} md={12}>
+                        <Form.Item name="username" rules={[...rules.required]} label="Tên đăng nhập">
+                            <Input placeholder="Nhập tên đăng nhập" />
+                        </Form.Item>
+                    </Col>}
+                    
+                    {visibleForm === 'NEW' && <Col span={24} md={12}>
+                        <Form.Item name="password" rules={[...rules.required]} label="Mật khẩu">
+                            <Password placeholder="Nhập mật khẩu" />
+                        </Form.Item>
+                    </Col>}
+                    <Form.Item name="credential_id" hidden={true}>
+                        <Input/>
+                    </Form.Item>
                     <Col span={24} md={12}>
                         <Form.Item name="name" rules={[...rules.required]} label="Tên chữ ký">
                             <Input placeholder="Nhập tên chữ ký" />

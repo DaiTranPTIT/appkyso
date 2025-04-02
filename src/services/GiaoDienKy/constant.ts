@@ -20,7 +20,6 @@ export interface SignHashRequest {
     signature_id: string;
     credential_id: string;
     os: string;
-    file_upload?: File; 
     width: number;
     height: number;
     point_x: number;
@@ -31,4 +30,5 @@ export interface SignHashRequest {
     merchant_id: string;
     password: string;
     user_Name: string;
+    sign_info_id: string;
 }
