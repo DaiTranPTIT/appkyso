@@ -2,17 +2,17 @@
   <g filter="url(#filter0_d_9075_32419)">
     <rect width="80" height="80" rx="16" fill="#FFF9F9" shape-rendering="crispEdges" />
     <circle cx="31" cy="34" r="10" fill="#F9D3D1" />
-    <circle cx="40" cy="40" r="19" stroke="#CC0D00" stroke-width="2" stroke-linecap="round"
+    <circle cx="40" cy="40" r="19" stroke="#008fd5" stroke-width="2" stroke-linecap="round"
       stroke-linejoin="round" />
-    <path d="M40.0002 21C23.9008 27.5903 24.9245 54.19 40.0002 59" stroke="#CC0D00" stroke-width="2"
+    <path d="M40.0002 21C23.9008 27.5903 24.9245 54.19 40.0002 59" stroke="#008fd5" stroke-width="2"
       stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M40 21C56.0995 27.5903 55.0758 54.19 40 59" stroke="#CC0D00" stroke-width="2"
+    <path d="M40 21C56.0995 27.5903 55.0758 54.19 40 59" stroke="#008fd5" stroke-width="2"
       stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M24.8001 51.2601C32.1659 44.0264 46.6918 43.681 54.7512 51.2252" stroke="#CC0D00"
+    <path d="M24.8001 51.2601C32.1659 44.0264 46.6918 43.681 54.7512 51.2252" stroke="#008fd5"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M55.8199 29.8784C47.7704 38.832 31.4102 38.4872 24.0226 30.114" stroke="#CC0D00"
+    <path d="M55.8199 29.8784C47.7704 38.832 31.4102 38.4872 24.0226 30.114" stroke="#008fd5"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <line x1="39.1" y1="22" x2="39.1" y2="58" stroke="#CC0D00" stroke-width="2"
+    <line x1="39.1" y1="22" x2="39.1" y2="58" stroke="#008fd5" stroke-width="2"
       stroke-linecap="round" stroke-linejoin="round" />
   </g>
   <defs>

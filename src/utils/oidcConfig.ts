@@ -5,5 +5,5 @@ import { keycloakAuthority } from './ip';
 export const oidcConfig = {
   authority: keycloakAuthority,
   client_id: keycloakClientID,
-  // client_secret: keycloakSecret,
+  client_secret: 'gzboffKAXdWbkCJFCYlOGeYQhHijV0l9',
 };

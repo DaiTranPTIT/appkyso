@@ -25,20 +25,21 @@ export default () => {
             const res: any = await axios.get(`${apiGateway}/api/v1/sign-info/${id}`);
             if (!res.data) return;
             const signInfo: any = res.data;
-            switch (signInfo.type) {
-                case ETypeKy.vgca_usb_token: 
-                    history.push({
-                        pathname: '/usbtoken',
-                        query: signInfo,
-                    });
-                    break;
-                case ETypeKy.vgca_remote_token:
-                    history.push({
-                        pathname: `/remote-signing/${id}`,
-                        query: signInfo,
-                    });
-                    break;
-            }
+            history.push({
+                pathname: `/remote-signing/${id}`,
+                query: signInfo,
+            });
+            // switch (signInfo.type) {
+            //     case ETypeKy.vgca_usb_token: 
+            //         history.push({
+            //             pathname: '/usbtoken',
+            //             query: signInfo,
+            //         });
+            //         break;
+            //     case ETypeKy.vgca_remote_token:
+                    
+            //         break;
+            // }
         } catch (err) {
             setIsError(true);
         }

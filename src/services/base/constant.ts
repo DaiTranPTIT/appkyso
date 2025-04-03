@@ -42,7 +42,7 @@ export const AppModules: Record<EModuleKey, Login.TModule> = {
 	},
 	[EModuleKey.TCNS]: {
 		title: APP_CONFIG_TITLE_NHAN_SU,
-		clientId: `${APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID}tcns`,
+		clientId: `signature_cmc`,
 		url: APP_CONFIG_URL_NHAN_SU,
 		icon: EModuleKey.TCNS + '.svg',
 	},

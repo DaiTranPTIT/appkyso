@@ -218,8 +218,12 @@ export default () => {
 
       await sign(req);
       notification.success({
-        message: 'Ký thành công',
-        description: 'Văn bản của bạn đã được ký số!',
+        message: 'Văn bản của bạn đã được ký số',
+        description: 'Đang chuyển hướng ...',
+        duration: 5,
+        onClose() {
+          window.close();
+        },
       });
       setLoading(false);
       getSignInfo();
@@ -255,7 +259,7 @@ export default () => {
                         className="cursor-move rounded shadow-md"
                         draggable="true"
                       >
-                        <img src={`https://digital-signature.ript.vn/api/files/${item.file_path.replace('datas', '')}`} width={'100px'} alt="Signature" />
+                        <img src={`${apiGateway}/files/${item.file_path.replace('datas', '')}`} width={'100px'} alt="Signature" />
                       </div>
                       <strong>{item.name}</strong>
                     </div>
@@ -300,7 +304,7 @@ export default () => {
                 className="absolute"
               >
                 <div className="absolute close-button" onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
-                <img className="cursor-move" src={`https://digital-signature.ript.vn/api/files/${chuKyDrop?.file_path.replace('datas', '')}`} width={100} alt="Signature" />
+                <img className="cursor-move" src={`${apiGateway}/files/${chuKyDrop?.file_path.replace('datas', '')}`} width={100} alt="Signature" />
               </div>
             </Draggable>}
           </div> || <Spin className="flex items-center w-[100%]"/>}

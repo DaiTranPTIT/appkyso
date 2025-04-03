@@ -16,7 +16,7 @@ const Settings: LayoutSettings & {
 	colorWeak: false,
 	title: process.env.APP_CONFIG_TITLE_NHAN_SU ?? '',
 	pwa: false,
-	logo: '/logo.png',
+	logo: '/logo.webp',
 	iconfontUrl: '',
 	headerTheme: 'dark',
 	headerHeight: 60,
