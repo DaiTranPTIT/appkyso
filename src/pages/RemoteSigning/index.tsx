@@ -35,6 +35,15 @@ export default () => {
   const [loadingKy, setLoadingKy] = useState<boolean>(false);
   const [form] = useForm();
   const location = useLocation<any>();
+  const dragStartPosition = useRef<{ x: number; y: number } | null>(null);
+  const [pointInSign, setPointInSign] = useState<{x: number, y: number, width: number, height: number}>(
+    {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    }
+  );
 
 
   useEffect(() => {
@@ -70,6 +79,13 @@ export default () => {
   }
 
   const handleDragStart = (e: React.DragEvent, chuKy: FileInfo) => {
+    if (!dragStartPosition.current) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+      dragStartPosition.current = { x: offsetX, y: offsetY };
+      setPointInSign({x: offsetX, y: offsetY, width: rect.width, height: rect.height})
+    }
     setChuKySelected(chuKy);
     setIsDragging(true);
   };
@@ -118,8 +134,8 @@ export default () => {
     setIsDragging(false);
     if (pdfContainerRef.current) {
       const containerRect = pdfContainerRef.current.getBoundingClientRect();
-      const x = e.clientX - containerRect.left - 60;
-      const y = e.clientY - containerRect.top - 60;
+      const x = e.clientX - containerRect.left - pointInSign.x + 10;
+      const y = e.clientY - containerRect.top - pointInSign.y;
 
       // Kiểm tra xem có thả vào vùng PDF không
       if (x >= 0 && x <= containerRect.width && y >= 0 && y <= containerRect.height) {
@@ -223,38 +239,43 @@ export default () => {
       <div className="flex justify-between gap-[40px]">
         <div className="w-[400px] bg-white border-gray-500 p-4 rounded shadow-md">
           <h2 className="mb-4"><strong>Mẫu chữ ký</strong></h2>
-          <Card style={{ height: 'auto', marginBottom: '20px' }}>
+          <Card style={{ height: 'auto', marginBottom: '20px', maxHeight: '400px', overflowY: 'auto' }}>
             <Spin spinning={loading}>
               <Row gutter={[10, 10]}>
                 {
-                  dsKy?.map(item => <Col span={8}>
-                    <div className="flex items-center">
+                  dsKy?.map(item => <Col span={24}>
+                    <div className="flex items-center gap-[10px]">
                       <div
                         onDrag={e => handleDragStart(e, item)}
-                        onDragEnd={() => setIsDragging(false)}
+                        onDragEnd={e => {
+                          setIsDragging(false);
+                          dragStartPosition.current = null;
+                          console.log(pointInSign);
+                        }}
                         className="cursor-move rounded shadow-md"
                         draggable="true"
                       >
-                        <img src={`https://digital-signature.ript.vn/api/files/${item.file_path.replace('datas', '')}`} width={'100%'} alt="Signature" />
+                        <img src={`https://digital-signature.ript.vn/api/files/${item.file_path.replace('datas', '')}`} width={'100px'} alt="Signature" />
                       </div>
+                      <strong>{item.name}</strong>
                     </div>
                   </Col>)
                 }
               </Row>
             </Spin>
           </Card>
-          <button className="button-27" role="button" onClick={showModalUsernamePassword}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+          <button className="button-27" role="button" onClick={showModalUsernamePassword}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pen" viewBox="0 0 16 16">
             <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
           </svg> Ký số</button>
         </div>
 
         <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto py-4">
           <Pagination simple current={currentPage} total={numPages} className="mb-[20px] flex justify-center mb-4" onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
-          <div
+          {pdfFile && <div
             className={`relative border-2 border-dashed border-${isDragging ? 'blue-500' : 'grey'} p-2 container-drag w-[max-content] bg-${isDragging ? 'blue-50' : ''} mx-[auto]`}
 
           >
-            {pdfFile && (
+            {(
               <div ref={pdfContainerRef} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
                 <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
                   <Page pageNumber={currentPage} renderTextLayer={false} renderAnnotationLayer={false} />
@@ -268,7 +289,10 @@ export default () => {
               onStart={() => setIsDragging(true)}
               bounds={"parent"}
               handle=".cursor-move"
-              defaultPosition={{ x: signaturePosition.x, y: signaturePosition.y - 792 }}
+              defaultPosition={{ 
+                x: signaturePosition.x, 
+                y: signaturePosition.y - (pdfContainerRef.current?.getBoundingClientRect().height || 0)
+              }}
             >
 
               <div id="chuKy"
@@ -279,7 +303,7 @@ export default () => {
                 <img className="cursor-move" src={`https://digital-signature.ript.vn/api/files/${chuKyDrop?.file_path.replace('datas', '')}`} width={100} alt="Signature" />
               </div>
             </Draggable>}
-          </div>
+          </div> || <Spin className="flex items-center w-[100%]"/>}
         </div>
       </div>
       <Modal title="Xác nhận ký" visible={loadingKy} footer={false} onCancel={() => setLoadingKy(false)}>

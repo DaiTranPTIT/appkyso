@@ -1,7 +1,7 @@
 import UploadFile from "@/components/Upload/UploadFile";
 import { getDsKyApi, getListCredentialApi, suaChuKy, taoChuKy, xoaChuKy } from "@/services/GiaoDienKy/api";
 import { CKieuHienThi, CLoaiChuKy, EKieuHienThi, ELoaiChuKy } from "@/services/GiaoDienKy/constant";
-import { FileInfo, ICredential } from "@/services/GiaoDienKy/typing";
+import { FileInfo } from "@/services/GiaoDienKy/typing";
 import rules from "@/utils/rules";
 import { DeleteOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons"
 import { Button, Card, Col, Form, Input, Modal, notification, Popconfirm, Radio, Row, Select, Spin, Table, Tag, Tooltip } from "antd"
@@ -16,6 +16,7 @@ export default () => {
     const [credForm] = useForm();
     const [loading, setLoading] = useState(false);
     const [form] = useForm();
+    const [userForm] = useForm();
     const [dsKy, setDsKy] = useState<FileInfo[]>();
     const [idEdit, setIdEdit] = useState<string>();
 
@@ -105,14 +106,14 @@ export default () => {
         getDsKy();
     }, [])
 
-    const submit = async (payload: any, credential_id?: string) => {
+    const submit = async (payload: any) => {
         try {
             setLoading(true);
             const signature = {
                 name: payload.name,
                 type: payload.type,
                 display: payload.displayType,
-                credential_id: credential_id
+                credential_id: payload.credential_id
             }
             const formData = new FormData();
             formData.append('signature', JSON.stringify(signature));
@@ -141,81 +142,103 @@ export default () => {
         }
     }
 
-    const getListCredential = async (val: any) => {
+    const getListCredential = async () => {
         try {
             setLoading(true);
-            const res = await getListCredentialApi(val);
-            if (res.data.code === 400) {
-                notification.error({
-                    message: "Thất bại",
-                    description: "Tài khoản không tồn tại",
-                });
-                return;
-            }
-
-            console.log(res.data.result);
-
-            Modal.confirm({
-                width: 600,
-                title: 'Chọn CRED',
+            await Modal.confirm({
+                title: 'Nhập thông tin tài khoản',
                 onOk: () => {
                     return new Promise((resolve, reject) => {
-                        credForm
+                        userForm
                             .validateFields()
-                            .then(values => {
-                                submit(val, values.credential_id);
+                            .then(async val => {
                                 resolve(null);
+                                const res = await getListCredentialApi(val);
+                                if (res.data.code === 400) {
+                                    notification.error({
+                                        message: "Thất bại",
+                                        description: "Tài khoản không tồn tại",
+                                    });
+                                    return;
+                                }
+                                Modal.confirm({
+                                    width: 600,
+                                    title: 'Chọn CRED',
+                                    onOk: () => {
+                                        return new Promise((resolve, reject) => {
+                                            credForm
+                                                .validateFields()
+                                                .then(values => {
+                                                    console.log(values.credential_id)
+                                                    form.setFieldsValue({
+                                                        'credential_id': values.credential_id
+                                                    })
+                                                    resolve(null);
+                                                })
+                                                .catch(() => reject());
+                                        });
+                                    },
+                                    content: (
+                                        <Form form={credForm}>
+                                            <Form.Item name="credential_id" rules={[...rules.required]}>
+                                                <Radio.Group style={{ width: '100%' }}>
+                                                    <Table
+                                                        rowKey="credential_id"
+                                                        columns={[
+                                                            {
+                                                                title: "",
+                                                                dataIndex: "credential_id",
+                                                                render: (_: any, record: any) => (
+                                                                    <Radio value={record.credential_id} />
+                                                                ),
+                                                            },
+                                                            {
+                                                                title: "Cred",
+                                                                dataIndex: "credName",
+                                                            },
+                                                            {
+                                                                title: "Trạng thái",
+                                                                dataIndex: "status",
+                                                                render: val => {
+                                                                    console.log(val);
+                                                                    switch (val) {
+                                                                        case "OPERATED":
+                                                                            return <Tag color="green">Hoạt động</Tag>;
+                                                                        default:
+                                                                            return <Tag color="red">Không hoạt động</Tag>;
+                                                                    }
+                                                                }
+                                                            },
+                                                        ]}
+                                                        dataSource={res.data.result.map((item: any) => {
+                                                            return {
+                                                                credential_id: item.credential_id,
+                                                                credName: item.credential_id,
+                                                                status: item.status
+                                                            }
+                                                        })}
+                                                        pagination={false}
+                                                    />
+                                                </Radio.Group>
+                                            </Form.Item>
+                                        </Form>
+                                    )
+                                });
                             })
                             .catch(() => reject());
                     });
                 },
                 content: (
-                    <Form form={credForm} onFinish={val => submit(val)}>
-                        <Form.Item name="credential_id" rules={[...rules.required]}>
-                            <Radio.Group style={{width: '100%'}}>
-                                <Table
-                                    rowKey="credential_id"
-                                    columns={[
-                                        {
-                                          title: "",
-                                          dataIndex: "credential_id",
-                                          render: (_: any, record: any) => (
-                                            <Radio value={record.credential_id} />
-                                          ),
-                                        },
-                                        {
-                                          title: "Cred",
-                                          dataIndex: "credName",
-                                        },
-                                        {
-                                            title: "Trạng thái",
-                                            dataIndex: "status",
-                                            render: val => {
-                                                console.log(val);
-                                                switch (val) {
-                                                    case "OPERATED": 
-                                                        return <Tag color="green">Hoạt động</Tag>;
-                                                    default: 
-                                                        return <Tag color="red">Không hoạt động</Tag>;
-                                                }
-                                            }
-                                        },
-                                    ]}
-                                    dataSource={res.data.result.map((item: any) => {
-                                        return {
-                                            credential_id: item.credential_id,
-                                            credName: item.credential_id,
-                                            status: item.status
-                                        }
-                                    })}
-                                    pagination={false}
-                                />
-                            </Radio.Group>
+                    <Form form={userForm} layout="vertical">
+                        <Form.Item name="username" rules={[...rules.required]} label="Tên đăng nhập">
+                            <Input placeholder="Nhập tên đăng nhập" />
+                        </Form.Item>
+                        <Form.Item name="password" rules={[...rules.required]} label="Mật khẩu">
+                            <Password placeholder="Nhập mật khẩu" />
                         </Form.Item>
                     </Form>
                 )
             });
-            onClose();
         } catch (err) {
         } finally {
             setLoading(false);
@@ -239,22 +262,18 @@ export default () => {
             onOk={form.submit}
 
         >
-            <Form form={form} onFinish={visibleForm === 'NEW' && getListCredential || submit} layout="vertical">
+            <Form form={form} onFinish={submit} layout="vertical">
                 <Row gutter={[16, 16]}>
-                    {visibleForm === 'NEW' && <Col span={24} md={12}>
-                        <Form.Item name="username" rules={[...rules.required]} label="Tên đăng nhập">
-                            <Input placeholder="Nhập tên đăng nhập" />
-                        </Form.Item>
-                    </Col>}
-
-                    {visibleForm === 'NEW' && <Col span={24} md={12}>
-                        <Form.Item name="password" rules={[...rules.required]} label="Mật khẩu">
-                            <Password placeholder="Nhập mật khẩu" />
-                        </Form.Item>
-                    </Col>}
-                    <Form.Item name="credential_id" hidden={true}>
-                        <Input />
-                    </Form.Item>
+                    <Col span={24} md={12}>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <Form.Item name="credential_id" label="CRED" rules={[...rules.required]} style={{width: '100%'}}>
+                                <Input placeholder="Nhập CRED" style={{width: '100%'}}/>
+                            </Form.Item>
+                            <Button type="primary" onClick={getListCredential} style={{marginTop: '30px'}}>
+                                Lấy Cred
+                            </Button>
+                        </div>
+                    </Col>
                     <Col span={24} md={12}>
                         <Form.Item name="name" rules={[...rules.required]} label="Tên chữ ký">
                             <Input placeholder="Nhập tên chữ ký" />
