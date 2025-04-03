@@ -44,6 +44,7 @@ export default () => {
       height: 0
     }
   );
+  const [seconds, setSeconds] = useState(5);
 
 
   useEffect(() => {
@@ -217,9 +218,8 @@ export default () => {
       }
 
       await sign(req);
-      let seconds = 5;
       const interval = setInterval(() => {
-        seconds -= 1;
+        setSeconds(val => val  - 1);
         if (seconds > 0) {
         } else {
           clearInterval(interval);
