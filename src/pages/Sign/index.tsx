@@ -17,7 +17,9 @@ export default () => {
     const [isError, setIsError] = useState<boolean>();
 
     useEffect(() => {
-        getSignInfo(id);
+        setTimeout(() => {
+            getSignInfo(id);
+        }, 500)
     }, []);
 
     const getSignInfo = async (id: string) => {
