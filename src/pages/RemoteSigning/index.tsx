@@ -217,9 +217,17 @@ export default () => {
       }
 
       await sign(req);
+      let seconds = 5;
+      const interval = setInterval(() => {
+        seconds -= 1;
+        if (seconds > 0) {
+        } else {
+          clearInterval(interval);
+        }
+      }, 1000);
       notification.success({
         message: 'Văn bản của bạn đã được ký số',
-        description: 'Đang chuyển hướng ...',
+        description: `Đang chuyển hướng (${seconds} giây) ...`,
         duration: 5,
         onClose() {
           window.close();
