@@ -219,11 +219,13 @@ export default () => {
 
       await sign(req);
       const interval = setInterval(() => {
-        setSeconds(val => val  - 1);
-        if (seconds > 0) {
-        } else {
-          clearInterval(interval);
-        }
+        setSeconds(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0; // Dừng lại khi hết giây
+          }
+          return prev - 1;
+        });
       }, 1000);
       notification.success({
         message: 'Văn bản của bạn đã được ký số',
