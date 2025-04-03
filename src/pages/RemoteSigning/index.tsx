@@ -218,11 +218,10 @@ export default () => {
       }
 
       await sign(req);
-      const interval = setInterval(() => {
+      setInterval(() => {
         setSeconds(prev => {
           if (prev <= 1) {
-            clearInterval(interval);
-            return 0; // Dừng lại khi hết giây
+            return 0;
           }
           return prev - 1;
         });
