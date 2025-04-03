@@ -1,23 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Button, Card, Col, Modal, notification, Pagination, Row, Spin } from "antd";
+import { Button, Card, Col, Form, Input, Modal, notification, Pagination, Row, Spin } from "antd";
 import { base64ToFile } from "@/utils/function";
 import Draggable from "react-draggable";
-import { FileInfo } from "@/services/GiaoDienKy/typing";
+import { FileInfo, SignHashRequest } from "@/services/GiaoDienKy/typing";
 import { apiKy, getDsKyApi } from "@/services/GiaoDienKy/api";
 import { AuditOutlined, CloseOutlined } from "@ant-design/icons";
-import { SignHashRequest } from "@/services/GiaoDienKy/constant";
 import './style.less';
 import axios from "axios";
 import { apiGateway } from "@/utils/ip";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
+import { useForm } from "antd/lib/form/Form";
+import rules from "@/utils/rules";
+import Password from "antd/lib/input/Password";
 type ParamsType = {
   id: string;
 };
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-const PDFSignatureApp: React.FC = () => {
+export default () => {
   const { id } = useParams<ParamsType>();
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
@@ -31,26 +33,39 @@ const PDFSignatureApp: React.FC = () => {
   const [chuKySelected, setChuKySelected] = useState<FileInfo>();
   const [loading, setLoading] = useState(false);
   const [loadingKy, setLoadingKy] = useState<boolean>(false);
-  
+  const [form] = useForm();
+  const location = useLocation<any>();
+
+
   useEffect(() => {
-    getDsKy();
-    getSignInfo(id);
+    const script = document.createElement("script");
+    script.src = "https://cdn.tailwindcss.com";
+    script.async = true;
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
   }, []);
 
-  const getSignInfo = async (id: string) => {
+  useEffect(() => {
+    getDsKy();
+    getSignInfo();
+  }, []);
+
+  const getSignInfo = async () => {
     try {
-      const res: any = await axios.get(`${apiGateway}/api/v1/sign-info/${id}`);
-      if (!res.data) return;
+      const signInfo = location.query;
+      console.log(signInfo)
       const getFile = await axios.get(`${apiGateway}/api/v1/signature/get_pdf/`, {
-        params: res.data
+        params: signInfo
       })
-      if(!getFile) return;
+      if (!getFile) return;
       const file = await base64ToFile(getFile.data.pdf_base64, "sample-local-pdf.pdf");
       if (file) {
         setPdfFile(file);
       }
     } catch (err) {
-      console.log(err);
     }
   }
 
@@ -119,7 +134,37 @@ const PDFSignatureApp: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const layToaDo = async () => {
+  const showModalUsernamePassword = async () => {
+    Modal.confirm({
+      title: 'Nhập thông tin tài khoản',
+      onOk: () => {
+        return new Promise((resolve, reject) => {
+          form
+            .validateFields()
+            .then(values => {
+              layToaDo(values);
+              resolve(null);
+            })
+            .catch(() => reject());
+        });
+      },
+      content: (
+        <Form form={form} layout="vertical">
+          <Form.Item name="username" rules={[...rules.required]} label="Tên đăng nhập">
+            <Input placeholder="Nhập tên đăng nhập" />
+          </Form.Item>
+          <Form.Item name="password" rules={[...rules.required]} label="Mật khẩu">
+            <Password placeholder="Nhập mật khẩu" />
+          </Form.Item>
+        </Form>
+      )
+    });
+  }
+
+  const layToaDo = async (acc: {
+    username: string,
+    password: string
+  }) => {
     if (pdfContainerRef.current && signatureRef.current) {
       const containerRect = pdfContainerRef.current.getBoundingClientRect();
       const signatureRect = signatureRef.current.getBoundingClientRect();
@@ -131,11 +176,11 @@ const PDFSignatureApp: React.FC = () => {
       const sign_width = signatureRect.width;
       const sign_height = signatureRect.height;
 
-      const point_x = x/container_width * 100;
-      const point_y = y/container_height * 100;
-      const width = sign_width/container_width * 100;
-      const height = sign_height/container_height * 100;
-       
+      const point_x = x / container_width * 100;
+      const point_y = y / container_height * 100;
+      const width = sign_width / container_width * 100;
+      const height = sign_height / container_height * 100;
+
       console.log(point_x, ' - ', point_y, ' - ', width, ' - ', height);
 
       const req = {
@@ -149,24 +194,27 @@ const PDFSignatureApp: React.FC = () => {
         point_y: point_y,
         page_sign: currentPage,
         computer_name: "Computer",
-        mac: "BC-E9-2F-A5-27-F0",
+        mac: "00-00-00-00-00-00",
         merchant_id: "VIETTEL",
-        password: "92046906",
-        user_Name: "tuanda@ptit.edu.vn"
+        password: acc.password,
+        user_Name: acc.username
       }
 
       await sign(req);
       notification.success({
-				message: 'Ký thành công',
-				description: 'Văn bản của bạn đã được ký số!',
-			});
+        message: 'Ký thành công',
+        description: 'Văn bản của bạn đã được ký số!',
+      });
       setLoading(false);
-      getSignInfo(id);
+      getSignInfo();
+      removeChuKy();
     }
   };
 
   const removeChuKy = () => {
     setSignaturePosition(null);
+    setChuKySelected(undefined);
+    setChuKyDrop(undefined);
   }
 
   return (
@@ -195,10 +243,9 @@ const PDFSignatureApp: React.FC = () => {
               </Row>
             </Spin>
           </Card>
-
-          <Button type="primary" onClick={layToaDo} icon={<AuditOutlined />}>
-            KÝ SỐ
-          </Button>
+          <button className="button-27" role="button" onClick={showModalUsernamePassword}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+          </svg> Ký số</button>
         </div>
 
         <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto py-4">
@@ -245,5 +292,3 @@ const PDFSignatureApp: React.FC = () => {
 
   );
 };
-
-export default PDFSignatureApp;

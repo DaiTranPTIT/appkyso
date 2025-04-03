@@ -1,3 +1,5 @@
+import { ETypeKy } from "./constant";
+
 interface FileInfo {
     id: string;
     file_path: string;
@@ -31,4 +33,30 @@ interface ICredential {
     version: number;
     status: "OPERATED" | string;
     status_desc: string;
+}
+
+export interface SignHashRequest {
+    signature_id: string;
+    credential_id: string;
+    os: string;
+    width: number;
+    height: number;
+    point_x: number;
+    point_y: number;
+    page_sign: number;
+    computer_name: string;
+    mac: string;
+    merchant_id: string;
+    password: string;
+    user_Name: string;
+    sign_info_id: string;
+}
+
+export interface ISignInfo {
+    file_link: string;
+    file_upload_handler: string;
+    session_id: string;
+    jwt_token: string | null;
+    meta_data: MetaData[];
+    type: ETypeKy;
 }

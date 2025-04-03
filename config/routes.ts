@@ -1,4 +1,6 @@
-﻿export default [
+﻿import { layout } from "@/app";
+
+export default [
 	{
 		path: '/user',
 		layout: false,
@@ -37,9 +39,17 @@
 		component: './LogKy'
 	},
 	{
-		path: '/ky-so/:id',
-		component: './GiaoDienKy',
-		layout: false,
+		path: '/sign/:id',
+		component: './Sign',
+	},
+	{
+		path: '/remote-signing/:id',
+		component: './RemoteSigning',
+		layout: false
+	},
+	{
+		path: '/usbtoken',
+		component: './USBToken',
 	},
 	{
 		icon: 'AppstoreAddOutlined',
@@ -82,10 +92,6 @@
 		],
 		layout: false,
 		hideInMenu: true,
-	},
-	{
-		path: '/sign/:id',
-		component: './KySo/Service',
 	},
 	{
 		path: '/',

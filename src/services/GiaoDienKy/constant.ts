@@ -16,19 +16,8 @@ export enum EKieuHienThi {
 
 export const CKieuHienThi = Object.entries(EKieuHienThi).map(([value, label]) => ({ label, value }));
 
-export interface SignHashRequest {
-    signature_id: string;
-    credential_id: string;
-    os: string;
-    width: number;
-    height: number;
-    point_x: number;
-    point_y: number;
-    page_sign: number;
-    computer_name: string;
-    mac: string;
-    merchant_id: string;
-    password: string;
-    user_Name: string;
-    sign_info_id: string;
+export enum ETypeKy {
+    vgca_usb_token='vgca_usb_token',
+    vgca_remote_token='vgca_remote_token',
+    vgca_sim_token='vgca_sim_token'
 }
