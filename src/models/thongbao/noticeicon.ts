@@ -15,12 +15,13 @@ export default () => {
 	const getThongBaoModel = async (): Promise<ThongBao.IRecord[]> => {
 		setLoading(true);
 		try {
-			const response = await getThongBao({
-				page,
-				limit,
-				condition: undefined,
-				sort: { createdAt: -1 },
-			});
+			const response: any = null;
+			// await getThongBao({
+			// 	page,
+			// 	limit,
+			// 	condition: undefined,
+			// 	sort: { createdAt: -1 },
+			// });
 			setDanhSach(response?.data?.data?.result ?? []);
 			setUnread(response?.data?.data?.unread ?? 0);
 			setTotal(response?.data?.data?.total ?? 0);

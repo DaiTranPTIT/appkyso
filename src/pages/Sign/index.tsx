@@ -1,8 +1,6 @@
-import ErrorBoundary from "@/components/ErrorBoundary";
 import ErrorInfo from "@/components/ErrorInfo";
 import { ETypeKy } from "@/services/GiaoDienKy/constant";
-import { ISignInfo } from "@/services/GiaoDienKy/typing";
-import { apiGateway } from "@/utils/ip";
+import { ipRoot } from "@/utils/ip";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -17,12 +15,14 @@ export default () => {
     const [isError, setIsError] = useState<boolean>();
 
     useEffect(() => {
-        getSignInfo(id);
+        setTimeout(() => {
+            getSignInfo(id);
+        }, 500);
     }, []);
 
     const getSignInfo = async (id: string) => {
         try {
-            const res: any = await axios.get(`${apiGateway}/api/v1/sign-info/${id}`);
+            const res: any = await axios.get(`${ipRoot}/sign-info/${id}`);
             if (!res.data) return;
             const signInfo: any = res.data;
             switch (signInfo.type) {

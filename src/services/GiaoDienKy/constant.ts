@@ -17,7 +17,7 @@ export enum EKieuHienThi {
 export const CKieuHienThi = Object.entries(EKieuHienThi).map(([value, label]) => ({ label, value }));
 
 export enum ETypeKy {
-    vgca_usb_token='vgca_usb_token',
-    vgca_remote_token='vgca_remote_token',
+    vgca_usb_token='usb',
+    vgca_remote_token='remote',
     vgca_sim_token='vgca_sim_token'
 }

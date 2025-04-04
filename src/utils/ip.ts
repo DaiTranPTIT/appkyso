@@ -4,7 +4,6 @@ const ipRoot = APP_CONFIG_IP_ROOT; // ip dev
 
 // Ip Chính => Mặc định dùng trong các useInitModel
 const ip3 = ipRoot + 'tcns'; // ip dev
-const apiGateway = APP_CONFIG_IP;
 
 // Ip khác
 const ipNotif = ipRoot + 'notification'; // ip dev
@@ -25,6 +24,7 @@ const oneSignalClient = APP_CONFIG_ONE_SIGNAL_ID;
 
 export {
 	ip3,
+	ipRoot,
 	ipNotif,
 	ipSlink,
 	currentRole,
@@ -36,6 +36,5 @@ export {
 	keycloakUserInfoEndpoint,
 	keycloakAuthority,
 	sentryDSN,
-	oneSignalClient,
-	apiGateway
+	oneSignalClient
 };

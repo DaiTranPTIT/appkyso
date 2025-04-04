@@ -2,6 +2,7 @@ import UploadFile from "@/components/Upload/UploadFile";
 import { getDsKyApi, getListCredentialApi, suaChuKy, taoChuKy, xoaChuKy } from "@/services/GiaoDienKy/api";
 import { CKieuHienThi, CLoaiChuKy, EKieuHienThi, ELoaiChuKy } from "@/services/GiaoDienKy/constant";
 import { FileInfo } from "@/services/GiaoDienKy/typing";
+import { ipRoot } from "@/utils/ip";
 import rules from "@/utils/rules";
 import { DeleteOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons"
 import { Button, Card, Col, Form, Input, Modal, notification, Popconfirm, Radio, Row, Select, Spin, Table, Tag, Tooltip } from "antd"
@@ -67,7 +68,7 @@ export default () => {
         { title: 'Loại', dataIndex: 'type', key: 'type', render: (val: ELoaiChuKy) => ELoaiChuKy[val] },
         { title: 'Kiểu hiển thị', dataIndex: 'display', key: 'display', render: (val: EKieuHienThi) => EKieuHienThi[val] },
         { title: 'Ngày tạo', dataIndex: 'created_at', key: 'created_at', render: (val) => moment(val).format('HH:mm DD/MM/YYYY') },
-        { title: 'Hình chữ ký', render: (val, rec) => <img style={{ height: '40px' }} src={`https://digital-signature.ript.vn/api/files/${rec.file_path.replace('datas', '')}`} /> },
+        { title: 'Chữ ký', align: 'center', render: (val, rec) => <img style={{ height: '40px' }} src={`${ipRoot}${rec.file_path}`} /> },
         {
             title: 'Thao tác',
             align: 'center',
@@ -109,14 +110,11 @@ export default () => {
     const submit = async (payload: any) => {
         try {
             setLoading(true);
-            const signature = {
-                name: payload.name,
-                type: payload.type,
-                display: payload.displayType,
-                credential_id: payload.credential_id
-            }
             const formData = new FormData();
-            formData.append('signature', JSON.stringify(signature));
+            formData.append('name', payload.name);
+            formData.append('type', payload.type);
+            formData.append('display', payload.displayType);
+            formData.append('credential_id', payload.credential_id);
             if (payload.file.fileList[0].originFileObj) formData.append('file_upload', payload.file.fileList[0].originFileObj);
             if (idEdit) {
                 const res = await suaChuKy(formData, idEdit);

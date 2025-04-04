@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Button, Card, Col, Form, Input, Modal, notification, Pagination, Row, Spin } from "antd";
-import { base64ToFile } from "@/utils/function";
+import { Card, Col, Form, Input, Modal, notification, Pagination, Row, Spin } from "antd";
+import { base64ToFile, getFileFromServer } from "@/utils/function";
 import Draggable from "react-draggable";
 import { FileInfo, SignHashRequest } from "@/services/GiaoDienKy/typing";
 import { apiKy, getDsKyApi } from "@/services/GiaoDienKy/api";
-import { AuditOutlined, CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined } from "@ant-design/icons";
 import './style.less';
 import axios from "axios";
-import { apiGateway } from "@/utils/ip";
+import { ipRoot } from "@/utils/ip";
 import { useLocation, useParams } from "react-router";
 import { useForm } from "antd/lib/form/Form";
 import rules from "@/utils/rules";
@@ -34,7 +34,7 @@ export default () => {
   const [loading, setLoading] = useState(false);
   const [loadingKy, setLoadingKy] = useState<boolean>(false);
   const [form] = useForm();
-  const location = useLocation<any>();
+  const location = useLocation();
   const dragStartPosition = useRef<{ x: number; y: number } | null>(null);
   const [pointInSign, setPointInSign] = useState<{x: number, y: number, width: number, height: number}>(
     {
@@ -64,17 +64,11 @@ export default () => {
 
   const getSignInfo = async () => {
     try {
-      const signInfo = location.query;
-      console.log(signInfo)
-      const getFile = await axios.get(`${apiGateway}/api/v1/signature/get_pdf/`, {
-        params: signInfo
-      })
-      if (!getFile) return;
-      const file = await base64ToFile(getFile.data.pdf_base64, "sample-local-pdf.pdf");
-      if (file) {
-        setPdfFile(file);
-      }
+      const file = await getFileFromServer(`${ipRoot}/sign-info/file_content/${id}`);
+      if (!file) return;
+      setPdfFile(file);
     } catch (err) {
+      console.log(err);
     }
   }
 
@@ -110,8 +104,9 @@ export default () => {
     try {
       setLoadingKy(true);
       const res = await apiKy(formData);
-      console.log(res);
+      return Promise.resolve(res);
     } catch (err) {
+      return Promise.reject(err);
     } finally {
       setLoadingKy(false);
     }
@@ -216,14 +211,20 @@ export default () => {
         user_Name: acc.username
       }
 
-      await sign(req);
-      notification.success({
-        message: 'Ký thành công',
-        description: 'Văn bản của bạn đã được ký số!',
-      });
-      setLoading(false);
-      getSignInfo();
-      removeChuKy();
+      try {
+        const res = await sign(req);
+        if(!res) return;
+        notification.success({
+          message: 'Ký số thành công',
+          description: 'Đang chuyển hướng...',
+        });
+        getSignInfo();
+        removeChuKy();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -255,7 +256,7 @@ export default () => {
                         className="cursor-move rounded shadow-md"
                         draggable="true"
                       >
-                        <img src={`https://digital-signature.ript.vn/api/files/${item.file_path.replace('datas', '')}`} width={'100px'} alt="Signature" />
+                        <img src={`${ipRoot}${item.file_path}`} width={'100px'} alt="Signature" />
                       </div>
                       <strong>{item.name}</strong>
                     </div>
@@ -300,7 +301,7 @@ export default () => {
                 className="absolute"
               >
                 <div className="absolute close-button" onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
-                <img className="cursor-move" src={`https://digital-signature.ript.vn/api/files/${chuKyDrop?.file_path.replace('datas', '')}`} width={100} alt="Signature" />
+                <img className="cursor-move" src={`${ipRoot}${chuKyDrop?.file_path}`} width={100} alt="Signature" />
               </div>
             </Draggable>}
           </div> || <Spin className="flex items-center w-[100%]"/>}
