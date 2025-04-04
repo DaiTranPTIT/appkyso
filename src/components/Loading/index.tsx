@@ -1,8 +1,10 @@
 import { DeleteOutlined, HomeOutlined } from '@ant-design/icons';
 import { Button, Spin } from 'antd';
 import './style.less';
+import { useIntl } from 'umi';
 
 const LoadingPage = () => {
+	const intl = useIntl();
 	const onClearCache = () => {
 		localStorage.clear();
 		sessionStorage.clear();
@@ -14,16 +16,16 @@ const LoadingPage = () => {
 		<div className='loading-content'>
 			<Spin spinning size='large' />
 
-			<h2>Vui lòng đợi trong giây lát</h2>
-			<h3>Đang chuyển hướng tới trang đích...</h3>
+			<h2>{intl.formatMessage({ id: 'global.loading.thongbao1' })}</h2>
+			<h3>{intl.formatMessage({ id: 'global.loading.thongbao2' })}</h3>
 
-			<span className='loading-description'>Nếu phải chờ đợi quá lâu, bạn có thể</span>
+			<span className='loading-description'>{intl.formatMessage({ id: 'global.loading.thongbao3' })}</span>
 			<div className='loading-actions'>
 				{/* <Button icon={<HomeOutlined />} type='primary' onClick={() => (window.location.href = '/')}>
 					Về trang chủ
 				</Button> */}
 				<Button type='link' danger icon={<DeleteOutlined />} onClick={onClearCache}>
-					Xóa bộ nhớ đệm
+					{intl.formatMessage({ id: 'global.loading.xoabonhodiem' })}
 				</Button>
 			</div>
 		</div>

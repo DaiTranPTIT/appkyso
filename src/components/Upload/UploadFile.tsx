@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import Resizer from 'react-image-file-resizer';
 import './UploadAvatar.less';
 import type { TResizeProps, TUploadProps } from './typing';
+import { useIntl } from 'umi';
 
 type TFile = UpFile & { resized?: boolean; remote?: boolean };
 
@@ -28,6 +29,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 	extra,
 	isPortraitAvatar,
 }) => {
+	const intl = useIntl();
 	const isDisabled = disabled || otherProps?.disabled || false;
 	const [fileList, setFileList] = useState<any[]>();
 	const [previewOpen, setPreviewOpen] = useState(false);
@@ -95,7 +97,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 		let files = val.fileList as TFile[];
 		const findLargeFile = files?.some((file) => file.size && file.size / 1024 / 1024 > maxFileSize);
 		if (findLargeFile) {
-			message.error(`Dung lượng tập tin không được quá ${maxFileSize}Mb`);
+			message.error(intl.formatMessage({ id: 'global.uploadfile.error.mb' }, { maxFileSize }));
 			return;
 		}
 
@@ -104,7 +106,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 			return file?.remote !== true && !otherProps?.accept?.includes(arrFileName?.[arrFileName.length - 1]);
 		});
 		if (findWrongTypeFile && otherProps?.accept) {
-			message.error('Định dạng tập tin không cho phép');
+			message.error(intl.formatMessage({ id: 'global.uploadfile.error.format' }));
 			return;
 		}
 
@@ -126,9 +128,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 	const Extra = () =>
 		isDisabled ? null : (
 			<small style={{ color: '#999' }}>
-				<i>
-					Tối đa {maxCount} mục, dung lượng mỗi file không được quá {maxFileSize}Mb
-				</i>
+				<i>{intl.formatMessage({ id: 'global.uploadfile.toida' }, { maxCount, maxFileSize })}</i>
 				{extra && (
 					<div>
 						<i>{extra}</i>
@@ -155,7 +155,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 						<p className='ant-upload-drag-icon'>
 							<UploadOutlined />
 						</p>
-						<p className='ant-upload-text'>Nhấn chuột hoặc kéo thả tài liệu để tải lên</p>
+						<p className='ant-upload-text'>{intl.formatMessage({ id: 'global.uploadfile.text' })}</p>
 						<p className='ant-upload-hint'>{buttonDescription}</p>
 						<Extra />
 					</>
@@ -191,7 +191,9 @@ const UploadFile: React.FC<TUploadProps> = ({
 							}}
 						>
 							<PlusOutlined />
-							<div className='ant-upload-text'>{buttonDescription || 'Thêm ảnh đại diện'}</div>
+							<div className='ant-upload-text'>
+								{buttonDescription || intl.formatMessage({ id: 'global.uploadfile.text1' })}
+							</div>
 						</div>
 					) : null}
 				</Upload>
@@ -225,7 +227,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 			>
 				{!isDisabled ? (
 					<Button size={buttonSize || 'small'} icon={<UploadOutlined />}>
-						{buttonDescription || 'Chọn tệp'}
+						{buttonDescription || intl.formatMessage({ id: 'global.uploadfile.button.chontep' }, { maxFileSize })}
 					</Button>
 				) : null}
 			</Upload>

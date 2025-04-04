@@ -2,13 +2,14 @@ import { FileExcelOutlined } from '@ant-design/icons';
 import { Button, Col, Empty, Modal, Row } from 'antd';
 import fileDownload from 'js-file-download';
 import { useEffect, useState } from 'react';
-import { useModel } from 'umi';
+import { useIntl, useModel } from 'umi';
 import { type TExportField } from '../typing';
 import CardChooseFields from './CardChooseFields';
 import CardExportFields from './CardExportFields';
 import { type ModalExportProps } from './typing';
 
 const ModalExport = (props: ModalExportProps) => {
+	const intl = useIntl();
 	const { visible, onCancel, modelName, maskCloseableForm, fileName, condition, filters, otherQuery } = props;
 	const { getExportFieldsModel, postExportModel, formSubmiting, selectedIds } = useModel(modelName);
 	const [allFields, setAllFields] = useState<TExportField[]>([]); // Export Fields lấy từ API
@@ -68,7 +69,7 @@ const ModalExport = (props: ModalExportProps) => {
 
 	return (
 		<Modal
-			title='Xuất dữ liệu'
+			title={intl.formatMessage({ id: 'global.table.export.title' })}
 			visible={visible}
 			onCancel={onCancelModal}
 			footer={null}
@@ -79,7 +80,11 @@ const ModalExport = (props: ModalExportProps) => {
 			{!!exportFields.length ? (
 				<>
 					<Row gutter={[12, 12]} style={{ marginBottom: 18 }}>
-						{selectedIds?.length > 0 ? <Col span={24}>Trích xuất {selectedIds?.length} mục đã chọn</Col> : null}
+						{selectedIds?.length > 0 ? (
+							<Col span={24}>
+								{intl.formatMessage({ id: 'global.table.export.index.trichxuat' }, selectedIds?.length)}
+							</Col>
+						) : null}
 
 						<Col
 							span={24}
@@ -87,7 +92,7 @@ const ModalExport = (props: ModalExportProps) => {
 								marginBottom: '-15px',
 							}}
 						>
-							Chọn các trường dữ liệu cần trích xuất:
+							{intl.formatMessage({ id: 'global.table.export.index.choncactruong' })}:
 						</Col>
 
 						<Col span={24} md={12}>
@@ -106,13 +111,15 @@ const ModalExport = (props: ModalExportProps) => {
 							disabled={!finalFields.length}
 							loading={formSubmiting}
 						>
-							Tải xuống dữ liệu
+							{intl.formatMessage({ id: 'global.table.export.index.button.taixuong' })}
 						</Button>
-						<Button onClick={onCancelModal}>Hủy</Button>
+						<Button onClick={onCancelModal}>
+							{intl.formatMessage({ id: 'global.table.export.index.button.huy' })}
+						</Button>
 					</div>
 				</>
 			) : (
-				<Empty description='Chức năng chưa được hỗ trợ' />
+				<Empty description={intl.formatMessage({ id: 'global.table.export.index.empty' })} />
 			)}
 		</Modal>
 	);

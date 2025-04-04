@@ -5,10 +5,11 @@ import { Button, Col, Form, InputNumber, Row, Select, Space, message } from 'ant
 import fileDownload from 'js-file-download';
 import { pick } from 'lodash';
 import { useState } from 'react';
-import { useModel } from 'umi';
+import { useIntl, useModel } from 'umi';
 import * as XLSX from 'xlsx';
 
 const ChooseFileImport = (props: { onChange: () => void; onCancel: any; getTemplate: any; fileName?: string }) => {
+	const intl = useIntl();
 	const { onChange, onCancel, getTemplate } = props;
 	const { setHeadLine, setFileData, setStartLine } = useModel('import');
 	const [workbook, setWorkbook] = useState<XLSX.WorkBook>();
@@ -44,7 +45,7 @@ const ChooseFileImport = (props: { onChange: () => void; onCancel: any; getTempl
 			reader.onload = (e) => getWorksheets(e.target?.result);
 			reader.readAsBinaryString(file);
 		} else {
-			message.error('Trình duyệt không hỗ trợ');
+			message.error(intl.formatMessage({ id: 'global.table.import.choose.message1' }));
 			if (onCancel) onCancel();
 		}
 	};
@@ -79,7 +80,7 @@ const ChooseFileImport = (props: { onChange: () => void; onCancel: any; getTempl
 				return;
 			}
 		}
-		message.error('Không lấy được dữ liệu');
+		message.error(intl.formatMessage({ id: 'global.table.import.choose.message2' }));
 	};
 
 	const onDownloadTemplate = () => {
@@ -94,21 +95,29 @@ const ChooseFileImport = (props: { onChange: () => void; onCancel: any; getTempl
 		<Form layout='vertical' onFinish={onFinish} form={form}>
 			<Row gutter={[12, 0]}>
 				<Col span={24}>
-					<Form.Item name='file' label='Tập tin dữ liệu' rules={[...rules.fileRequired]}>
+					<Form.Item
+						name='file'
+						label={intl.formatMessage({ id: 'global.table.import.choose.taptin' })}
+						rules={[...rules.fileRequired]}
+					>
 						<UploadFile
 							onChange={onChangeUpload}
 							accept='.xls, .xlsx'
 							drag
-							buttonDescription='Chọn tập tin dữ liệu để nhập vào hệ thống'
+							buttonDescription={intl.formatMessage({ id: 'global.table.import.choose.des' })}
 						/>
 					</Form.Item>
 				</Col>
 
 				<Col span={24} md={12}>
-					<Form.Item name='sheet' label='Trang tính chứa dữ liệu' rules={[...rules.required]}>
+					<Form.Item
+						name='sheet'
+						label={intl.formatMessage({ id: 'global.table.import.choose.trangtinh' })}
+						rules={[...rules.required]}
+					>
 						<Select
 							style={{ width: '100%' }}
-							placeholder='Chọn trang tính chứa dữ liệu'
+							placeholder={intl.formatMessage({ id: 'global.table.import.choose.trangtinh.placeholder' })}
 							options={sheetNames?.map((item) => ({
 								key: item,
 								value: item,
@@ -119,17 +128,24 @@ const ChooseFileImport = (props: { onChange: () => void; onCancel: any; getTempl
 					</Form.Item>
 				</Col>
 				<Col span={24} md={12}>
-					<Form.Item name='line' label='Dòng làm tiêu đề cột' rules={[...rules.required]}>
-						<InputNumber placeholder='Chọn dòng tiêu đề cột trong trang tính' style={{ width: '100%' }} />
+					<Form.Item
+						name='line'
+						label={intl.formatMessage({ id: 'global.table.import.choose.tieude' })}
+						rules={[...rules.required]}
+					>
+						<InputNumber
+							placeholder={intl.formatMessage({ id: 'global.table.import.choose.tieude.placeholder' })}
+							style={{ width: '100%' }}
+						/>
 					</Form.Item>
 				</Col>
 
 				{getTemplate ? (
 					<Col span={24} style={{ textAlign: 'center', marginTop: 8 }}>
-						<i>Sử dụng tập dữ liệu mẫu để việc xử lý được thực hiện nhanh chóng và chính xác</i>
+						<i>{intl.formatMessage({ id: 'global.table.import.choose.sudungtapdulieu' })}</i>
 						<br />
 						<Button icon={<DownloadOutlined />} type='link' onClick={onDownloadTemplate}>
-							Tải tập tin mẫu
+							{intl.formatMessage({ id: 'global.table.import.choose.button.taitaptin' })}
 						</Button>
 					</Col>
 				) : null}
@@ -137,10 +153,10 @@ const ChooseFileImport = (props: { onChange: () => void; onCancel: any; getTempl
 				<Col span={24}>
 					<Space style={{ marginTop: 12, justifyContent: 'space-between', width: '100%' }}>
 						<Button onClick={() => onCancel()} icon={<CloseOutlined />}>
-							Hủy
+							{intl.formatMessage({ id: 'global.table.import.choose.button.huy' })}
 						</Button>
 						<Button htmlType='submit' type='primary'>
-							Tiếp theo <ArrowRightOutlined />
+							{intl.formatMessage({ id: 'global.table.import.choose.button.tieptheo' })} <ArrowRightOutlined />
 						</Button>
 					</Space>
 				</Col>

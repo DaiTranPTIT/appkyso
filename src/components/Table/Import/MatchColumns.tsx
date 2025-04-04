@@ -2,10 +2,11 @@ import rules from '@/utils/rules';
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Row, Select, Space } from 'antd';
 import { useEffect } from 'react';
-import { useModel } from 'umi';
+import { useIntl, useModel } from 'umi';
 import { type TImportHeader } from '../typing';
 
 const MatchColumns = (props: { onChange: () => void; onBack: any; importHeaders: TImportHeader[] }) => {
+	const intl = useIntl();
 	const { onChange, onBack, importHeaders } = props;
 	const { headLine, matchedColumns, setMatchedColumns } = useModel('import');
 	const [form] = Form.useForm();
@@ -24,7 +25,7 @@ const MatchColumns = (props: { onChange: () => void; onBack: any; importHeaders:
 		<Form layout='vertical' form={form} onFinish={onFinish}>
 			<Row gutter={[12, 0]}>
 				<Col span={24} className='fw500' style={{ marginBottom: 12 }}>
-					Ghép cột thông tin với cột dữ liệu tương ứng
+					{intl.formatMessage({ id: 'global.table.import.math.ghepcot' })}
 				</Col>
 				{importHeaders?.map((col) => (
 					<Col span={24} md={12} key={col.field}>
@@ -42,7 +43,7 @@ const MatchColumns = (props: { onChange: () => void; onBack: any; importHeaders:
 								}))}
 								style={{ width: '100%' }}
 								allowClear={!col.required}
-								placeholder='Cột thông tin trên tập dữ liệu'
+								placeholder={intl.formatMessage({ id: 'global.table.import.math.placeholder' })}
 								optionFilterProp='label'
 								showSearch
 							/>
@@ -50,18 +51,16 @@ const MatchColumns = (props: { onChange: () => void; onBack: any; importHeaders:
 					</Col>
 				))}
 				<Col span={24}>
-					<i style={{ color: 'red' }}>
-						Các trường có đánh dấu * là bắt buộc. Ngoài ra các trường khác có thể bỏ qua nếu không có dữ liệu
-					</i>
+					<i style={{ color: 'red' }}>{intl.formatMessage({ id: 'global.table.import.math.thongtin' })}</i>
 				</Col>
 
 				<Col span={24}>
 					<Space style={{ marginTop: 12, justifyContent: 'space-between', width: '100%' }}>
 						<Button onClick={() => onBack()} icon={<ArrowLeftOutlined />}>
-							Quay lại
+							{intl.formatMessage({ id: 'global.table.import.math.button.quaylai' })}
 						</Button>
 						<Button htmlType='submit' type='primary'>
-							Tiếp theo <ArrowRightOutlined />
+							{intl.formatMessage({ id: 'global.table.import.math.button.tieptheo' })} <ArrowRightOutlined />
 						</Button>
 					</Space>
 				</Col>

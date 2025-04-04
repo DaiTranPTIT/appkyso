@@ -2,6 +2,7 @@ import rules from '@/utils/rules';
 import { Form, Input, Radio, type FormInstance } from 'antd';
 import { useEffect, useState } from 'react';
 import UploadFile from './UploadFile';
+import { useIntl } from 'umi';
 
 /**
  * Form Item cho vào Form cho nhập URL hoặc UPLOAD file
@@ -16,6 +17,7 @@ const FormItemUrlOrUpload = (props: {
 	isRequired?: boolean;
 	label?: string;
 }) => {
+	const intl = useIntl();
 	const { form, initValue, isRequired } = props;
 	const [typeUpload, setTypeUpload] = useState<'UPLOAD' | 'URL'>('UPLOAD');
 	const field = props.field || 'url';
@@ -40,8 +42,8 @@ const FormItemUrlOrUpload = (props: {
 						}}
 						value={typeUpload}
 					>
-						<Radio value={'URL'}>Đường dẫn</Radio>
-						<Radio value={'UPLOAD'}>Tải lên</Radio>
+						<Radio value={'URL'}>{intl.formatMessage({ id: 'global.uploadfile.duongdan' })}</Radio>
+						<Radio value={'UPLOAD'}>{intl.formatMessage({ id: 'global.uploadfile.tailen' })}</Radio>
 					</Radio.Group>
 				</>
 			}
@@ -53,7 +55,7 @@ const FormItemUrlOrUpload = (props: {
 			{typeUpload === 'UPLOAD' ? (
 				<UploadFile maxCount={1} otherProps={{ accept }} />
 			) : (
-				<Input placeholder='Nhập đường dẫn' />
+				<Input placeholder={`${intl.formatMessage({ id: 'global.uploadfile.duongdan.placeholder' })}`} />
 			)}
 		</Form.Item>
 	);

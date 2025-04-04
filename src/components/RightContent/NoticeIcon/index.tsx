@@ -1,10 +1,11 @@
 import ViewThongBao from '@/pages/ThongBao/components/ViewThongBao';
 import { Modal } from 'antd';
 import { useEffect, useState } from 'react';
-import { useModel } from 'umi';
+import { useIntl, useModel } from 'umi';
 import NoticeIcon from './NoticeIcon';
 
 const NoticeIconView = () => {
+	const intl = useIntl();
 	const {
 		danhSach,
 		getThongBaoModel,
@@ -41,8 +42,8 @@ const NoticeIconView = () => {
 				}}
 				loading={loading}
 				onClear={() => clearReadState()}
-				clearText='Đánh dấu tất cả là đã đọc'
-				viewMoreText='Tải thêm'
+				clearText={intl.formatMessage({ id: 'global.rightcontent.thongbao.cleartext' })}
+				viewMoreText={intl.formatMessage({ id: 'global.rightcontent.thongbao.taithem' })}
 				onViewMore={() => {
 					if (loading) return;
 					setLimit(limit + 5);
@@ -57,8 +58,8 @@ const NoticeIconView = () => {
 					tabKey='notification'
 					count={total}
 					list={danhSach}
-					title='Thông báo'
-					emptyText='Bạn đã xem tất cả thông báo'
+					title={intl.formatMessage({ id: 'global.rightcontent.thongbao.title' })}
+					emptyText={intl.formatMessage({ id: 'global.rightcontent.thongbao.emptytext' })}
 					showClear={!!unread}
 					showViewMore={danhSach.length < total}
 				/>
@@ -71,7 +72,7 @@ const NoticeIconView = () => {
 				onCancel={() => setVisibleDetail(false)}
 				visible={visibleDetail}
 				okButtonProps={{ hidden: true }}
-				cancelText='Đóng'
+				cancelText={intl.formatMessage({ id: 'global.rightcontent.thongbao.dong' })}
 			>
 				<ViewThongBao
 					record={record}

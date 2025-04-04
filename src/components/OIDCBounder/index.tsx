@@ -9,13 +9,14 @@ import { ConfigProvider, notification } from 'antd';
 import queryString from 'query-string';
 import { useEffect, type FC } from 'react';
 import { AuthProvider, hasAuthParams, useAuth } from 'react-oidc-context';
-import { history, useModel } from 'umi';
+import { history, useIntl, useModel } from 'umi';
 import LoadingPage from '../Loading';
 import { unAuthPaths, unCheckPermissionPaths } from './constant';
 
 let OIDCBounderHandlers: ReturnType<typeof useAuthActions> | null = null;
 
 const OIDCBounder_: FC = ({ children }) => {
+	const intl = useIntl();
 	const { setInitialState, initialState } = useModel('@@initialState');
 	const auth = useAuth();
 	const actions = useAuthActions();
@@ -69,8 +70,8 @@ const OIDCBounder_: FC = ({ children }) => {
 				if (auth.isAuthenticated) auth.removeUser();
 				else {
 					notification.warn({
-						message: 'Xác thực người dùng',
-						description: 'Vui lòng đợi trong giây lát. Đang chuyển hướng...',
+						message: intl.formatMessage({ id: 'global.OIDCBounder.message' }),
+						description: intl.formatMessage({ id: 'global.OIDCBounder.description' }),
 					});
 					history.replace('/user/login');
 				}

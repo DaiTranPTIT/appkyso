@@ -1,6 +1,7 @@
 import { Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { type TooltipProps } from 'antd/lib/tooltip';
+import { useIntl } from 'umi';
 
 interface EllipsisProps {
 	rows?: number;
@@ -18,6 +19,7 @@ interface IProps {
 }
 
 const ExpandText = (props: IProps) => {
+	const intl = useIntl();
 	const [expand, setExpand] = useState<boolean>(false);
 	const [counter, setCounter] = useState<number>(0);
 
@@ -40,7 +42,7 @@ const ExpandText = (props: IProps) => {
 				style={{ ...props.style, overflowWrap: props.style?.overflowWrap ?? 'anywhere' }}
 				ellipsis={{
 					rows: 3,
-					symbol: 'Xem tiếp',
+					symbol: intl.formatMessage({ id: 'global.expandText.xemtiep' }),
 					expandable: true,
 					...props.ellipsis,
 					onExpand: typoExpand,
@@ -48,7 +50,7 @@ const ExpandText = (props: IProps) => {
 			>
 				{props.children}
 			</Typography.Paragraph>
-			{expand && <a onClick={typoClose}>Ẩn bớt</a>}
+			{expand && <a onClick={typoClose}>{intl.formatMessage({ id: 'global.expandText.anbot' })}</a>}
 		</div>
 	);
 };
