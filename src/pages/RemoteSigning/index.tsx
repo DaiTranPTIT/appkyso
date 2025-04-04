@@ -217,6 +217,10 @@ export default () => {
         notification.success({
           message: 'Ký số thành công',
           description: 'Đang chuyển hướng...',
+          duration: 5,
+          onClose() {
+            window.close();
+          },
         });
         getSignInfo();
         removeChuKy();
