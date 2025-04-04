@@ -1,9 +1,13 @@
 import { Modal, Progress } from 'antd';
 import defaultSettings from '../../../config/defaultSettings';
+import { useIntl } from 'umi';
 
-const FormWaiting = (s = 'Đang xử lý dữ liệu...') => {
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const intl = useIntl();
+
+const FormWaiting = (s = intl.formatMessage({ id: 'global.formWaiting.title' })) => {
 	Modal.info({
-		title: 'Thông báo',
+		title: intl.formatMessage({ id: 'global.formWaiting.dangxuly' }),
 		centered: true,
 		icon: null,
 		okButtonProps: { hidden: true },
@@ -13,7 +17,7 @@ const FormWaiting = (s = 'Đang xử lý dữ liệu...') => {
 				<span>{s}</span>
 				<br />
 				<small>
-					<i>(Vui lòng chờ đến khi tiến trình kết thúc!)</i>
+					<i>({intl.formatMessage({ id: 'global.formWaiting.thongbao' })})</i>
 				</small>
 			</div>
 		),

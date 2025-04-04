@@ -3,7 +3,7 @@ import { ArrowLeftOutlined, QuestionOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Col, Row, Space } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { useModel } from 'umi';
+import { useIntl, useModel } from 'umi';
 import TableStaticData from '../TableStaticData';
 import type { IColumn, TImportHeader } from '../typing';
 
@@ -13,16 +13,17 @@ const PreviewDataImport = (props: {
 	importHeaders: TImportHeader[];
 	extendData?: Record<string, string | number>;
 }) => {
+	const intl = useIntl();
 	const { onChange, onBack, importHeaders, extendData } = props;
 	const { matchedColumns, fileData, setDataImport, dataImport, startLine } = useModel('import');
 	const [invalidRows, setInvalidRows] = useState<Set<number>>();
 	const [loading, setLoading] = useState(false);
-	const invalidText = 'Không hợp lệ';
+	const invalidText = intl.formatMessage({ id: 'global.table.import.preview.table.invalidText' });
 
 	const columns: IColumn<any>[] = [
 		{
 			dataIndex: 'row',
-			title: 'TT hàng',
+			title: intl.formatMessage({ id: 'global.table.import.preview.table.tthang' }),
 			width: 80,
 			align: 'center',
 			onCell: (row) => ({ style: { backgroundColor: row.invalid ? '#ffdada94' : undefined } }),
@@ -125,7 +126,7 @@ const PreviewDataImport = (props: {
 	return (
 		<Row gutter={[12, 12]}>
 			<Col span={24}>
-				<div className='fw500'>Danh sách dữ liệu từ tập tin</div>
+				<div className='fw500'>{intl.formatMessage({ id: 'global.table.import.preview.danhsacdulieu' })}</div>
 				{invalidRows?.size ? (
 					<i style={{ color: 'red' }}>
 						Có ô chứa dữ liệu không hợp lệ tại các dòng {Array.from(invalidRows).join(', ')} (đã được đánh dấu trong
@@ -148,7 +149,7 @@ const PreviewDataImport = (props: {
 			<Col span={24}>
 				<Space style={{ marginTop: 12, justifyContent: 'space-between', width: '100%' }}>
 					<Button onClick={() => onBack()} icon={<ArrowLeftOutlined />}>
-						Quay lại
+						{intl.formatMessage({ id: 'global.table.import.preview.button.quaylai' })}
 					</Button>
 					<Button
 						htmlType='submit'
@@ -157,7 +158,7 @@ const PreviewDataImport = (props: {
 						icon={<QuestionOutlined />}
 						disabled={!dataImport?.length || !!invalidRows?.size}
 					>
-						Kiểm tra dữ liệu
+						{intl.formatMessage({ id: 'global.table.import.preview.button.kiemtra' })}
 					</Button>
 				</Space>
 			</Col>

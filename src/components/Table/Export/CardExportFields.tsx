@@ -2,13 +2,15 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Card } from 'antd';
 import TableStaticData from '../TableStaticData';
 import { type IColumn, type TExportField } from '../typing';
+import { useIntl } from 'umi';
 
 const CardExportFields = (props: { fields: TExportField[]; setFields: (val: TExportField[]) => void }) => {
+	const intl = useIntl();
 	const { fields, setFields } = props;
 
 	const columns: IColumn<TExportField>[] = [
 		{
-			title: 'Tên trường',
+			title: intl.formatMessage({ id: 'global.table.export.field.tentruong' }),
 			width: 180,
 			render: (val, rec) => rec.labels.join(' / '),
 		},
@@ -36,7 +38,12 @@ const CardExportFields = (props: { fields: TExportField[]; setFields: (val: TExp
 	};
 
 	return (
-		<Card title='Các trường để trích xuất' bordered={false} bodyStyle={{ padding: 0 }} headStyle={{ padding: 0 }}>
+		<Card
+			title={intl.formatMessage({ id: 'global.table.export.field.title' })}
+			bordered={false}
+			bodyStyle={{ padding: 0 }}
+			headStyle={{ padding: 0 }}
+		>
 			<TableStaticData
 				columns={columns}
 				data={fields.filter((item) => item.selected)}

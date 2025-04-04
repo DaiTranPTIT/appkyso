@@ -8,6 +8,7 @@ import { message, Space } from 'antd';
 import fileDownload from 'js-file-download';
 import { useEffect, useState } from 'react';
 import ButtonExtend from '../Table/ButtonExtend';
+import { useIntl } from 'umi';
 
 const PreviewFile = (props: {
 	file: string;
@@ -16,6 +17,7 @@ const PreviewFile = (props: {
 	children?: React.ReactElement;
 	ip?: string;
 }) => {
+	const intl = useIntl();
 	const { file, width = '100%', height = '600px', children, ip = ip3 } = props;
 	const [fileType, setFileType] = useState<EDinhDangFile>(EDinhDangFile.UNKNOWN);
 	const [iframeSrc, setIframeSrc] = useState<string>('');
@@ -90,7 +92,7 @@ const PreviewFile = (props: {
 			navigator.clipboard
 				.writeText(file)
 				.then(() => {
-					message.success('Đã sao chép đường dẫn!');
+					message.success(intl.formatMessage({ id: 'global.previewfile.message.saochep' }));
 				})
 				.catch((error) => {
 					console.error(error);
@@ -113,11 +115,21 @@ const PreviewFile = (props: {
 				<b>{getNameFile(file ?? '--')}</b>
 
 				<Space wrap>
-					<ButtonExtend type='link' tooltip='Tải xuống' icon={<DownloadOutlined />} onClick={handleDownload} />
-					<ButtonExtend type='link' tooltip='Sao chép đường dẫn' icon={<CopyOutlined />} onClick={handleCopy} />
 					<ButtonExtend
 						type='link'
-						tooltip='Mở rộng'
+						tooltip={intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
+						icon={<DownloadOutlined />}
+						onClick={handleDownload}
+					/>
+					<ButtonExtend
+						type='link'
+						tooltip={intl.formatMessage({ id: 'global.previewfile.button.saochep' })}
+						icon={<CopyOutlined />}
+						onClick={handleCopy}
+					/>
+					<ButtonExtend
+						type='link'
+						tooltip={intl.formatMessage({ id: 'global.previewfile.button.morong' })}
 						icon={<FullscreenOutlined />}
 						onClick={() => window.open(iframeSrc, '_blank')}
 					/>
@@ -138,16 +150,16 @@ const PreviewFile = (props: {
 					}}
 				>
 					<p>
-						<strong>Tệp tin không hỗ trợ hiển thị trực tiếp</strong>
+						<strong>{intl.formatMessage({ id: 'global.previewfile.thongbao' })}</strong>
 						<br />
 						<ButtonExtend
 							notHideText
 							type='link'
-							tooltip='Tải xuống'
+							tooltip={intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
 							icon={<DownloadOutlined />}
 							onClick={handleDownload}
 						>
-							Tải xuống
+							{intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
 						</ButtonExtend>
 					</p>
 				</div>

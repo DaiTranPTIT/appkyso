@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { findFiltersInColumns } from './function';
 import RowFilter from './RowFilter';
 import { type IColumn, type TFilter } from './typing';
+import { useIntl } from 'umi';
 
 const ModalCustomFilter = (props: {
 	visible: boolean;
@@ -12,6 +13,7 @@ const ModalCustomFilter = (props: {
 	filters: TFilter<any>[];
 	setFilters: any;
 }) => {
+	const intl = useIntl();
 	const { visible, setVisible, columns, filters, setFilters } = props;
 	const [filtersTemp, setFiltersTemp] = useState<TFilter<any>[]>([]);
 	const [form] = Form.useForm();
@@ -39,8 +41,13 @@ const ModalCustomFilter = (props: {
 	};
 
 	return (
-		<Modal visible={visible} onCancel={() => setVisible(false)} footer={null} title='Bộ lọc tùy chỉnh'>
-			<p>Các điều kiện lọc đang được áp dụng:</p>
+		<Modal
+			visible={visible}
+			onCancel={() => setVisible(false)}
+			footer={null}
+			title={intl.formatMessage({ id: 'global.table.customfilter.title' })}
+		>
+			<p>{intl.formatMessage({ id: 'global.table.customfilter.dieukien' })}:</p>
 			<Form form={form} layout='vertical' onFinish={onFinish}>
 				{filtersTemp.map((filter, index) => (
 					<RowFilter
@@ -74,13 +81,13 @@ const ModalCustomFilter = (props: {
 							]);
 						}}
 					>
-						Thêm điều kiện lọc
+						{intl.formatMessage({ id: 'global.table.customfilter.button.them' })}
 					</Button>
 				</Form.Item>
 
 				<Space size={8} wrap style={{ marginTop: 24, justifyContent: 'center', width: '100%' }}>
 					<Button htmlType='submit' type='primary' icon={<FilterFilled />}>
-						Áp dụng bộ lọc
+						{intl.formatMessage({ id: 'global.table.customfilter.button.apdung' })}
 					</Button>
 					<Button
 						danger
@@ -92,9 +99,11 @@ const ModalCustomFilter = (props: {
 							setVisible(false);
 						}}
 					>
-						Bỏ lọc
+						{intl.formatMessage({ id: 'global.table.customfilter.button.xoa' })}
 					</Button>
-					<Button onClick={() => setVisible(false)}>Đóng</Button>
+					<Button onClick={() => setVisible(false)}>
+						{intl.formatMessage({ id: 'global.table.customfilter.button.huy' })}
+					</Button>
 				</Space>
 			</Form>
 		</Modal>
