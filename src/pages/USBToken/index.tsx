@@ -13,14 +13,15 @@ export default () => {
     
 
     const getSignInfo = async(signInfo: any) => { 
+        console.log(signInfo);
         try {
             await sign({
                 FileName: signInfo.file_link,
-                FileUploadHandler: signInfo.file_upload_handler,
-                JWTToken: "",
+                FileUploadHandler: signInfo.callback_url,
+                JWTToken: signInfo.jwt_token,
                 SessionId: signInfo.session_id,
                 MetaData: signInfo.meta_data
-            }, signInfo.type, signInfo.function);
+            }, signInfo.function);
         } catch(err) {
             console.log(err);
         }
@@ -35,7 +36,7 @@ export default () => {
             DocNumber?: string,
             IssuedDate?: string,
             MetaData: any
-        }, type?: string, functionName?: string
+        }, functionName?: string
     ) => {
         var json_prms = JSON.stringify(params);
         // @ts-ignore
