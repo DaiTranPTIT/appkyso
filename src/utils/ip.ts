@@ -11,6 +11,7 @@ const ipSlink = ipRoot + 'slink'; // ip dev
 const ipCore = ipRoot + 'core'; // ip dev
 
 const currentRole = EModuleKey.TCNS;
+const replaceRole = EModuleKey.CONG_CAN_BO; // Thay đổi theo từng phân hệ
 const oneSignalRole = EModuleKey.CONG_CAN_BO;
 
 // DO NOT TOUCH
@@ -25,6 +26,7 @@ const oneSignalClient = APP_CONFIG_ONE_SIGNAL_ID;
 
 export {
 	currentRole,
+	replaceRole,
 	ip3,
 	ipCore,
 	ipNotif,

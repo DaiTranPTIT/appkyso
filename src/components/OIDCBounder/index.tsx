@@ -1,9 +1,9 @@
 import { useAuthActions } from '@/hooks/useAuthActions';
 import { getPermission, getUserInfo } from '@/services/base/api';
-import { primaryColor } from '@/services/base/constant';
+import { AppModules, primaryColor } from '@/services/base/constant';
 import { type Login } from '@/services/base/typing';
 import axios from '@/utils/axios';
-import { currentRole } from '@/utils/ip';
+import { currentRole, replaceRole } from '@/utils/ip';
 import { oidcConfig } from '@/utils/oidcConfig';
 import { ConfigProvider, notification } from 'antd';
 import queryString from 'query-string';
@@ -62,7 +62,16 @@ const OIDCBounder_: FC = ({ children }) => {
 				});
 
 				if (!isUncheckPath && currentRole && permissions.length && !hasRole) {
-					history.replace('/403');
+					const hasReplaceRole = permissions.some((item) => item.rsname === replaceRole);
+					if (hasReplaceRole) {
+						if (AppModules[replaceRole]?.url) {
+							window.location.replace(AppModules[replaceRole].url);
+						} else {
+							history.replace('/403');
+						}
+					} else {
+						history.replace('/403');
+					}
 				} else {
 					if (window.location.pathname === '/' || window.location.pathname === '/user/login') redirectLocation();
 				}

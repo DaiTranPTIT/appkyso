@@ -17,13 +17,14 @@ const PrintTemplate = React.forwardRef(
 			subTitle?: React.ReactNode;
 			footer?: React.ReactNode;
 			hideTieuNgu?: boolean;
+			isCompact?: boolean;
 
 			/** Tên Phòng ban hiển thị dưới tên trường */
 			tenPhongBan?: string;
 		},
 		ref: any,
 	) => {
-		const { children, title, subTitle, footer, hideTieuNgu, tenPhongBan } = props;
+		const { children, title, subTitle, footer, hideTieuNgu, isCompact, tenPhongBan } = props;
 
 		// const componentRef = useRef(null);
 
@@ -50,7 +51,7 @@ const PrintTemplate = React.forwardRef(
 		// <PrintTemplate ref={componentRef}></PrintTemplate>
 
 		return (
-			<div className='print-section' ref={ref}>
+			<div className={`print-section ${isCompact ? 'compact' : ''}`} ref={ref}>
 				<div className='to-print'>
 					{!hideTieuNgu ? (
 						<Row gutter={[5, 5]}>
