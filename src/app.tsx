@@ -16,7 +16,8 @@ import NotAccessible from './pages/exception/403';
 import NotFoundContent from './pages/exception/404';
 import type { IInitialState } from './services/base/typing';
 import './styles/global.less';
-import { currentRole } from './utils/ip';
+import { currentRole, replaceRole } from './utils/ip';
+import { AppModules } from './services/base/constant';
 
 /**  loading */
 export const initialStateConfig = {
@@ -95,8 +96,18 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 					currentRole &&
 					initialState?.authorizedPermissions?.length &&
 					!initialState?.authorizedPermissions?.find((item) => item.rsname === currentRole)
-				)
-					history.replace('/403');
+				) {
+					const hasReplaceRole = initialState?.authorizedPermissions.some((item) => item.rsname === replaceRole);
+					if (hasReplaceRole) {
+						if (AppModules[replaceRole]?.url) {
+							window.location.replace(AppModules[replaceRole].url);
+						} else {
+							history.replace('/403');
+						}
+					} else {
+						history.replace('/403');
+					}
+				}
 			}
 		},
 
