@@ -8,6 +8,7 @@
 		font-size: 14px;
 		font-family: 'Times New Roman';
 		-webkit-print-color-adjust: exact;
+		line-height: 1.5;
 
 		.to-print {
 			display: block;
@@ -73,12 +74,12 @@
 		thead {
 			display: table-header-group;
 
-			tr > th {
+			tr>th {
 				border-right: 1px solid black !important;
 				border-bottom: 1px solid black !important;
 			}
 
-			tr:first-child > th {
+			tr:first-child>th {
 				border-top: 1px solid black !important;
 
 				&:first-child {
@@ -113,32 +114,36 @@
 		@page {
 			margin: 15mm 15mm 15mm 20mm;
 		}
+
 	}
 
 	&.compact {
 		.to-print {
-			.quoc-hieu,
-			.tieu-ngu,
-			.title,
-			.sub-title,
-			.date {
-				font-size: 12px !important;
-			}
+			font-size: 12px;
 
 			.title {
-				margin-top: 10px;
-				margin-bottom: 4px;
+				font-size: 14px;
+				margin-top: 8px;
+				margin-bottom: 2px;
 			}
 
 			.sub-title {
+				font-size: 12px;
 				margin-bottom: 4px;
 			}
 		}
 
 		.ant-table .ant-table-thead th,
 		.ant-table .ant-table-tbody td {
-			padding: 6px 10px !important;
+			padding: 2px 4px !important;
 			font-size: 12px !important;
+			height: auto;
+		}
+
+		@media print {
+			@page {
+				margin: 10mm 10mm 10mm 15mm;
+			}
 		}
 	}
 }

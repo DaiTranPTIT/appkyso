@@ -63,15 +63,13 @@ const OIDCBounder_: FC = ({ children }) => {
 
 				if (!isUncheckPath && currentRole && permissions.length && !hasRole) {
 					const hasReplaceRole = permissions.some((item) => item.rsname === replaceRole);
-					if (hasReplaceRole) {
-						if (AppModules[replaceRole]?.url) {
-							window.location.replace(AppModules[replaceRole].url);
-						} else {
-							history.replace('/403');
-						}
-					} else {
-						history.replace('/403');
+					const linkReplace = !!replaceRole && AppModules[replaceRole]?.url;
+
+					if (!!linkReplace && hasReplaceRole) {
+						window.location.replace(linkReplace);
+						return;
 					}
+					history.replace('/403');
 				} else {
 					if (window.location.pathname === '/' || window.location.pathname === '/user/login') redirectLocation();
 				}

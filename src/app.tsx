@@ -97,16 +97,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 					initialState?.authorizedPermissions?.length &&
 					!initialState?.authorizedPermissions?.find((item) => item.rsname === currentRole)
 				) {
-					const hasReplaceRole = initialState?.authorizedPermissions.some((item) => item.rsname === replaceRole);
-					if (hasReplaceRole) {
-						if (AppModules[replaceRole]?.url) {
-							window.location.replace(AppModules[replaceRole].url);
-						} else {
-							history.replace('/403');
-						}
-					} else {
-						history.replace('/403');
+					const hasReplaceRole = initialState.authorizedPermissions.some((item) => item.rsname === replaceRole);
+					const linkReplace = !!replaceRole && AppModules[replaceRole]?.url;
+
+					if (!!linkReplace && hasReplaceRole) {
+						window.location.replace(linkReplace);
+						return;
 					}
+					history.replace('/403');
 				}
 			}
 		},
