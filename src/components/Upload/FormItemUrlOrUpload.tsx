@@ -16,9 +16,10 @@ const FormItemUrlOrUpload = (props: {
 	accept?: string;
 	isRequired?: boolean;
 	label?: string;
+	disabled?: boolean;
 }) => {
 	const intl = useIntl();
-	const { form, initValue, isRequired } = props;
+	const { form, initValue, isRequired, disabled } = props;
 	const [typeUpload, setTypeUpload] = useState<'UPLOAD' | 'URL'>('UPLOAD');
 	const field = props.field || 'url';
 	const accept = props.accept || '.docx, .pdf, .doc';
@@ -36,6 +37,7 @@ const FormItemUrlOrUpload = (props: {
 				<>
 					{label} &nbsp;
 					<Radio.Group
+						disabled={disabled}
 						onChange={(e) => {
 							setTypeUpload(e.target.value);
 							form.setFieldsValue({ [field]: undefined });
@@ -53,9 +55,12 @@ const FormItemUrlOrUpload = (props: {
 			]}
 		>
 			{typeUpload === 'UPLOAD' ? (
-				<UploadFile maxCount={1} otherProps={{ accept }} />
+				<UploadFile disabled={disabled} maxCount={1} otherProps={{ accept }} />
 			) : (
-				<Input placeholder={`${intl.formatMessage({ id: 'global.uploadfile.duongdan.placeholder' })}`} />
+				<Input
+					disabled={disabled}
+					placeholder={`${intl.formatMessage({ id: 'global.uploadfile.duongdan.placeholder' })}`}
+				/>
 			)}
 		</Form.Item>
 	);
