@@ -471,11 +471,11 @@ const TableBase = (props: TableBaseProps) => {
 
 					{props.rowSelection && props.deleteMany && selectedIds?.length ? (
 						<Popconfirm
-							title={intl.formatMessage({ id: 'global.table.index.button.xoa.title' }, selectedIds?.length)}
+							title={intl.formatMessage({ id: 'global.table.index.button.xoa.title' }, { count: selectedIds?.length })}
 							onConfirm={handleDeleteMany}
 						>
 							<ButtonExtend type='link' danger>
-								{intl.formatMessage({ id: 'global.table.index.button.xoa' }, selectedIds?.length)}
+								{intl.formatMessage({ id: 'global.table.index.button.xoa' }, { count: selectedIds?.length })}
 							</ButtonExtend>
 						</Popconfirm>
 					) : null}
