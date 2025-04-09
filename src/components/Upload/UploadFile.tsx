@@ -97,7 +97,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 		let files = val.fileList as TFile[];
 		const findLargeFile = files?.some((file) => file.size && file.size / 1024 / 1024 > maxFileSize);
 		if (findLargeFile) {
-			message.error(intl.formatMessage({ id: 'global.uploadfile.error.mb' }, { maxFileSize }));
+			message.error(intl.formatMessage({ id: 'global.uploadfile.error.mb' }, { maxFileSize: maxFileSize }));
 			return;
 		}
 
@@ -128,7 +128,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 	const Extra = () =>
 		isDisabled ? null : (
 			<small style={{ color: '#999' }}>
-				<i>{intl.formatMessage({ id: 'global.uploadfile.toida' }, { maxCount, maxFileSize })}</i>
+				<i>{intl.formatMessage({ id: 'global.uploadfile.toida' }, { maxCount: maxCount, maxFileSize: maxFileSize })}</i>
 				{extra && (
 					<div>
 						<i>{extra}</i>

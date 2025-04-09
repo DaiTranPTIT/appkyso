@@ -184,33 +184,6 @@ const CardThongBao = (props: { notiType: NotificationType; activeKey: string }) 
 	return (
 		<>
 			<Space wrap style={{ marginBottom: 12 }}>
-				{activeKey === 'ban_hanh' && (
-					<>
-						<ButtonExtend
-							onClick={() => {
-								setRecord({} as ThongBao.IRecord);
-								setEdit(false);
-								setIsView(false);
-								setVisibleForm(true);
-							}}
-							icon={<PlusCircleOutlined />}
-							type='primary'
-							notHideText
-							tooltip='Thêm mới dữ liệu'
-						>
-							Thêm mới
-						</ButtonExtend>
-						<ButtonExtend
-							key='1'
-							onClick={() => {
-								setRecordThongBaoDanhSach(undefined);
-								setVisibleThongBaoDanhSach(true);
-							}}
-						>
-							Thông báo tùy chỉnh
-						</ButtonExtend>
-					</>
-				)}
 				<Segmented
 					value={type}
 					onChange={(key: any) => {
@@ -283,6 +256,37 @@ const CardThongBao = (props: { notiType: NotificationType; activeKey: string }) 
 				destroyModal
 				buttons={{ create: false }}
 				hideCard
+				otherButtons={[
+					activeKey === 'ban_hanh' ? (
+						<>
+							<ButtonExtend
+								onClick={() => {
+									setRecord({} as ThongBao.IRecord);
+									setEdit(false);
+									setIsView(false);
+									setVisibleForm(true);
+								}}
+								icon={<PlusCircleOutlined />}
+								type='primary'
+								notHideText
+								tooltip='Thêm mới dữ liệu'
+							>
+								Thêm mới
+							</ButtonExtend>
+							<ButtonExtend
+								key='1'
+								onClick={() => {
+									setRecordThongBaoDanhSach(undefined);
+									setVisibleThongBaoDanhSach(true);
+								}}
+							>
+								Thông báo tùy chỉnh
+							</ButtonExtend>
+						</>
+					) : (
+						<></>
+					),
+				]}
 			/>
 
 			<Modal
