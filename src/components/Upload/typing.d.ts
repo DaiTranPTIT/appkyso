@@ -1,6 +1,7 @@
 import type { UploadProps } from 'antd';
 import type { UploadFile as UpFile } from 'antd/es/upload/interface';
 import type { SizeType } from 'antd/lib/config-provider/SizeContext';
+import type { TPreviewFileProps } from '../PreviewFile/typing';
 
 export type TUploadProps = {
 	fileList?: any;
@@ -33,6 +34,11 @@ export type TUploadProps = {
 
 	/** Có thể dùng `disabled` này hoặc trong `otherProps` */
 	disabled?: boolean;
+
+	/** Có cho xem file khi upload không */
+	hasPreviewFile?: boolean;
+
+	previewFileProps?: Pick<TPreviewFileProps, 'isFileId' | 'ip'>;
 };
 
 export type TResizeProps = {
@@ -53,3 +59,5 @@ export type TResizeProps = {
 	/** Chiều cao tối thiểu của hình ảnh mới */
 	minHeight?: number;
 };
+
+type TFileProps = UpFile & { resized?: boolean; remote?: boolean };

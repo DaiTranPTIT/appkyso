@@ -1,5 +1,5 @@
 import { EDinhDangFile } from '@/services/base/constant';
-import type { IFile } from '@/services/base/typing';
+import type { IFileInfo } from '@/services/base/typing';
 import { getFileInfo } from '@/services/uploadFile';
 import { ip3 } from '@/utils/ip';
 import { getFileType, getNameFile } from '@/utils/utils';
@@ -7,19 +7,15 @@ import { CopyOutlined, DownloadOutlined, FullscreenOutlined } from '@ant-design/
 import { message, Space } from 'antd';
 import fileDownload from 'js-file-download';
 import { useEffect, useState } from 'react';
-import ButtonExtend from '../Table/ButtonExtend';
 import { useIntl } from 'umi';
+import ButtonExtend from '../Table/ButtonExtend';
+import type { TPreviewFileProps } from './typing';
 
-const PreviewFile = (props: {
-	file: string;
-	width?: string;
-	height?: string;
-	children?: React.ReactElement;
-	ip?: string;
-}) => {
+const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 	const intl = useIntl();
-	const { file, width = '100%', height = '600px', children, ip = ip3 } = props;
+	const { file, width = '100%', height = '600px', children, ip = ip3, isFileId } = props;
 	const [fileType, setFileType] = useState<EDinhDangFile>(EDinhDangFile.UNKNOWN);
+	const [fileUrl, setFileUrl] = useState<string>('');
 	const [iframeSrc, setIframeSrc] = useState<string>('');
 
 	const getFileExtension = (url: string) => {
@@ -28,32 +24,39 @@ const PreviewFile = (props: {
 	};
 
 	const getFileTypeFromUrl = async (url: string) => {
-		const idFile = url.split('/')[url.length - 2];
-		let mime = '';
+		const idFile = isFileId ? url : url.split('/')[url.length - 2];
+		let mime: EDinhDangFile = EDinhDangFile.UNKNOWN;
 
 		try {
+			// Nếu có thông tin id file thì get thông tin chi tiết
 			if (idFile) {
 				const result = await getFileInfo(idFile, ip);
-				const fileInfo: IFile = result?.data;
-				return fileInfo?.file?.mimetype || getFileExtension(url) || EDinhDangFile.UNKNOWN;
+				const fileInfo: IFileInfo = result?.data?.data;
+				const fileurl1 = fileInfo?.url ?? (!isFileId ? url : '');
+
+				// Mapping { mimetype : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"} sang EDinhDangFile
+				mime =
+					getFileType(fileInfo?.mimetype ? fileInfo.mimetype : getFileExtension(fileurl1) ?? '') ||
+					EDinhDangFile.UNKNOWN;
+				setFileUrl(fileurl1);
 			} else {
-				mime = getFileExtension(url) || EDinhDangFile.UNKNOWN;
+				mime = getFileType(getFileExtension(url) ?? '') || EDinhDangFile.UNKNOWN;
+				setFileUrl(url);
 			}
 		} catch (error) {
 			console.error(error);
-			return EDinhDangFile.UNKNOWN;
 		}
 
 		return mime;
 	};
 
 	const getIframeSrc = (type: EDinhDangFile) => {
-		if (!file) return '';
+		if (!fileUrl) return '';
 		const officeFileType = [EDinhDangFile.WORD, EDinhDangFile.EXCEL, EDinhDangFile.POWERPOINT];
 		if (type && officeFileType.includes(type)) {
-			return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(file)}`;
+			return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
 		} else {
-			return file;
+			return fileUrl;
 		}
 	};
 
@@ -61,12 +64,11 @@ const PreviewFile = (props: {
 		const fetchFileType = async () => {
 			try {
 				const res = await getFileTypeFromUrl(file);
-				setFileType(getFileType(res) as EDinhDangFile);
+				const type = getFileType(res) as EDinhDangFile;
+				setFileType(type);
 
-				if (res) {
-					const val = getIframeSrc(getFileType(res) as EDinhDangFile);
-					setIframeSrc(val);
-				}
+				const val = getIframeSrc(type);
+				setIframeSrc(val);
 			} catch (error) {
 				console.error(error);
 			}
@@ -76,11 +78,11 @@ const PreviewFile = (props: {
 	}, [file]);
 
 	const handleDownload = async () => {
-		if (file) {
+		if (fileUrl) {
 			try {
-				const response = await fetch(file);
+				const response = await fetch(fileUrl);
 				const blob = await response.blob();
-				fileDownload(blob, getNameFile(file));
+				fileDownload(blob, getNameFile(fileUrl));
 			} catch (error) {
 				console.error('Error downloading file:', error);
 			}
@@ -102,17 +104,8 @@ const PreviewFile = (props: {
 
 	return (
 		<>
-			<div
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					marginBottom: 12,
-					flexWrap: 'wrap',
-					gap: 8,
-				}}
-			>
-				<b>{getNameFile(file ?? '--')}</b>
+			<Space wrap align='center' style={{ justifyContent: 'space-between', marginBottom: 12, width: '100%' }}>
+				<b>{getNameFile(fileUrl ?? '--')}</b>
 
 				<Space wrap>
 					<ButtonExtend
@@ -135,8 +128,9 @@ const PreviewFile = (props: {
 					/>
 					{children}
 				</Space>
-			</div>
-			{fileType !== EDinhDangFile.UNKNOWN ? (
+			</Space>
+
+			{fileType !== EDinhDangFile.UNKNOWN && !!iframeSrc ? (
 				<iframe src={iframeSrc} width={width} height={height} />
 			) : (
 				<div
@@ -152,15 +146,18 @@ const PreviewFile = (props: {
 					<p>
 						<strong>{intl.formatMessage({ id: 'global.previewfile.thongbao' })}</strong>
 						<br />
-						<ButtonExtend
-							notHideText
-							type='link'
-							tooltip={intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
-							icon={<DownloadOutlined />}
-							onClick={handleDownload}
-						>
-							{intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
-						</ButtonExtend>
+
+						{!!fileUrl && (
+							<ButtonExtend
+								notHideText
+								type='link'
+								tooltip={intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
+								icon={<DownloadOutlined />}
+								onClick={handleDownload}
+							>
+								{intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
+							</ButtonExtend>
+						)}
 					</p>
 				</div>
 			)}

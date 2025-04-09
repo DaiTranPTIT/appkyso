@@ -1,15 +1,13 @@
 import { blobToBase64, getNameFile } from '@/utils/utils';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Image, Upload, message } from 'antd';
+import { Button, Image, Modal, Upload, message } from 'antd';
 import type { RcFile } from 'antd/es/upload';
-import type { UploadFile as UpFile } from 'antd/es/upload/interface';
 import { useEffect, useState } from 'react';
 import Resizer from 'react-image-file-resizer';
-import './UploadAvatar.less';
-import type { TResizeProps, TUploadProps } from './typing';
 import { useIntl } from 'umi';
-
-type TFile = UpFile & { resized?: boolean; remote?: boolean };
+import PreviewFile from '../PreviewFile';
+import './UploadAvatar.less';
+import type { TFileProps, TResizeProps, TUploadProps } from './typing';
 
 const UploadFile: React.FC<TUploadProps> = ({
 	value,
@@ -28,6 +26,8 @@ const UploadFile: React.FC<TUploadProps> = ({
 	fileList: fileListProp,
 	extra,
 	isPortraitAvatar,
+	hasPreviewFile = true,
+	...props
 }) => {
 	const intl = useIntl();
 	const isDisabled = disabled || otherProps?.disabled || false;
@@ -61,7 +61,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 	}, [value, fileListProp]);
 
 	/** Resize Hình ảnh */
-	const resizeImages = (files: TFile[]): TFile[] => {
+	const resizeImages = (files: TFileProps[]): TFileProps[] => {
 		let res = files;
 		try {
 			res = files?.map((file) => {
@@ -94,7 +94,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 	};
 
 	const handleChange = (val: any) => {
-		let files = val.fileList as TFile[];
+		let files = val.fileList as TFileProps[];
 		const findLargeFile = files?.some((file) => file.size && file.size / 1024 / 1024 > maxFileSize);
 		if (findLargeFile) {
 			message.error(intl.formatMessage({ id: 'global.uploadfile.error.mb' }, { maxFileSize: maxFileSize }));
@@ -118,11 +118,20 @@ const UploadFile: React.FC<TUploadProps> = ({
 	};
 
 	/** Xem trước ảnh */
-	const handlePreviewImage = async (file: UpFile) => {
+	const handlePreviewImage = async (file: TFileProps) => {
+		// Nếu file mới up lên (chưa có url và preview) thì thêm preview vào file
 		if (!file.url && !file.preview) file.preview = await blobToBase64(file.originFileObj as RcFile);
 
 		setPreviewImage(file.url || (file.preview as string));
 		setPreviewOpen(true);
+	};
+
+	/** Xem trước file */
+	const handlePreviewFile = async (file: TFileProps) => {
+		if (file.url) {
+			setPreviewImage(file.url ?? '');
+			setPreviewOpen(true);
+		}
 	};
 
 	const Extra = () =>
@@ -223,6 +232,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 				style={{ width: '100%' }}
 				multiple={maxCount > 1}
 				accept={accept}
+				onPreview={hasPreviewFile ? handlePreviewFile : undefined}
 				{...otherProps}
 			>
 				{!isDisabled ? (
@@ -232,6 +242,22 @@ const UploadFile: React.FC<TUploadProps> = ({
 				) : null}
 			</Upload>
 			<Extra />
+
+			{hasPreviewFile && (
+				<Modal
+					title='Xem trước tập tin'
+					width={800}
+					visible={previewOpen}
+					footer={null}
+					onCancel={() => setPreviewOpen(false)}
+				>
+					<PreviewFile file={previewImage} {...props.previewFileProps} />
+
+					<div className='form-footer'>
+						<Button onClick={() => setPreviewOpen(false)}>Đóng</Button>
+					</div>
+				</Modal>
+			)}
 		</>
 	);
 };

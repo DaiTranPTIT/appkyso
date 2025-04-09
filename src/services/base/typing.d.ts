@@ -52,21 +52,19 @@ export interface ISetting {
 	value: any;
 }
 
-export interface IFile {
-	file: {
-		_id: string;
-		author: string;
-		authorName: string;
-		mimetype: string;
-		name: string;
-		scope: EScopeFile;
-		size: number;
-		storageType: EStorageFile;
-
-		updatedAt: Date;
-		createdAt: Date;
-	};
+export interface IFileInfo {
+	_id: string;
+	author: string;
+	authorName: string;
+	mimetype: string;
+	name: string;
+	scope: EScopeFile;
+	size: number;
+	storageType: EStorageFile;
 	url: string;
+
+	updatedAt: Date;
+	createdAt: Date;
 }
 
 export type ColorType = {
