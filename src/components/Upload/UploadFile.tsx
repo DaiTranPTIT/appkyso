@@ -246,7 +246,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 			{hasPreviewFile && (
 				<Modal
 					title='Xem trước tập tin'
-					width={800}
+					width={1000}
 					visible={previewOpen}
 					footer={null}
 					onCancel={() => setPreviewOpen(false)}
@@ -254,7 +254,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 					<PreviewFile file={previewImage} {...props.previewFileProps} />
 
 					<div className='form-footer'>
-						<Button onClick={() => setPreviewOpen(false)}>Đóng</Button>
+						<Button onClick={() => setPreviewOpen(false)}>{intl.formatMessage({ id: 'global.button.dong' })}</Button>
 					</div>
 				</Modal>
 			)}
