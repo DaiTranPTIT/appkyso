@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useModel } from 'umi';
 
 /**
- * Secect Căn cứ pháp lý để cho vào FormItem
+ * Select Tất cả phân vùng dữ liệu hệ thống
  */
 const SelectPhanVungDuLieu = (props: {
 	value?: string | string[];
