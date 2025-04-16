@@ -18,6 +18,7 @@
 	height: 40px;
 	line-height: 44px;
 	text-align: right;
+
 	:global(.ant-dropdown-trigger) {
 		margin-right: 24px;
 	}
@@ -36,6 +37,7 @@
 .header {
 	margin-top: 50px;
 	line-height: 60px;
+
 	a {
 		text-decoration: none;
 	}
@@ -91,36 +93,38 @@
 	background: #fff;
 	border-radius: 4px;
 
-	&::before {
-		position: absolute;
-		top: -65px;
-		left: -424px;
-		z-index: -1;
-		width: 600px;
-		height: 300px;
-		background-image: url('/frame1.svg');
-		background-size: 100%;
-		content: '';
-	}
+	// &::before {
+	// 	position: absolute;
+	// 	top: -65px;
+	// 	left: -424px;
+	// 	z-index: -1;
+	// 	width: 600px;
+	// 	height: 300px;
+	// 	background-image: url('/frame1.svg');
+	// 	background-size: 100%;
+	// 	content: '';
+	// }
 
-	&::after {
-		position: absolute;
-		top: -56px;
-		right: -443px;
-		z-index: -1;
-		width: 600px;
-		height: 300px;
-		background-image: url('/frame2.svg');
-		background-repeat: no-repeat;
-		background-size: 100%;
-		content: '';
-	}
+	// &::after {
+	// 	position: absolute;
+	// 	top: -56px;
+	// 	right: -443px;
+	// 	z-index: -1;
+	// 	width: 600px;
+	// 	height: 300px;
+	// 	background-image: url('/frame2.svg');
+	// 	background-repeat: no-repeat;
+	// 	background-size: 100%;
+	// 	content: '';
+	// }
 
 	@media screen and (max-width: @screen-sm) {
 		max-width: 100%;
+
 		&::before {
 			display: none;
 		}
+
 		&::after {
 			top: 300px;
 			right: -66px;
@@ -151,6 +155,7 @@
 		margin-top: 24px;
 		line-height: 22px;
 		text-align: left;
+
 		.register {
 			float: right;
 		}
@@ -179,10 +184,12 @@
 	.title1 {
 		font-size: 22px;
 	}
+
 	.title2 {
 		font-size: 18px;
 		line-height: 30px;
 	}
+
 	.title3 {
 		font-size: 22px;
 	}

@@ -32,7 +32,7 @@ export default {
 	'global.previewfile.thongbao': 'Tệp tin không hỗ trợ hiển thị trực tiếp',
 
 	//RightContent
-	'global.rightcontent.header.title': 'HỆ THỐNG PHẦN MỀM CHỈ ĐẠO, ĐIỀU HÀNH',
+	'global.rightcontent.header.title': 'HỆ THỐNG CHUYỂN ĐỔI SỐ',
 	'global.rightcontent.moduleswitch.dschungnang': 'Danh sách chức năng',
 
 	'global.rightcontent.thongbao.title': 'Thông báo',

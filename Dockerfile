@@ -3,33 +3,33 @@ FROM node:16-alpine AS development
 
 
 # Set environment variables
-ENV APP_CONFIG_IP_ROOT=https://api.hvpnvn.edu.vn/
-ENV APP_CONFIG_ONE_SIGNAL_ID=f3857a81-2891-49be-87a7-903a4a1a54be
-ENV APP_CONFIG_SENTRY_DSN=https://ed934e521d476c44a89a42aaa8a6993a@sentry.aisoftech.vn/3
-ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://sso.hvpnvn.edu.vn/realms/vwa
-ENV APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID=vwa-
-ENV APP_CONFIG_APP_VERSION=241218.1100
+ENV APP_CONFIG_IP_ROOT=https://vinhuni-gw.ript.vn/
+ENV APP_CONFIG_ONE_SIGNAL_ID=
+ENV APP_CONFIG_SENTRY_DSN=
+ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://vinhuni-sso.ript.vn/realms/vinhuni
+ENV APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID=vinhuni-
+ENV APP_CONFIG_APP_VERSION=250416.0840
 
-ENV APP_CONFIG_CO_QUAN_CHU_QUAN='Hội Liên hiệp phụ nữ Việt Nam'
-ENV APP_CONFIG_TEN_TRUONG='Học viện Phụ nữ Việt Nam'
-ENV APP_CONFIG_TIEN_TO_TRUONG='Học viện'
-ENV APP_CONFIG_TEN_TRUONG_VIET_TAT_TIENG_ANH=VWA
-ENV APP_CONFIG_PRIMARY_COLOR=#007EB9
+ENV APP_CONFIG_CO_QUAN_CHU_QUAN='Bộ Giáo dục và Đào tạo'
+ENV APP_CONFIG_TEN_TRUONG='Trường Đại học Vinh'
+ENV APP_CONFIG_TIEN_TO_TRUONG='Trường'
+ENV APP_CONFIG_TEN_TRUONG_VIET_TAT_TIENG_ANH=VINHUNI
+ENV APP_CONFIG_PRIMARY_COLOR=#004998
 
-ENV APP_CONFIG_URL_LANDING=https://hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_CONNECT=https://sinhvien.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_CAN_BO=https://canbo.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_DAO_TAO=https://qldt.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_NHAN_SU=https://tcns.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_TAI_CHINH=https://taichinh.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_CTSV=https://ctsv.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_QLKH=https://qlkh.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_VPS=https://vanphong.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_KHAO_THI=https://khaothi.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_CORE=https://core.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_CSVC=https://csvc.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_THU_VIEN=https://thuvien.hvpnvn.edu.vn/
-ENV APP_CONFIG_URL_QLVB=https://sso.hvpnvn.edu.vn/realms/vwa/protocol/openid-connect/auth?response_type=token&client_id=vwa-odoo-qlvb&redirect_uri=http%3A%2F%2Fqlvb.hvpnvn.edu.vn%2Fauth_oauth%2Fsignin&scope=profile+openid+email&state=%7B%22d%22%3A+%22qlvb1%22%2C+%22p%22%3A+4%2C+%22r%22%3A+%22http%253A%252F%252Fqlvb.hvpnvn.edu.vn%252Fweb%22%7D
+ENV APP_CONFIG_URL_LANDING=https://vinhuni.edu.vn/
+ENV APP_CONFIG_URL_CONNECT=https://vinhuni-sinhvien.ript.vn/
+ENV APP_CONFIG_URL_CAN_BO=https://vinhuni-canbo.ript.vn/
+ENV APP_CONFIG_URL_DAO_TAO=https://vinhuni-qldt.ript.vn/
+ENV APP_CONFIG_URL_NHAN_SU=https://vinhuni-tcns.ript.vn/
+ENV APP_CONFIG_URL_TAI_CHINH=https://vinhuni-taichinh.ript.vn/
+ENV APP_CONFIG_URL_CTSV=https://vinhuni-ctsv.ript.vn/
+ENV APP_CONFIG_URL_QLKH=https://vinhuni-qlkh.ript.vn/
+ENV APP_CONFIG_URL_VPS=https://vinhuni-vps.ript.vn/
+ENV APP_CONFIG_URL_KHAO_THI=https://vinhuni-khaothi.ript.vn/
+ENV APP_CONFIG_URL_CORE=https://vinhuni-core.ript.vn/
+ENV APP_CONFIG_URL_CSVC=https://vinhuni-csvc.ript.vn/
+ENV APP_CONFIG_URL_THU_VIEN=
+ENV APP_CONFIG_URL_QLVB=
 
 ENV APP_CONFIG_TITLE_LANDING='Cổng thông tin'
 ENV APP_CONFIG_TITLE_CONNECT='Cổng người học'
