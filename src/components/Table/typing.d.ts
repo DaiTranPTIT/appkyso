@@ -150,43 +150,32 @@ export type TFilter<T> = {
 	active?: boolean;
 };
 
-export type TableStaticProps = {
+export type TableStaticProps = Pick<
+	TableBaseProps,
+	| 'emptyText'
+	| 'columns'
+	| 'title'
+	| 'Form'
+	| 'formProps'
+	| 'addStt'
+	| 'children'
+	| 'otherProps'
+	| 'formType'
+	| 'widthDrawer'
+	| 'rowSortable'
+	| 'onSortEnd'
+	| 'hideChildrenRows'
+	| 'onReload'
+> & {
 	data: any[];
-	columns: IColumn<any>[];
-
-	title?: React.ReactNode;
-	Form?: any;
-	formProps?: any;
+	loading?: boolean;
 
 	showEdit?: boolean;
 	setShowEdit?: (vi: boolean) => void;
-	addStt?: boolean;
-	children?: any;
+
 	hasCreate?: boolean;
 	hasTotal?: boolean;
 	size?: 'small' | 'middle';
-	otherProps?: TableProps<any>;
-	loading?: boolean;
-	formType?: 'Modal' | 'Drawer';
-	widthDrawer?: number;
-
-	/** Có hiển thị thị kéo thả sắp xêp hàng ko? Mặc định: Không */
-	rowSortable?: boolean;
-
-	/**
-	 * Sự kiện khi hàng được kéo đến vị trí mới
-	 * @param record Record ứng với hàng được kéo thả
-	 * @param newIndex Vị trí mới được kéo đến: 0 -> (limit-1)
-	 * @returns
-	 */
-	onSortEnd?: (record: any, newIndex: number) => void;
-
-	hideChildrenRows?: boolean;
-
-	/** Hàm reload dữ liệu
-	 * @default null
-	 */
-	onReload?: () => void;
 };
 
 // IMPORT HEADER
