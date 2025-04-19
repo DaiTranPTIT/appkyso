@@ -20,7 +20,7 @@ type TFrameProps = {
 
 const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 	const intl = useIntl();
-	const { file, width = '100%', height = '600px', children, ip = ip3, isFileId } = props;
+	const { file, style = {}, children, ip = ip3, isFileId } = props;
 	const [frameData, setFrameData] = useState<TFrameProps>();
 	const [loading, setLoading] = useState(false);
 
@@ -108,8 +108,14 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 		}
 	};
 
+	if (loading)
+		return (
+			<div style={{ width: '100%', height: '100%', ...style }}>
+				<Spin size='large' />
+			</div>
+		);
 	return (
-		<Spin spinning={loading}>
+		<div style={{ width: '100%', height: '100%', ...style }}>
 			<Space wrap align='center' style={{ justifyContent: 'space-between', marginBottom: 12, width: '100%' }}>
 				<b>{frameData?.name ?? '--'}</b>
 
@@ -145,7 +151,7 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 			</Space>
 
 			{frameData?.type !== EDinhDangFile.UNKNOWN && !!frameData?.src ? (
-				<iframe src={frameData.src} width={width} height={height} />
+				<iframe src={frameData.src} width='100%' height='100%' />
 			) : (
 				<div
 					style={{
@@ -175,7 +181,7 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 					</p>
 				</div>
 			)}
-		</Spin>
+		</div>
 	);
 };
 

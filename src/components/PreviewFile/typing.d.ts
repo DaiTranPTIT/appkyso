@@ -8,4 +8,6 @@ export type TPreviewFileProps = {
 
 	/** File truyền vào là id File */
 	isFileId?: boolean;
+
+	style?: React.CSSProperties;
 };
