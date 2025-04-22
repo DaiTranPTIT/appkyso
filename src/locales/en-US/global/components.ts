@@ -28,7 +28,7 @@ export default {
 	'global.previewfile.message.saochep': 'Link copied!',
 	'global.previewfile.button.taixuong': 'Download',
 	'global.previewfile.button.saochep': 'Copy link',
-	'global.previewfile.button.morong': 'Expand',
+	'global.previewfile.button.morong': 'Open in new tab',
 	'global.previewfile.thongbao': 'File preview is not supported',
 
 	//RightContent

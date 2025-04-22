@@ -246,7 +246,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 			{hasPreviewFile && (
 				<Modal
 					title='Xem trước tập tin'
-					width={1000}
+					width={1200}
 					visible={previewOpen}
 					footer={null}
 					onCancel={() => setPreviewOpen(false)}

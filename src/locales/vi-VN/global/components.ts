@@ -28,7 +28,7 @@ export default {
 	'global.previewfile.message.saochep': 'Đã sao chép đường dẫn!',
 	'global.previewfile.button.taixuong': 'Tải xuống',
 	'global.previewfile.button.saochep': 'Sao chép đường dẫn',
-	'global.previewfile.button.morong': 'Mở rộng',
+	'global.previewfile.button.morong': 'Mở trong cửa sổ mới',
 	'global.previewfile.thongbao': 'Tệp tin không hỗ trợ hiển thị trực tiếp',
 
 	//RightContent

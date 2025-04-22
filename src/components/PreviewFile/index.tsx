@@ -3,7 +3,7 @@ import type { IFileInfo } from '@/services/base/typing';
 import { getFileInfo } from '@/services/uploadFile';
 import { ip3 } from '@/utils/ip';
 import { getFileType, getNameFile } from '@/utils/utils';
-import { CopyOutlined, DownloadOutlined, FullscreenOutlined } from '@ant-design/icons';
+import { CopyOutlined, DownloadOutlined, RightOutlined } from '@ant-design/icons';
 import { message, Space, Spin } from 'antd';
 import fileDownload from 'js-file-download';
 import { useEffect, useState } from 'react';
@@ -141,7 +141,7 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 						<ButtonExtend
 							type='link'
 							tooltip={intl.formatMessage({ id: 'global.previewfile.button.morong' })}
-							icon={<FullscreenOutlined />}
+							icon={<RightOutlined />}
 							onClick={() => window.open(frameData?.src, '_blank')}
 						/>
 					)}
@@ -151,7 +151,7 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 			</Space>
 
 			{frameData?.type !== EDinhDangFile.UNKNOWN && !!frameData?.src ? (
-				<iframe src={frameData.src} width='100%' height='100%' />
+				<iframe src={frameData.src} style={{ height: 'calc(100% - 44px)', width: '100%', minHeight: 500 }} />
 			) : (
 				<div
 					style={{
