@@ -5,6 +5,7 @@ export type TPreviewFileProps = {
 	height?: string;
 	children?: React.ReactElement;
 	ip?: string;
+	tenFile?: string;
 
 	/** File truyền vào là id File */
 	isFileId?: boolean;
