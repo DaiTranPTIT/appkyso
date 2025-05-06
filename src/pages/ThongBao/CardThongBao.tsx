@@ -2,12 +2,13 @@ import ExpandText from '@/components/ExpandText';
 import TableBase from '@/components/Table';
 import ButtonExtend from '@/components/Table/ButtonExtend';
 import { EOperatorType } from '@/components/Table/constant';
+import ModalExpandable from '@/components/Table/ModalExpandable';
 import { type IColumn } from '@/components/Table/typing';
 import { type ESourceTypeNotification, mapModuleKeyToSourceType, NotificationType } from '@/services/ThongBao/constant';
 import { type ThongBao } from '@/services/ThongBao/typing';
 import { currentRole } from '@/utils/ip';
 import { DeleteOutlined, EyeOutlined, LeftOutlined, PlusCircleOutlined, RightOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Modal, Popconfirm, Segmented, Space } from 'antd';
+import { Button, DatePicker, Popconfirm, Segmented, Space } from 'antd';
 import moment from 'moment';
 import { useState } from 'react';
 import { useModel } from 'umi';
@@ -289,7 +290,7 @@ const CardThongBao = (props: { notiType: NotificationType; activeKey: string }) 
 				]}
 			/>
 
-			<Modal
+			<ModalExpandable
 				width={800}
 				bodyStyle={{ padding: 0 }}
 				okButtonProps={{ hidden: true }}
@@ -299,9 +300,9 @@ const CardThongBao = (props: { notiType: NotificationType; activeKey: string }) 
 				destroyOnClose
 			>
 				<ViewThongBao record={record} />
-			</Modal>
+			</ModalExpandable>
 
-			<Modal
+			<ModalExpandable
 				title='Danh sách người nhận'
 				width={800}
 				okButtonProps={{ hidden: true }}
@@ -311,7 +312,7 @@ const CardThongBao = (props: { notiType: NotificationType; activeKey: string }) 
 				destroyOnClose
 			>
 				<TableReceiverThongBao record={record} />
-			</Modal>
+			</ModalExpandable>
 
 			<CardFormThongBaoTuyChinh getData={getData} type={notiType} />
 		</>

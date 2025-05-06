@@ -1,8 +1,9 @@
 import TableBase from '@/components/Table';
 import { EOperatorType } from '@/components/Table/constant';
+import ModalExpandable from '@/components/Table/ModalExpandable';
 import type { IColumn } from '@/components/Table/typing';
 import type { AuditLog } from '@/services/TienIch/AuditLog/typing';
-import { Button, Card, Col, Descriptions, Modal, Row, Spin } from 'antd';
+import { Button, Card, Col, Descriptions, Row, Spin } from 'antd';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
@@ -145,7 +146,7 @@ const ModalAuditLog = (props: {
 	];
 
 	return (
-		<Modal title={title} visible={visible} onCancel={() => setVisible(false)} footer={null} width={1400}>
+		<ModalExpandable title={title} visible={visible} onCancel={() => setVisible(false)} footer={null} width={1400}>
 			{props.children}
 
 			<SplitPane split={isMobile ? 'horizontal' : 'vertical'} onChange={handlePaneSizeChange}>
@@ -221,7 +222,7 @@ const ModalAuditLog = (props: {
 			<div className='form-footer' style={{ marginTop: 18 }}>
 				<Button onClick={() => setVisible(false)}>Đóng</Button>
 			</div>
-		</Modal>
+		</ModalExpandable>
 	);
 };
 

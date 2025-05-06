@@ -1,5 +1,5 @@
 import { MenuOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { AutoComplete, ConfigProvider, Drawer, Empty, Input, Modal, Table, Tooltip, type InputRef } from 'antd';
+import { AutoComplete, ConfigProvider, Drawer, Empty, Input, Table, Tooltip, type InputRef } from 'antd';
 import classNames from 'classnames';
 import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
@@ -9,6 +9,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { useIntl } from 'umi';
 import ButtonExtend from './ButtonExtend';
 import { updateSearchStorage } from './function';
+import ModalExpandable from './ModalExpandable';
 import './style.less';
 import type { IColumn, TDataOption, TableStaticProps } from './typing';
 
@@ -291,7 +292,7 @@ const TableStaticData = (props: TableStaticProps) => {
 							/>
 						</Drawer>
 					) : (
-						<Modal
+						<ModalExpandable
 							width={props?.widthDrawer}
 							onCancel={() => {
 								if (setShowEdit) setShowEdit(false);
@@ -307,7 +308,7 @@ const TableStaticData = (props: TableStaticProps) => {
 								}}
 								{...props.formProps}
 							/>
-						</Modal>
+						</ModalExpandable>
 					)}
 				</>
 			)}

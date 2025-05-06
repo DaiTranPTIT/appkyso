@@ -1,11 +1,12 @@
 import { blobToBase64, getNameFile } from '@/utils/utils';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Image, Modal, Upload, message } from 'antd';
+import { Button, Image, Upload, message } from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import { useEffect, useState } from 'react';
 import Resizer from 'react-image-file-resizer';
 import { useIntl } from 'umi';
 import PreviewFile from '../PreviewFile';
+import ModalExpandable from '../Table/ModalExpandable';
 import './UploadAvatar.less';
 import type { TFileProps, TResizeProps, TUploadProps } from './typing';
 
@@ -248,7 +249,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 			<Extra />
 
 			{hasPreviewFile && (
-				<Modal
+				<ModalExpandable
 					title='Xem trước tập tin'
 					width={1200}
 					visible={previewOpen}
@@ -260,7 +261,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 					<div className='form-footer'>
 						<Button onClick={() => setPreviewOpen(false)}>{intl.formatMessage({ id: 'global.button.dong' })}</Button>
 					</div>
-				</Modal>
+				</ModalExpandable>
 			)}
 		</>
 	);
