@@ -58,6 +58,9 @@ export type TableBaseProps = {
 	title?: React.ReactNode;
 	widthDrawer?: number | 'full';
 
+	/** Title cho modal Thêm mới, chỉnh sửa (nên dùng thay cho dùng card trong Form) */
+	modalTitle?: string;
+
 	/** Hàm getData tùy chỉnh, nếu ko có thì 'getModel' của model sẽ là mặc định */
 	getData?: (params: any) => void;
 
