@@ -52,7 +52,7 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 				setLoading(true);
 				const result = await getFileInfo(idFile, ip);
 				const fileInfo: IFileInfo = result?.data?.data;
-				frame.url = fileInfo?.url ?? (!isFileId ? srcUrl : '');
+				frame.url = fileInfo?.url ?? (!isFileId ? srcUrl : `${ip}/file/${idFile}/${fileInfo?.name}`);
 				frame.name = fileInfo?.name;
 
 				// Mapping { mimetype : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"} sang EDinhDangFile
@@ -151,7 +151,7 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 			</Space>
 
 			{frameData?.type !== EDinhDangFile.UNKNOWN && !!frameData?.src ? (
-				<iframe src={frameData.src} style={{ height: 'calc(100% - 44px)', width: '100%', minHeight: 500 }} />
+				<iframe src={frameData.src} style={{ height: 'calc(100% - 44px)', width: '100%', minHeight: 560 }} />
 			) : (
 				<div
 					style={{
