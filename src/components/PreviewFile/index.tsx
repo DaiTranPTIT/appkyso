@@ -3,7 +3,14 @@ import type { IFileInfo } from '@/services/base/typing';
 import { getFileInfo } from '@/services/uploadFile';
 import { ip3 } from '@/utils/ip';
 import { getFileType, getNameFile } from '@/utils/utils';
-import { CopyOutlined, DownloadOutlined, RightOutlined } from '@ant-design/icons';
+import {
+	CopyOutlined,
+	DownloadOutlined,
+	ExpandOutlined,
+	FileSearchOutlined,
+	LeftOutlined,
+	RightOutlined,
+} from '@ant-design/icons';
 import { message, Space, Spin } from 'antd';
 import fileDownload from 'js-file-download';
 import { useEffect, useState } from 'react';
@@ -23,6 +30,29 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 	const { file, style = {}, children, ip = ip3, isFileId, tenFile } = props;
 	const [frameData, setFrameData] = useState<TFrameProps>();
 	const [loading, setLoading] = useState(false);
+	const [currentFileIndex, setCurrentFileIndex] = useState(0);
+	const [fileList, setFileList] = useState<string[]>([]);
+	const [fileNameList, setFileNameList] = useState<string[]>([]);
+
+	useEffect(() => {
+		if (Array.isArray(file)) {
+			setFileList(file);
+			setCurrentFileIndex(0);
+		} else {
+			setFileList([file]);
+			setCurrentFileIndex(0);
+		}
+
+		if (tenFile) {
+			if (Array.isArray(tenFile)) {
+				setFileNameList(tenFile);
+			} else {
+				setFileNameList([tenFile]);
+			}
+		} else {
+			setFileNameList([]);
+		}
+	}, [file, tenFile]);
 
 	const getFileExtension = (url: string) => {
 		const arr = url.split('.');
@@ -76,22 +106,38 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 
 	useEffect(() => {
 		const fetchFileType = async () => {
-			const res = await getFileDataFromUrl(file);
-			setFrameData(res);
+			if (fileList.length > 0) {
+				const res = await getFileDataFromUrl(fileList[currentFileIndex]);
+				setFrameData(res);
+			}
 		};
 
 		fetchFileType();
-	}, [file]);
+	}, [fileList, currentFileIndex]);
 
-	const handleDownload = async () => {
-		if (frameData?.url) {
+	const isDownloadableUrl = (url: string): boolean => {
+		const blockedSources = ['view.officeapps.live.com', 'docs.google.com/document'];
+		if (blockedSources.some((domain) => url.includes(domain))) return false;
+
+		const downloadableExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip'];
+		const ext = url.split('.').pop()?.split('?')[0]?.toLowerCase() ?? '';
+		return downloadableExtensions.includes(ext);
+	};
+
+	const handleDownloadOrView = async () => {
+		if (!frameData?.url) return;
+
+		if (isDownloadableUrl(frameData.url)) {
 			try {
-				const response = await fetch(frameData?.url);
+				const response = await fetch(frameData.url);
 				const blob = await response.blob();
-				fileDownload(blob, getNameFile(frameData?.url));
+				fileDownload(blob, getNameFile(frameData.url));
 			} catch (error) {
 				console.error('Error downloading file:', error);
+				window.open(frameData.url, '_blank');
 			}
+		} else {
+			window.open(frameData.url, '_blank');
 		}
 	};
 
@@ -108,6 +154,28 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 		}
 	};
 
+	const handlePrev = () => {
+		if (currentFileIndex > 0) {
+			setCurrentFileIndex(currentFileIndex - 1);
+		}
+	};
+
+	const handleNext = () => {
+		if (currentFileIndex < fileList.length - 1) {
+			setCurrentFileIndex(currentFileIndex + 1);
+		}
+	};
+
+	const getCurrentFileName = (): string => {
+		if (fileNameList.length > 0 && fileNameList[currentFileIndex]) {
+			return fileNameList[currentFileIndex];
+		}
+		if (typeof tenFile === 'string') {
+			return tenFile;
+		}
+		return frameData?.name ?? '--';
+	};
+
 	if (loading)
 		return (
 			<div style={{ width: '100%', height: '100%', ...style }}>
@@ -117,16 +185,36 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 	return (
 		<div style={{ width: '100%', height: '100%', ...style }}>
 			<Space wrap align='center' style={{ justifyContent: 'space-between', marginBottom: 12, width: '100%' }}>
-				<b>{tenFile ?? frameData?.name ?? '--'}</b>
+				<b>{getCurrentFileName()}</b>
 
 				<Space wrap>
+					{fileList.length > 1 && (
+						<Space>
+							<ButtonExtend
+								type='link'
+								disabled={currentFileIndex === 0}
+								icon={<LeftOutlined />}
+								onClick={handlePrev}
+							/>
+							<span>
+								{currentFileIndex + 1} / {fileList.length}
+							</span>
+							<ButtonExtend
+								type='link'
+								disabled={currentFileIndex === fileList.length - 1}
+								icon={<RightOutlined />}
+								onClick={handleNext}
+							/>
+						</Space>
+					)}
+
 					{!!frameData?.url && (
 						<>
 							<ButtonExtend
 								type='link'
 								tooltip={intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
 								icon={<DownloadOutlined />}
-								onClick={handleDownload}
+								onClick={handleDownloadOrView}
 							/>
 							<ButtonExtend
 								type='link'
@@ -141,7 +229,7 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 						<ButtonExtend
 							type='link'
 							tooltip={intl.formatMessage({ id: 'global.previewfile.button.morong' })}
-							icon={<RightOutlined />}
+							icon={<ExpandOutlined />}
 							onClick={() => window.open(frameData?.src, '_blank')}
 						/>
 					)}
@@ -166,14 +254,16 @@ const PreviewFile: React.FC<TPreviewFileProps> = (props) => {
 					<p>
 						<strong>{intl.formatMessage({ id: 'global.previewfile.thongbao' })}</strong>
 						<br />
+						{!!frameData?.src && <span>Đường đẫn: {frameData?.src}</span>}
+						<br />
 
 						{!!frameData?.url && (
 							<ButtonExtend
 								notHideText
 								type='link'
 								tooltip={intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
-								icon={<DownloadOutlined />}
-								onClick={handleDownload}
+								icon={<FileSearchOutlined />}
+								onClick={handleDownloadOrView}
 							>
 								{intl.formatMessage({ id: 'global.previewfile.button.taixuong' })}
 							</ButtonExtend>
