@@ -326,6 +326,14 @@ const useInitModel = <T,>(
 		setVisibleForm(true);
 	};
 
+	/** Xóa dữ liệu model: `danhSach, record, page, total` */
+	const clearModel = () => {
+		setRecord(undefined);
+		setDanhSach([]);
+		setPage(1);
+		setTotal(0);
+	};
+
 	//#region BASE IMPORT
 	/**
 	 * Lấy header cho chức năng import
@@ -500,6 +508,7 @@ const useInitModel = <T,>(
 		selectedIds,
 		setSelectedIds,
 		initFilter,
+		clearModel,
 	};
 };
 
