@@ -29,7 +29,7 @@ ENV APP_CONFIG_URL_KHAO_THI=https://vinhuni-khaothi.ript.vn/
 ENV APP_CONFIG_URL_CORE=https://vinhuni-core.ript.vn/
 ENV APP_CONFIG_URL_CSVC=https://vinhuni-csvc.ript.vn/
 ENV APP_CONFIG_URL_THU_VIEN=
-ENV APP_CONFIG_URL_QLVB=
+ENV APP_CONFIG_URL_QLVB=https://vinhuni-sso.ript.vn/realms/vinhuni/protocol/openid-connect/auth?response_type=code&client_id=vinhuni-qlvb&redirect_uri=http%3A%2F%2Fvinhuni-qlvb.ript.vn%2Fauth_oauth%2Fsignin&scope=openid+profile+email&state=%7B%22d%22%3A+%22qlvb%22%2C+%22p%22%3A+4%2C+%22r%22%3A+%22http%253A%252F%252Fvinhuni-qlvb.ript.vn%252Fweb%22%7D
 
 ENV APP_CONFIG_TITLE_LANDING='Cổng thông tin'
 ENV APP_CONFIG_TITLE_CONNECT='Cổng người học'
