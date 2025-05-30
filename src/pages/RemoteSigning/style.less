@@ -86,3 +86,27 @@ button.ant-btn-primary, .button-27 {
   box-shadow: none;
   transform: translateY(0);
 }
+
+.chu-ky {
+  cursor: pointer;
+}
+.chu-ky.active {
+  background-color: var(--primary-1);
+}
+
+.react-resizable-handle {
+  width: 12px !important;
+  height: 12px !important;
+  background: var(--primary-color);
+  border-radius: 4px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: se-resize;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.react-resizable-handle:hover {
+  opacity: 1;
+}

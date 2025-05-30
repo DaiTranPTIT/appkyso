@@ -1,18 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Card, Col, Form, Input, Modal, notification, Pagination, Row, Spin } from "antd";
-import { base64ToFile, getFileFromServer } from "@/utils/function";
+import { getFileFromServer } from "@/utils/function";
 import Draggable from "react-draggable";
 import { FileInfo, SignHashRequest } from "@/services/GiaoDienKy/typing";
 import { apiKy, getDsKyApi } from "@/services/GiaoDienKy/api";
 import { CloseOutlined } from "@ant-design/icons";
 import './style.less';
-import axios from "axios";
 import { ipRoot } from "@/utils/ip";
-import { useLocation, useParams } from "react-router";
+import { useParams } from "react-router";
 import { useForm } from "antd/lib/form/Form";
 import rules from "@/utils/rules";
 import Password from "antd/lib/input/Password";
+import { useAuth } from "react-oidc-context";
+import LoadingComponent from "@/components/LoadingComponent";
+import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
 type ParamsType = {
   id: string;
 };
@@ -25,7 +28,7 @@ export default () => {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pdfContainerRef = useRef<HTMLDivElement>(null);
-  const [dsKy, setDsKy] = useState<FileInfo[]>();
+  const [dsKy, setDsKy] = useState<FileInfo[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const signatureRef = useRef<HTMLDivElement>(null);
   const [signaturePosition, setSignaturePosition] = useState<{ x: number; y: number } | null>(null);
@@ -34,9 +37,10 @@ export default () => {
   const [loading, setLoading] = useState(false);
   const [loadingKy, setLoadingKy] = useState<boolean>(false);
   const [form] = useForm();
-  const location = useLocation();
   const dragStartPosition = useRef<{ x: number; y: number } | null>(null);
-  const [pointInSign, setPointInSign] = useState<{x: number, y: number, width: number, height: number}>(
+  const auth = useAuth();
+  const [loadingPage, setLoadingPage] = useState(false);
+  const [pointInSign, setPointInSign] = useState<{ x: number, y: number, width: number, height: number }>(
     {
       x: 0,
       y: 0,
@@ -44,6 +48,13 @@ export default () => {
       height: 0
     }
   );
+  const [initialLocation, setInitialLocation] = useState<{
+    x: number,
+    y: number,
+    page: number,
+    width: number,
+    height: number
+  }>();
 
 
   useEffect(() => {
@@ -64,9 +75,20 @@ export default () => {
 
   const getSignInfo = async () => {
     try {
-      const file = await getFileFromServer(`${ipRoot}/sign-info/file_content/${id}`);
+      const file = await getFileFromServer(`${ipRoot}/sign-info/file_content/${id}`, auth.user?.access_token);
       if (!file) return;
-      setPdfFile(file);
+      setPdfFile(file.fileContent);
+      console.log(file.signatureAreas)
+      const signatureArea = file.signatureAreas[0];
+      if(signatureArea) {
+        setInitialLocation({
+          x: Number(signatureArea.signature_area.x),
+          y: Number(signatureArea.signature_area.y),
+          page: Number(signatureArea.page),
+          width: Number(signatureArea.signature_area.width),
+          height: Number(signatureArea.signature_area.height)
+        })
+      }
     } catch (err) {
       console.log(err);
     }
@@ -78,7 +100,7 @@ export default () => {
       const offsetX = e.clientX - rect.left;
       const offsetY = e.clientY - rect.top;
       dragStartPosition.current = { x: offsetX, y: offsetY };
-      setPointInSign({x: offsetX, y: offsetY, width: rect.width, height: rect.height})
+      setPointInSign({ x: offsetX, y: offsetY, width: rect.width, height: rect.height })
     }
     setChuKySelected(chuKy);
     setIsDragging(true);
@@ -123,6 +145,25 @@ export default () => {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    setLoadingPage(true);
+    setTimeout(() => {
+      if (dsKy[0] && initialLocation) {
+        console.log(dsKy[0], initialLocation);
+        const containerRect = pdfContainerRef.current?.getBoundingClientRect();
+        if (!containerRect) return;
+        const containerWidth = containerRect.width;
+        const containerHeight = containerRect.height;
+        setSignaturePosition({ x: containerWidth * initialLocation.x / 100, y: (containerHeight - initialLocation.height*containerHeight/100) - (containerHeight * initialLocation.y / 100) });
+        setChuKyDrop(dsKy[0]);
+        setChuKySelected(dsKy[0]);
+        setCurrentPage(initialLocation.page || 1);
+      }
+      setLoadingPage(false);
+    }, 2000)
+
+  }, [dsKy, initialLocation]);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -213,7 +254,7 @@ export default () => {
 
       try {
         const res = await sign(req);
-        if(!res) return;
+        if (!res) return;
         notification.success({
           message: 'Ký số thành công',
           description: 'Đang chuyển hướng...',
@@ -239,85 +280,109 @@ export default () => {
   }
 
   return (
-    <div style={{ background: '#f4f4f4' }}>
-      {isDragging && <div className="overlay"></div>}
-      <div className="flex justify-between gap-[40px]">
-        <div className="w-[400px] bg-white border-gray-500 p-4 rounded shadow-md">
-          <h2 className="mb-4"><strong>Mẫu chữ ký</strong></h2>
-          <Card style={{ height: 'auto', marginBottom: '20px', maxHeight: '400px', overflowY: 'auto' }}>
-            <Spin spinning={loading}>
-              <Row gutter={[10, 10]}>
-                {
-                  dsKy?.map(item => <Col span={24}>
-                    <div className="flex items-center gap-[10px]">
-                      <div
-                        onDrag={e => handleDragStart(e, item)}
-                        onDragEnd={e => {
-                          setIsDragging(false);
-                          dragStartPosition.current = null;
-                          console.log(pointInSign);
-                        }}
-                        className="cursor-move rounded shadow-md"
-                        draggable="true"
-                      >
-                        <img src={`${ipRoot}${item.file_path}`} width={'100px'} alt="Signature" />
+    <>
+      {loadingPage && <LoadingComponent /> || <div style={{ background: '#f4f4f4' }}>
+        {isDragging && <div className="overlay"></div>}
+        <div className="flex justify-between gap-[40px]">
+          <div className="w-[400px] border-gray-500 px-3 py-4 bg-white">
+            <h2 className="mb-4"><strong>Mẫu chữ ký</strong></h2>
+            <Card style={{ height: 'auto', marginBottom: '20px', maxHeight: '400px', overflowY: 'auto' }}>
+              <Spin spinning={loading}>
+                <Row gutter={[10, 10]}>
+                  {
+                    dsKy?.map(item => 
+                    <Col span={24} onClick={() => {
+                      setChuKySelected(item);
+                      setChuKyDrop(item);
+                    }}
+                    className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKySelected && 'active'}`}>
+                      <div className="flex items-center gap-[10px]">
+                        <div
+                          onDrag={e => handleDragStart(e, item)}
+                          onDragEnd={e => {
+                            setIsDragging(false);
+                            dragStartPosition.current = null;
+                            console.log(pointInSign);
+                          }}
+                          className="cursor-move rounded shadow-md"
+                          draggable="true"
+                        >
+                          <img src={`${ipRoot}${item.file_path}`} style={{height: '40px', objectFit: 'contain', background: 'white'}} alt="Signature" />
+                        </div>
+                        <strong>{item.name}</strong>
                       </div>
-                      <strong>{item.name}</strong>
-                    </div>
-                  </Col>)
-                }
-              </Row>
-            </Spin>
-          </Card>
-          <button className="button-27" role="button" onClick={showModalUsernamePassword}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pen" viewBox="0 0 16 16">
-            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
-          </svg> Ký số</button>
-        </div>
+                    </Col>)
+                  }
+                </Row>
+              </Spin>
+            </Card>
+            <button className="button-27" role="button" onClick={showModalUsernamePassword}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pen" viewBox="0 0 16 16">
+              <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
+            </svg> Ký số</button>
+          </div>
 
-        <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto py-4">
-          <Pagination simple current={currentPage} total={numPages} className="mb-[20px] flex justify-center mb-4" onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
-          {pdfFile && <div
-            className={`relative border-2 border-dashed border-${isDragging ? 'blue-500' : 'grey'} p-2 container-drag w-[max-content] bg-${isDragging ? 'blue-50' : ''} mx-[auto]`}
+          <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto py-4">
+            <Pagination simple current={currentPage} total={numPages} className="mb-[20px] flex justify-center mb-4" onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
+            {pdfFile && <div
+              className={`relative border-2 border-dashed border-${isDragging ? 'blue-500' : 'grey'} p-2 container-drag w-[max-content] bg-${isDragging ? 'blue-50' : ''} mx-[auto]`}
 
-          >
-            {(
-              <div ref={pdfContainerRef} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
-                <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
-                  <Page pageNumber={currentPage} renderTextLayer={false} renderAnnotationLayer={false} />
-                </Document>
-              </div>
-
-            )}
-
-            {signaturePosition && <Draggable
-              onStop={() => setIsDragging(false)}
-              onStart={() => setIsDragging(true)}
-              bounds={"parent"}
-              handle=".cursor-move"
-              defaultPosition={{ 
-                x: signaturePosition.x, 
-                y: signaturePosition.y - (pdfContainerRef.current?.getBoundingClientRect().height || 0)
-              }}
             >
+              {(
+                <div ref={pdfContainerRef} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
+                  <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
+                    <Page pageNumber={currentPage} renderTextLayer={false} renderAnnotationLayer={false} />
+                  </Document>
+                </div>
 
-              <div id="chuKy"
-                ref={signatureRef}
-                className="absolute"
+              )}
+
+              {signaturePosition && <Draggable
+                onStop={() => setIsDragging(false)}
+                onStart={() => setIsDragging(true)}
+                bounds={"parent"}
+                handle=".cursor-move"
+                defaultPosition={{
+                  x: signaturePosition.x,
+                  y: signaturePosition.y - (pdfContainerRef.current?.getBoundingClientRect().height || 0)
+                }}
               >
-                <div className="absolute close-button" onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
-                <img className="cursor-move" src={`${ipRoot}${chuKyDrop?.file_path}`} width={100} alt="Signature" />
-              </div>
-            </Draggable>}
-          </div> || <Spin className="flex items-center w-[100%]"/>}
-        </div>
-      </div>
-      <Modal title="Xác nhận ký" visible={loadingKy} footer={false} onCancel={() => setLoadingKy(false)}>
-        {loadingKy && <div className="signing">
-          <img src="/kyso/signing.gif" width={150} />
-          <strong>Đang chờ xác nhận...</strong>
-        </div>}
-      </Modal>
-    </div>
 
+                <div id="chuKy"
+                  ref={signatureRef}
+                  className="absolute"
+                >
+                  <div className="absolute close-button" style={{zIndex: 1}} onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
+                  <ResizableBox
+                    width={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.width * (pdfContainerRef.current?.getBoundingClientRect().width) / 100 : 100}
+                    height={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.height * (pdfContainerRef.current?.getBoundingClientRect().height) / 100 : 100}
+                    minConstraints={[40, 40]}
+                    maxConstraints={[200, 200]}
+                    resizeHandles={['se']}
+                    lockAspectRatio={true}
+                    onResizeStop={(e, data) => {
+                      // Cập nhật lại width/height vào state
+                      setPointInSign(prev => ({
+                        ...prev,
+                        width: data.size.width,
+                        height: data.size.height
+                      }));
+                    }}
+                  >
+                    <img className="cursor-move" style={{width: '100%', height: '100%', objectFit: 'fill'}} src={`${ipRoot}${chuKyDrop?.file_path}`} alt="Signature" />
+                  </ResizableBox>
+                  
+                </div>
+              </Draggable>}
+            </div> || <Spin className="flex items-center w-[100%]" />}
+          </div>
+        </div>
+        <Modal title="Xác nhận ký" visible={loadingKy} footer={false} onCancel={() => setLoadingKy(false)}>
+          {loadingKy && <div className="signing">
+            <img src="/kyso/signing.gif" width={150} />
+            <strong>Đang chờ xác nhận...</strong>
+          </div>}
+        </Modal>
+      </div>}
+    </>
   );
 };

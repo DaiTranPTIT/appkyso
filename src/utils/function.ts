@@ -1,7 +1,9 @@
+import { useAuth } from "react-oidc-context";
+
 export const getFileFromUrl = async (url: string, filename: string) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new File([blob], filename, { type: blob.type });
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new File([blob], filename, { type: blob.type });
 };
 
 export function base64ToFile(base64String: any, fileName: string): File {
@@ -22,12 +24,20 @@ export function base64ToFile(base64String: any, fileName: string): File {
   return new File([blob], fileName, { type: blob.type });
 }
 
-export async function getFileFromServer(fileInfo: any) {
-  const response = await fetch(fileInfo);
+export async function getFileFromServer(fileInfo: any, token?: string) {
+  const response = await fetch(fileInfo, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  // FIX: Make sure the header names match exactly what the server is sending
+  const signatureAreas = response.headers.get('signature_areas'); // Now expecting 'xheader'
   const disposition = response.headers.get("Content-Disposition");
   const filenameMatch = disposition && disposition.match(/filename="?(.+?)"?$/);
   const filename = filenameMatch ? filenameMatch[1] : "downloaded_file";
-
   const blob = await response.blob();
-  return new File([blob], filename, { type: blob.type });
+  return {
+    fileContent: new File([blob], filename, { type: blob.type }),
+    signatureAreas: signatureAreas ? JSON.parse(signatureAreas) : null,
+  };
 }
