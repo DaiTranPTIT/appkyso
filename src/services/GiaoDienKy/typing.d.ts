@@ -1,6 +1,6 @@
 import { ETypeKy } from "./constant";
 
-interface FileInfo {
+interface IChuKy {
     id: string;
     file_path: string;
     file_name: string;
@@ -14,7 +14,7 @@ interface FileInfo {
 }
 
 export interface IGetSign {
-    founds: FileInfo[],
+    founds: IChuKy[],
     search_options: {
         ordering: string
         page: number

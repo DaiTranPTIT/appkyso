@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Card, Col, Form, Input, Modal, notification, Pagination, Row, Spin } from "antd";
+import { Button, Card, Col, Form, Input, Modal, notification, Pagination, PaginationProps, Row, Spin, Tag } from "antd";
 import { getFileFromServer } from "@/utils/function";
 import Draggable from "react-draggable";
-import { FileInfo, SignHashRequest } from "@/services/GiaoDienKy/typing";
+import { IChuKy, SignHashRequest } from "@/services/GiaoDienKy/typing";
 import { apiKy, getDsKyApi } from "@/services/GiaoDienKy/api";
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined, ContactsFilled } from "@ant-design/icons";
 import './style.less';
 import { ipRoot } from "@/utils/ip";
 import { useParams } from "react-router";
@@ -24,22 +24,32 @@ pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pd
 
 export default () => {
   const { id } = useParams<ParamsType>();
+  const auth = useAuth();
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [form] = useForm();
   const [numPages, setNumPages] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const pdfContainerRef = useRef<HTMLDivElement>(null);
-  const [dsKy, setDsKy] = useState<FileInfo[]>([]);
+  const [dsKy, setDsKy] = useState<IChuKy[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  const dragStartPosition = useRef<{ x: number; y: number } | null>(null);
+  const pdfContainerRef = useRef<HTMLDivElement>(null);
   const signatureRef = useRef<HTMLDivElement>(null);
-  const [signaturePosition, setSignaturePosition] = useState<{ x: number; y: number } | null>(null);
-  const [chuKyDrop, setChuKyDrop] = useState<FileInfo>();
-  const [chuKySelected, setChuKySelected] = useState<FileInfo>();
+  const [signatureAreas, setSignatureAreas] = useState<any>();
+  const [signatureArea, setSignatureArea] = useState<any>();
+
+  const [chuKyDrag, setChuKyDrag] = useState<IChuKy>();
+  const [chuKyDrop, setChuKyDrop] = useState<
+  {
+    chuKy: IChuKy,
+    page: number
+  }>();
+
   const [loading, setLoading] = useState(false);
   const [loadingKy, setLoadingKy] = useState<boolean>(false);
-  const [form] = useForm();
-  const dragStartPosition = useRef<{ x: number; y: number } | null>(null);
-  const auth = useAuth();
-  const [loadingPage, setLoadingPage] = useState(false);
+  const [pdfLoaded, setPdfLoaded] = useState(false);
+
+  const [signaturePosition, setSignaturePosition] = useState<{ x: number; y: number } | null>(null);
   const [pointInSign, setPointInSign] = useState<{ x: number, y: number, width: number, height: number }>(
     {
       x: 0,
@@ -73,28 +83,51 @@ export default () => {
     getSignInfo();
   }, []);
 
+  useEffect(() => {
+    if(!signatureAreas) return;
+    setSignatureArea(signatureAreas[signatureAreas.length - 1]);
+  }, [signatureAreas]);
+
+  useEffect(() => {
+    if(signatureArea) {
+      setInitialLocation({
+        x: Number(signatureArea.signature_area.x),
+        y: Number(signatureArea.signature_area.y),
+        page: Number(signatureArea.page),
+        width: Number(signatureArea.signature_area.width),
+        height: Number(signatureArea.signature_area.height)
+      });
+    }
+  }, [signatureArea]);
+
+  useEffect(() => {
+    if (dsKy[0] && initialLocation && pdfLoaded) {
+      setTimeout(() => {
+        const containerRect = pdfContainerRef.current?.getBoundingClientRect();
+        if (!containerRect) return;
+        const containerWidth = containerRect.width;
+        const containerHeight = containerRect.height;
+        setSignaturePosition({ x: containerWidth * initialLocation.x / 100, y: (containerHeight - initialLocation.height*containerHeight/100) - (containerHeight * initialLocation.y / 100) });
+        setChuKyDrop({chuKy: dsKy[0], page: initialLocation.page});
+        setChuKyDrag(dsKy[0]);
+        setCurrentPage(initialLocation.page || 1);
+      }, 100);
+    }
+  }, [dsKy, initialLocation, pdfLoaded]);
+
   const getSignInfo = async () => {
     try {
       const file = await getFileFromServer(`${ipRoot}/sign-info/file_content/${id}`, auth.user?.access_token);
       if (!file) return;
       setPdfFile(file.fileContent);
-      console.log(file.signatureAreas)
-      const signatureArea = file.signatureAreas[0];
-      if(signatureArea) {
-        setInitialLocation({
-          x: Number(signatureArea.signature_area.x),
-          y: Number(signatureArea.signature_area.y),
-          page: Number(signatureArea.page),
-          width: Number(signatureArea.signature_area.width),
-          height: Number(signatureArea.signature_area.height)
-        })
-      }
+      setSignatureAreas(file.signatureAreas);
+      setPdfLoaded(true);
     } catch (err) {
       console.log(err);
     }
   }
 
-  const handleDragStart = (e: React.DragEvent, chuKy: FileInfo) => {
+  const handleDragStart = (e: React.DragEvent, chuKy: IChuKy) => {
     if (!dragStartPosition.current) {
       const rect = e.currentTarget.getBoundingClientRect();
       const offsetX = e.clientX - rect.left;
@@ -102,7 +135,7 @@ export default () => {
       dragStartPosition.current = { x: offsetX, y: offsetY };
       setPointInSign({ x: offsetX, y: offsetY, width: rect.width, height: rect.height })
     }
-    setChuKySelected(chuKy);
+    setChuKyDrag(chuKy);
     setIsDragging(true);
   };
 
@@ -146,29 +179,10 @@ export default () => {
     }
   }
 
-  useEffect(() => {
-    setLoadingPage(true);
-    setTimeout(() => {
-      if (dsKy[0] && initialLocation) {
-        console.log(dsKy[0], initialLocation);
-        const containerRect = pdfContainerRef.current?.getBoundingClientRect();
-        if (!containerRect) return;
-        const containerWidth = containerRect.width;
-        const containerHeight = containerRect.height;
-        setSignaturePosition({ x: containerWidth * initialLocation.x / 100, y: (containerHeight - initialLocation.height*containerHeight/100) - (containerHeight * initialLocation.y / 100) });
-        setChuKyDrop(dsKy[0]);
-        setChuKySelected(dsKy[0]);
-        setCurrentPage(initialLocation.page || 1);
-      }
-      setLoadingPage(false);
-    }, 2000)
-
-  }, [dsKy, initialLocation]);
-
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    if (pdfContainerRef.current) {
+    if (pdfContainerRef.current && chuKyDrag) {
       const containerRect = pdfContainerRef.current.getBoundingClientRect();
       const x = e.clientX - containerRect.left - pointInSign.x + 10;
       const y = e.clientY - containerRect.top - pointInSign.y;
@@ -176,7 +190,7 @@ export default () => {
       // Kiểm tra xem có thả vào vùng PDF không
       if (x >= 0 && x <= containerRect.width && y >= 0 && y <= containerRect.height) {
         setSignaturePosition({ x, y });
-        setChuKyDrop(chuKySelected);
+        setChuKyDrop({chuKy: chuKyDrag, page: currentPage});
       }
     }
   };
@@ -237,8 +251,8 @@ export default () => {
 
       const req = {
         sign_info_id: id,
-        signature_id: chuKySelected?.id || '',
-        credential_id: chuKySelected?.credential_id || '',
+        signature_id: chuKyDrop?.chuKy?.id || '',
+        credential_id: chuKyDrop?.chuKy?.credential_id || '',
         os: window.navigator.userAgent,
         width: width,
         height: height,
@@ -275,15 +289,14 @@ export default () => {
 
   const removeChuKy = () => {
     setSignaturePosition(null);
-    setChuKySelected(undefined);
     setChuKyDrop(undefined);
   }
 
   return (
     <>
-      {loadingPage && <LoadingComponent /> || <div style={{ background: '#f4f4f4' }}>
+      {!pdfLoaded ? <LoadingComponent />: <div style={{ background: '#f4f4f4' }}>
         {isDragging && <div className="overlay"></div>}
-        <div className="flex justify-between gap-[40px]">
+        <div className="flex justify-between">
           <div className="w-[400px] border-gray-500 px-3 py-4 bg-white">
             <h2 className="mb-4"><strong>Mẫu chữ ký</strong></h2>
             <Card style={{ height: 'auto', marginBottom: '20px', maxHeight: '400px', overflowY: 'auto' }}>
@@ -292,19 +305,17 @@ export default () => {
                   {
                     dsKy?.map(item => 
                     <Col span={24} onClick={() => {
-                      setChuKySelected(item);
-                      setChuKyDrop(item);
+                      setChuKyDrag(item);
+                      setChuKyDrop({chuKy: item, page: currentPage});
                     }}
-                    className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKySelected && 'active'}`}>
+                    className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKyDrop?.chuKy && 'active'}`}>
                       <div className="flex items-center gap-[10px]">
                         <div
                           onDrag={e => handleDragStart(e, item)}
                           onDragEnd={e => {
                             setIsDragging(false);
                             dragStartPosition.current = null;
-                            console.log(pointInSign);
                           }}
-                          className="cursor-move rounded shadow-md"
                           draggable="true"
                         >
                           <img src={`${ipRoot}${item.file_path}`} style={{height: '40px', objectFit: 'contain', background: 'white'}} alt="Signature" />
@@ -316,64 +327,82 @@ export default () => {
                 </Row>
               </Spin>
             </Card>
-            <button className="button-27" role="button" onClick={showModalUsernamePassword}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pen" viewBox="0 0 16 16">
-              <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z" />
-            </svg> Ký số</button>
+
+            <div className="flex items-center">
+              <strong>Gợi ý trang ký khả dụng: </strong>
+              <ul className="signature-areas">
+                {
+                  signatureAreas?.map((item: any) => {
+                    return <li>
+                      <Tag style={{cursor: 'pointer'}} onClick={() => {
+                        setSignatureArea(item);
+                      }} color={item === signatureArea ? 'red': undefined}>Trang {item.page}</Tag>
+                    </li>
+                  })
+                }
+              </ul>
+            </div>
+            
           </div>
 
-          <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto py-4">
-            <Pagination simple current={currentPage} total={numPages} className="mb-[20px] flex justify-center mb-4" onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
-            {pdfFile && <div
-              className={`relative border-2 border-dashed border-${isDragging ? 'blue-500' : 'grey'} p-2 container-drag w-[max-content] bg-${isDragging ? 'blue-50' : ''} mx-[auto]`}
+          <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto">
+            <div className="flex justify-between items-center topbar-control px-4 py-2">
+              <Pagination size="small" simple current={currentPage} total={numPages} onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
+              <Button disabled={!chuKyDrop} type="primary" onClick={showModalUsernamePassword} icon={<ContactsFilled />}>Ký số</Button>
+            </div>
+            <div className="py-4">
+              {pdfFile && <div
+                className={`relative border-2 border-dashed border-${isDragging ? 'blue-500' : 'grey'} p-2 container-drag w-[max-content] bg-${isDragging ? 'blue-50' : ''} mx-[auto]`}
 
-            >
-              {(
-                <div ref={pdfContainerRef} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
-                  <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
-                    <Page pageNumber={currentPage} renderTextLayer={false} renderAnnotationLayer={false} />
-                  </Document>
-                </div>
-
-              )}
-
-              {signaturePosition && <Draggable
-                onStop={() => setIsDragging(false)}
-                onStart={() => setIsDragging(true)}
-                bounds={"parent"}
-                handle=".cursor-move"
-                defaultPosition={{
-                  x: signaturePosition.x,
-                  y: signaturePosition.y - (pdfContainerRef.current?.getBoundingClientRect().height || 0)
-                }}
               >
+                {(
+                  <div ref={pdfContainerRef} onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
+                    <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
+                      <Page pageNumber={currentPage} renderTextLayer={false} renderAnnotationLayer={false} />
+                    </Document>
+                  </div>
 
-                <div id="chuKy"
-                  ref={signatureRef}
-                  className="absolute"
+                )}
+
+                {signaturePosition && <Draggable
+                  onStop={() => setIsDragging(false)}
+                  onStart={() => setIsDragging(true)}
+                  bounds={"parent"}
+                  handle=".cursor-move"
+                  defaultPosition={{
+                    x: signaturePosition.x,
+                    y: signaturePosition.y - (pdfContainerRef.current?.getBoundingClientRect().height || 0)
+                  }}
                 >
-                  <div className="absolute close-button" style={{zIndex: 1}} onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
-                  <ResizableBox
-                    width={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.width * (pdfContainerRef.current?.getBoundingClientRect().width) / 100 : 100}
-                    height={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.height * (pdfContainerRef.current?.getBoundingClientRect().height) / 100 : 100}
-                    minConstraints={[40, 40]}
-                    maxConstraints={[200, 200]}
-                    resizeHandles={['se']}
-                    lockAspectRatio={true}
-                    onResizeStop={(e, data) => {
-                      // Cập nhật lại width/height vào state
-                      setPointInSign(prev => ({
-                        ...prev,
-                        width: data.size.width,
-                        height: data.size.height
-                      }));
-                    }}
+
+                  <div id="chuKy"
+                    ref={signatureRef}
+                    className={`absolute ${chuKyDrop?.page === currentPage? 'show' : 'hidden'}`}
                   >
-                    <img className="cursor-move" style={{width: '100%', height: '100%', objectFit: 'fill'}} src={`${ipRoot}${chuKyDrop?.file_path}`} alt="Signature" />
-                  </ResizableBox>
-                  
-                </div>
-              </Draggable>}
-            </div> || <Spin className="flex items-center w-[100%]" />}
+                    <div className="absolute close-button" style={{zIndex: 1}} onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
+                    <ResizableBox
+                      width={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.width * (pdfContainerRef.current?.getBoundingClientRect().width) / 100 : 100}
+                      height={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.height * (pdfContainerRef.current?.getBoundingClientRect().height) / 100 : 100}
+                      minConstraints={[40, 40]}
+                      maxConstraints={[200, 200]}
+                      resizeHandles={['se']}
+                      lockAspectRatio={true}
+                      onResizeStop={(e, data) => {
+                        // Cập nhật lại width/height vào state
+                        setPointInSign(prev => ({
+                          ...prev,
+                          width: data.size.width,
+                          height: data.size.height
+                        }));
+                      }}
+                    >
+                      <img className="cursor-move" style={{width: '100%', height: '100%', objectFit: 'fill'}} src={`${ipRoot}${chuKyDrop?.chuKy?.file_path}`} alt="Signature" />
+                    </ResizableBox>
+                    
+                  </div>
+                </Draggable>}
+              </div> || <Spin className="flex items-center w-[100%]" />}
+            </div>
           </div>
         </div>
         <Modal title="Xác nhận ký" visible={loadingKy} footer={false} onCancel={() => setLoadingKy(false)}>

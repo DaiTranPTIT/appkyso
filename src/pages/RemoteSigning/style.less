@@ -12,13 +12,17 @@
 	width: 100vw;
 	height: 100vh;
 	backdrop-filter: brightness(0.5);
-	z-index: 5;
+	z-index: 1001;
 	transition: .2s;
 }
 
 .container-drag {
 	position: relative;
 	z-index: 10;
+}
+
+.container-drag.border-blue-500 {
+  z-index: 1002;
 }
 
 .close-button {
@@ -45,48 +49,6 @@ button.ant-btn-primary, .button-27 {
 	justify-content: flex-end;
 }
 
-.button-27 {
-  appearance: none;
-  background-color: #000000;
-  border: 2px solid #1A1A1A;
-  border-radius: 15px;
-  box-sizing: border-box;
-  color: #FFFFFF;
-  cursor: pointer;
-  gap: 10px;
-  font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-  font-size: 16px;
-  font-weight: 600;
-  line-height: normal;
-  margin: 0;
-  min-height: 40px;
-  min-width: 0;
-  outline: none;
-  padding: 0 24px;
-  text-align: center;
-  text-decoration: none;
-  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  width: 100%;
-  will-change: transform;
-}
-
-.button-27:disabled {
-  pointer-events: none;
-}
-
-.button-27:hover {
-  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
-  transform: translateY(-2px);
-}
-
-.button-27:active {
-  box-shadow: none;
-  transform: translateY(0);
-}
-
 .chu-ky {
   cursor: pointer;
 }
@@ -109,4 +71,19 @@ button.ant-btn-primary, .button-27 {
 
 .react-resizable-handle:hover {
   opacity: 1;
+}
+
+.topbar-control {
+  background-color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 6px -1px rgba(114, 114, 114, 0.1);
+}
+
+.signature-areas {
+  display: inline-flex;
+  margin-bottom: 0;
+  gap: 5px;
+  margin-left: 10px;
 }
