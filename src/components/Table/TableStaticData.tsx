@@ -186,8 +186,8 @@ const TableStaticData = (props: TableStaticProps) => {
 
 	return (
 		<div className='table-base'>
-			{children}
 			<div className='header'>
+				{children}
 				<div className='action'>
 					{hasCreate && (
 						<ButtonExtend
