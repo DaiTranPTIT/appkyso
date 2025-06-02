@@ -242,8 +242,7 @@ const TableStaticData = (props: TableStaticProps) => {
 				)}
 			>
 				<Table
-					title={props?.title ? () => props.title : false}
-					columns={columns}
+					columns={columns as any[]}
 					dataSource={(props?.data ?? []).map((item, index) => ({
 						...item,
 						index: index + 1,
