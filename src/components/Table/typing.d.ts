@@ -169,6 +169,7 @@ export type TableStaticProps = Pick<
 	| 'onSortEnd'
 	| 'hideChildrenRows'
 	| 'onReload'
+	| 'otherButtons'
 > & {
 	data: any[];
 	loading?: boolean;

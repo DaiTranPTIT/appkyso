@@ -186,8 +186,8 @@ const TableStaticData = (props: TableStaticProps) => {
 
 	return (
 		<div className='table-base'>
+			{children}
 			<div className='header'>
-				{children}
 				<div className='action'>
 					{hasCreate && (
 						<ButtonExtend
@@ -202,6 +202,8 @@ const TableStaticData = (props: TableStaticProps) => {
 							{intl.formatMessage({ id: 'global.tablestatic.button.themmoi' })}
 						</ButtonExtend>
 					)}
+
+					{props.otherButtons}
 				</div>
 
 				<div className='extra'>
