@@ -50,6 +50,7 @@ export interface SignHashRequest {
     password: string;
     user_Name: string;
     sign_info_id: string;
+    phone: string;
 }
 
 export interface ISignInfo {

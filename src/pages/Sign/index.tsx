@@ -38,6 +38,12 @@ export default () => {
                         query: signInfo,
                     });
                     break;
+                case ETypeKy.vgca_sim_token:
+                    history.push({
+                        pathname: `/sim/${id}`,
+                        query: signInfo,
+                    });
+                    break;
             }
         } catch (err) {
             setIsError(true);

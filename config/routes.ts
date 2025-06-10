@@ -48,6 +48,11 @@ export default [
 		layout: false
 	},
 	{
+		path: '/sim/:id',
+		component: './SimSigning',
+		layout: false
+	},
+	{
 		path: '/usbtoken',
 		component: './USBToken',
 	},
