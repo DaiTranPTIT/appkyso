@@ -5,7 +5,7 @@ import './style.less';
 
 const ModalExpandable = (
 	props: {
-		children?: React.ReactNode;
+		children?: ((isExpand: boolean) => React.ReactNode) | React.ReactNode;
 		/** Có hiển thị full screen ko? Mặc định: Không */
 		fullScreen?: boolean;
 	} & ModalProps,
@@ -15,7 +15,7 @@ const ModalExpandable = (
 
 	return (
 		<Modal className={isExpanded || fullScreen ? 'modal-full' : ''} closable={false} {...otherProps}>
-			{children}
+			{typeof children === 'function' ? children(isExpanded) : children}
 
 			<div className='modal-buttons'>
 				{!fullScreen && (
