@@ -10,19 +10,34 @@ import { type ModalImportProps } from './typing';
 
 const ModalImport = (props: ModalImportProps) => {
 	const intl = useIntl();
-	const { visible, onCancel, onOk, modelName, maskCloseableForm, extendData, getTemplate, titleTemplate } = props;
+	const {
+		visible,
+		onCancel,
+		onOk,
+		modelName,
+		maskCloseableForm,
+		extendData,
+		getTemplate,
+		titleTemplate,
+		dependenciesHeader = [],
+		getHeader,
+	} = props;
 	const { setFileData, setMatchedColumns, setDataImport } = useModel('import');
-	const { getImportHeaderModel, getImportTemplateModel, importHeaders } = useModel(modelName);
+	const { getImportHeaderModel, getImportTemplateModel, importHeaders, setImportHeaders } = useModel(modelName);
 	const [currentStep, setCurrentStep] = useState(0);
 	const [isGetHeader, setIsGetHeader] = useState<boolean>(false);
 
 	const getHeaders = () => {
-		if (getImportHeaderModel) getImportHeaderModel();
+		if (getHeader)
+			getHeader().then((headers) => {
+				setImportHeaders(headers);
+			});
+		else if (getImportHeaderModel) getImportHeaderModel();
 	};
 
 	useEffect(() => {
 		setIsGetHeader(false);
-	}, [modelName]);
+	}, [modelName, ...dependenciesHeader]);
 
 	useEffect(() => {
 		if (visible && !isGetHeader) {

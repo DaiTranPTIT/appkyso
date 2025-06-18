@@ -22,4 +22,8 @@ export type ModalImportProps = {
 
 	/** Tên file Excel mẫu, mặc định `File biểu mẫu.xlsx` */
 	titleTemplate?: string;
+
+	getHeader?: () => Promise<any[]>;
+
+	dependenciesHeader?: any[];
 };
