@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Button, Card, Col, Form, Input, Modal, notification, Pagination, PaginationProps, Row, Spin, Tag } from "antd";
+import { Button, Card, Col, Form, Input, Modal, notification, Pagination, PaginationProps, Row, Spin, Tag, Select, Tooltip } from "antd";
 import { getFileFromServer } from "@/utils/function";
 import Draggable from "react-draggable";
 import { IChuKy, SignHashRequest } from "@/services/GiaoDienKy/typing";
-import { apiKy, getDsKyApi } from "@/services/GiaoDienKy/api";
-import { CloseOutlined, ContactsFilled } from "@ant-design/icons";
+import { apiKy, getDsKyApi, getListCredentialApi, taoChuKy } from "@/services/GiaoDienKy/api";
+import { CloseOutlined, ContactsFilled, FileAddOutlined, PlusOutlined } from "@ant-design/icons";
 import './style.less';
 import { ipRoot } from "@/utils/ip";
 import { useParams } from "react-router";
@@ -16,6 +16,12 @@ import { useAuth } from "react-oidc-context";
 import LoadingComponent from "@/components/LoadingComponent";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
+
+//thêm mới chữ kí vào trực tiếp trình ký
+import UploadFile from "@/components/Upload/UploadFile";
+import { CKieuHienThi, CLoaiChuKy, EKieuHienThi, ELoaiChuKy } from "@/services/GiaoDienKy/constant";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
+
 type ParamsType = {
   id: string;
 };
@@ -27,6 +33,9 @@ export default () => {
   const auth = useAuth();
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [form] = useForm();
+  const [createSignForm] = useForm(); // Form tạo chữ ký mới
+  const [credForm] = useForm();
+  const [userForm] = useForm();
   const [numPages, setNumPages] = useState<number>(0);
   const [dsKy, setDsKy] = useState<IChuKy[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -40,14 +49,16 @@ export default () => {
 
   const [chuKyDrag, setChuKyDrag] = useState<IChuKy>();
   const [chuKyDrop, setChuKyDrop] = useState<
-  {
-    chuKy: IChuKy,
-    page: number
-  }>();
+    {
+      chuKy: IChuKy,
+      page: number
+    }>();
 
   const [loading, setLoading] = useState(false);
   const [loadingKy, setLoadingKy] = useState<boolean>(false);
+  const [loadingCreate, setLoadingCreate] = useState(false); // Loading tạo chữ ký
   const [pdfLoaded, setPdfLoaded] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false); // Modal tạo chữ ký
 
   const [signaturePosition, setSignaturePosition] = useState<{ x: number; y: number } | null>(null);
   const [pointInSign, setPointInSign] = useState<{ x: number, y: number, width: number, height: number }>(
@@ -66,7 +77,6 @@ export default () => {
     height: number
   }>();
 
-
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://cdn.tailwindcss.com";
@@ -84,12 +94,12 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    if(!signatureAreas) return;
+    if (!signatureAreas) return;
     setSignatureArea(signatureAreas[signatureAreas.length - 1]);
   }, [signatureAreas]);
 
   useEffect(() => {
-    if(signatureArea) {
+    if (signatureArea) {
       setInitialLocation({
         x: Number(signatureArea.signature_area.x),
         y: Number(signatureArea.signature_area.y),
@@ -107,8 +117,8 @@ export default () => {
         if (!containerRect) return;
         const containerWidth = containerRect.width;
         const containerHeight = containerRect.height;
-        setSignaturePosition({ x: containerWidth * initialLocation.x / 100, y: (containerHeight - initialLocation.height*containerHeight/100) - (containerHeight * initialLocation.y / 100) });
-        setChuKyDrop({chuKy: dsKy[0], page: initialLocation.page});
+        setSignaturePosition({ x: containerWidth * initialLocation.x / 100, y: (containerHeight - initialLocation.height * containerHeight / 100) - (containerHeight * initialLocation.y / 100) });
+        setChuKyDrop({ chuKy: dsKy[0], page: initialLocation.page });
         setChuKyDrag(dsKy[0]);
         setCurrentPage(initialLocation.page || 1);
       }, 100);
@@ -190,7 +200,7 @@ export default () => {
       // Kiểm tra xem có thả vào vùng PDF không
       if (x >= 0 && x <= containerRect.width && y >= 0 && y <= containerRect.height) {
         setSignaturePosition({ x, y });
-        setChuKyDrop({chuKy: chuKyDrag, page: currentPage});
+        setChuKyDrop({ chuKy: chuKyDrag, page: currentPage });
       }
     }
   };
@@ -292,37 +302,188 @@ export default () => {
     setChuKyDrop(undefined);
   }
 
+  // Các hàm xử lý tạo chữ ký mới
+  const onCloseCreateModal = () => {
+    createSignForm.resetFields();
+    setShowCreateModal(false);
+  }
+
+  const createNewSignature = async (payload: any) => {
+    try {
+      setLoadingCreate(true);
+      const formData = new FormData();
+      formData.append('name', payload.name);
+      formData.append('type', payload.type);
+      formData.append('display', payload.displayType);
+      formData.append('credential_id', payload.credential_id);
+      if (payload.file.fileList[0].originFileObj) {
+        formData.append('file_upload', payload.file.fileList[0].originFileObj);
+      }
+      
+      const res = await taoChuKy(formData);
+      if (res) {
+        notification.success({
+          message: 'Tạo chữ ký thành công'
+        });
+        onCloseCreateModal();
+        getDsKy(); // Refresh danh sách chữ ký
+      }
+    } catch (err) {
+      notification.error({
+        message: 'Tạo chữ ký thất bại'
+      });
+    } finally {
+      setLoadingCreate(false);
+    }
+  }
+
+  const getListCredential = async () => {
+    try {
+      setLoadingCreate(true);
+      await Modal.confirm({
+        title: 'Nhập thông tin tài khoản',
+        onOk: () => {
+          return new Promise((resolve, reject) => {
+            userForm
+              .validateFields()
+              .then(async val => {
+                resolve(null);
+                const res = await getListCredentialApi(val);
+                if (res.data.code === 400) {
+                  notification.error({
+                    message: "Thất bại",
+                    description: "Tài khoản không tồn tại",
+                  });
+                  return;
+                }
+                Modal.confirm({
+                  width: 600,
+                  title: 'Chọn CRED',
+                  onOk: () => {
+                    return new Promise((resolve, reject) => {
+                      credForm
+                        .validateFields()
+                        .then(values => {
+                          console.log(values.credential_id)
+                          createSignForm.setFieldsValue({
+                            'credential_id': values.credential_id
+                          })
+                          resolve(null);
+                        })
+                        .catch(() => reject());
+                    });
+                  },
+                  content: (
+                    <Form form={credForm}>
+                      <Form.Item name="credential_id" rules={[...rules.required]}>
+                        <Radio.Group style={{ width: '100%' }}>
+                          <Table
+                            rowKey="credential_id"
+                            columns={[
+                              {
+                                title: "",
+                                dataIndex: "credential_id",
+                                render: (_: any, record: any) => (
+                                  <Radio value={record.credential_id} />
+                                ),
+                              },
+                              {
+                                title: "Cred",
+                                dataIndex: "credName",
+                              },
+                              {
+                                title: "Trạng thái",
+                                dataIndex: "status",
+                                render: val => {
+                                  console.log(val);
+                                  switch (val) {
+                                    case "OPERATED":
+                                      return <Tag color="green">Hoạt động</Tag>;
+                                    default:
+                                      return <Tag color="red">Không hoạt động</Tag>;
+                                  }
+                                }
+                              },
+                            ]}
+                            dataSource={res.data.result.map((item: any) => {
+                              return {
+                                credential_id: item.credential_id,
+                                credName: item.credential_id,
+                                status: item.status
+                              }
+                            })}
+                            pagination={false}
+                          />
+                        </Radio.Group>
+                      </Form.Item>
+                    </Form>
+                  )
+                });
+              })
+              .catch(() => reject());
+          });
+        },
+        content: (
+          <Form form={userForm} layout="vertical">
+            <Form.Item name="username" rules={[...rules.required]} label="Tên đăng nhập">
+              <Input placeholder="Nhập tên đăng nhập" />
+            </Form.Item>
+            <Form.Item name="password" rules={[...rules.required]} label="Mật khẩu">
+              <Password placeholder="Nhập mật khẩu" />
+            </Form.Item>
+          </Form>
+        )
+      });
+    } catch (err) {
+    } finally {
+      setLoadingCreate(false);
+    }
+  }
+
   return (
     <>
-      {!pdfLoaded ? <LoadingComponent />: <div style={{ background: '#f4f4f4' }}>
+      {!pdfLoaded ? <LoadingComponent /> : <div style={{ background: '#f4f4f4' }}>
         {isDragging && <div className="overlay"></div>}
         <div className="flex justify-between">
           <div className="w-[400px] border-gray-500 px-3 py-4 bg-white">
-            <h2 className="mb-4"><strong>Mẫu chữ ký</strong></h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2><strong>Mẫu chữ ký</strong></h2>
+              {/*thêm nút tạo mới chữ ký */}
+              <Tooltip title="Tạo chữ ký mới"> 
+                <Button 
+                  type="primary" 
+                  size="small" 
+                  icon={<FileAddOutlined />}
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  Thêm chữ ký 
+                </Button>
+              </Tooltip>
+            </div>
             <Card style={{ height: 'auto', marginBottom: '20px', maxHeight: '400px', overflowY: 'auto' }}>
               <Spin spinning={loading}>
                 <Row gutter={[10, 10]}>
                   {
-                    dsKy?.map(item => 
-                    <Col span={24} onClick={() => {
-                      setChuKyDrag(item);
-                      setChuKyDrop({chuKy: item, page: currentPage});
-                    }}
-                    className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKyDrop?.chuKy && 'active'}`}>
-                      <div className="flex items-center gap-[10px]">
-                        <div
-                          onDrag={e => handleDragStart(e, item)}
-                          onDragEnd={e => {
-                            setIsDragging(false);
-                            dragStartPosition.current = null;
-                          }}
-                          draggable="true"
-                        >
-                          <img src={`${ipRoot}${item.file_path}`} style={{height: '40px', objectFit: 'contain', background: 'white'}} alt="Signature" />
+                    dsKy?.map(item =>
+                      <Col span={24} key={item.id} onClick={() => {
+                        setChuKyDrag(item);
+                        setChuKyDrop({ chuKy: item, page: currentPage });
+                      }}
+                        className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKyDrop?.chuKy && 'active'}`}>
+                        <div className="flex items-center gap-[10px]">
+                          <div
+                            onDrag={e => handleDragStart(e, item)}
+                            onDragEnd={e => {
+                              setIsDragging(false);
+                              dragStartPosition.current = null;
+                            }}
+                            draggable="true"
+                          >
+                            <img src={`${ipRoot}${item.file_path}`} style={{ height: '40px', objectFit: 'contain', background: 'white' }} alt="Signature" />
+                          </div>
+                          <strong>{item.name}</strong>
                         </div>
-                        <strong>{item.name}</strong>
-                      </div>
-                    </Col>)
+                      </Col>)
                   }
                 </Row>
               </Spin>
@@ -332,17 +493,17 @@ export default () => {
               <strong>Gợi ý trang ký khả dụng: </strong>
               <ul className="signature-areas">
                 {
-                  signatureAreas?.map((item: any) => {
-                    return <li>
-                      <Tag style={{cursor: 'pointer'}} onClick={() => {
+                  signatureAreas?.map((item: any, index: number) => {
+                    return <li key={index}>
+                      <Tag style={{ cursor: 'pointer' }} onClick={() => {
                         setSignatureArea(item);
-                      }} color={item === signatureArea ? 'red': undefined}>Trang {item.page}</Tag>
+                      }} color={item === signatureArea ? 'red' : undefined}>Trang {item.page}</Tag>
                     </li>
                   })
                 }
               </ul>
             </div>
-            
+
           </div>
 
           <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto">
@@ -377,9 +538,9 @@ export default () => {
 
                   <div id="chuKy"
                     ref={signatureRef}
-                    className={`absolute ${chuKyDrop?.page === currentPage? 'show' : 'hidden'}`}
+                    className={`absolute ${chuKyDrop?.page === currentPage ? 'show' : 'hidden'}`}
                   >
-                    <div className="absolute close-button" style={{zIndex: 1}} onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
+                    <div className="absolute close-button" style={{ zIndex: 1 }} onClick={removeChuKy}><CloseOutlined style={{ fontSize: '8px' }} /></div>
                     <ResizableBox
                       width={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.width * (pdfContainerRef.current?.getBoundingClientRect().width) / 100 : 100}
                       height={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.height * (pdfContainerRef.current?.getBoundingClientRect().height) / 100 : 100}
@@ -396,15 +557,61 @@ export default () => {
                         }));
                       }}
                     >
-                      <img className="cursor-move" style={{width: '100%', height: '100%', objectFit: 'fill'}} src={`${ipRoot}${chuKyDrop?.chuKy?.file_path}`} alt="Signature" />
+                      <img className="cursor-move" style={{ width: '100%', height: '100%', objectFit: 'fill' }} src={`${ipRoot}${chuKyDrop?.chuKy?.file_path}`} alt="Signature" />
                     </ResizableBox>
-                    
+
                   </div>
                 </Draggable>}
               </div> || <Spin className="flex items-center w-[100%]" />}
             </div>
           </div>
         </div>
+        
+        {/* Modal tạo chữ ký mới chuyển từ QuanLyChuKy sang */}
+        <Modal
+          width={800}
+          title="Tạo chữ ký mới"
+          visible={showCreateModal}
+          onCancel={onCloseCreateModal}
+          okButtonProps={{ loading: loadingCreate }}
+          onOk={createSignForm.submit}
+        >
+          <Form form={createSignForm} onFinish={createNewSignature} layout="vertical">
+            <Row gutter={[16, 16]}>
+              <Col span={24} md={12}>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Form.Item name="credential_id" label="CRED" rules={[...rules.required]} style={{width: '100%'}}>
+                    <Input placeholder="Nhập CRED" style={{width: '100%'}}/>
+                  </Form.Item>
+                  <Button type="primary" onClick={getListCredential} style={{marginTop: '30px'}}>
+                    Lấy Cred
+                  </Button>
+                </div>
+              </Col>
+              <Col span={24} md={12}>
+                <Form.Item name="name" rules={[...rules.required]} label="Tên chữ ký">
+                  <Input placeholder="Nhập tên chữ ký" />
+                </Form.Item>
+              </Col>
+              <Col span={24} md={12}>
+                <Form.Item name="type" rules={[...rules.required]} label="Loại chữ ký">
+                  <Select options={CLoaiChuKy} placeholder="Chọn loại chữ ký" />
+                </Form.Item>
+              </Col>
+              <Col span={24} md={12}>
+                <Form.Item name="displayType" rules={[...rules.required]} label="Kiểu hiển thị">
+                  <Select options={CKieuHienThi} placeholder="Chọn kiểu hiển thị" />
+                </Form.Item>
+              </Col>
+              <Col span={24} md={12}>
+                <Form.Item name="file" rules={[...rules.required]} label="Hình ảnh chữ ký">
+                  <UploadFile accept=".jpg, .png" maxCount={1} />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Modal>
+
         <Modal title="Xác nhận ký" visible={loadingKy} footer={false} onCancel={() => setLoadingKy(false)}>
           {loadingKy && <div className="signing">
             <img src="/kyso/signing.gif" width={150} />
