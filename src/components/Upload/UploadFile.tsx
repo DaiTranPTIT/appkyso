@@ -1,11 +1,12 @@
 import { blobToBase64, getNameFile } from '@/utils/utils';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Image, Modal, Upload, message } from 'antd';
+import { Button, Image, Upload, message } from 'antd';
 import type { RcFile } from 'antd/es/upload';
 import { useEffect, useState } from 'react';
 import Resizer from 'react-image-file-resizer';
 import { useIntl } from 'umi';
 import PreviewFile from '../PreviewFile';
+import ModalExpandable from '../Table/ModalExpandable';
 import './UploadAvatar.less';
 import type { TFileProps, TResizeProps, TUploadProps } from './typing';
 
@@ -41,14 +42,18 @@ const UploadFile: React.FC<TUploadProps> = ({
 		let files: any[] = [];
 		// Single URL
 		if (typeof value === 'string') {
-			files = [{ url: value, remote: true, name: getNameFile(value) }];
+			files = [{ url: value, remote: true, name: props.previewFileProps?.isFileId ? 'Tập tin' : getNameFile(value) }];
 			setFileList(files);
 			// Callback về Form để Form Item có fileList => Phục vụ check rules fileRequired
 			if (onChange) onChange({ fileList: files });
 		}
 		// Array of URLs
 		else if (Array.isArray(value)) {
-			files = value.map((url) => ({ url, remote: true, name: getNameFile(url) }));
+			files = value.map((url, ind) => ({
+				url,
+				remote: true,
+				name: props.previewFileProps?.isFileId ? `Tập tin ${ind + 1}` : getNameFile(url),
+			}));
 			setFileList(files);
 			// Callback về Form để Form Item có fileList => Phục vụ check rules fileRequired
 			if (onChange) onChange({ fileList: files });
@@ -244,9 +249,9 @@ const UploadFile: React.FC<TUploadProps> = ({
 			<Extra />
 
 			{hasPreviewFile && (
-				<Modal
+				<ModalExpandable
 					title='Xem trước tập tin'
-					width={1000}
+					width={1200}
 					visible={previewOpen}
 					footer={null}
 					onCancel={() => setPreviewOpen(false)}
@@ -256,7 +261,7 @@ const UploadFile: React.FC<TUploadProps> = ({
 					<div className='form-footer'>
 						<Button onClick={() => setPreviewOpen(false)}>{intl.formatMessage({ id: 'global.button.dong' })}</Button>
 					</div>
-				</Modal>
+				</ModalExpandable>
 			)}
 		</>
 	);

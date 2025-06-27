@@ -1,5 +1,6 @@
+import ModalExpandable from '@/components/Table/ModalExpandable';
 import type { NotificationType } from '@/services/ThongBao/constant';
-import { Modal, Steps } from 'antd';
+import { Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import { useModel } from 'umi';
 import ConfirmThongBaoTuyChinh from './Confirm';
@@ -19,7 +20,7 @@ const CardFormThongBaoTuyChinh = (props: { getData: () => void; type: Notificati
 	};
 
 	return (
-		<Modal
+		<ModalExpandable
 			title='Gửi thông báo tùy chỉnh'
 			visible={visibleThongBaoDanhSach}
 			onCancel={() => setVisibleThongBaoDanhSach(false)}
@@ -41,7 +42,7 @@ const CardFormThongBaoTuyChinh = (props: { getData: () => void; type: Notificati
 			) : (
 				<ConfirmThongBaoTuyChinh getData={getData} type={type} />
 			)}
-		</Modal>
+		</ModalExpandable>
 	);
 };
 

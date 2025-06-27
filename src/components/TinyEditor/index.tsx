@@ -27,7 +27,7 @@ const TinyEditor = (props: {
 		hideMenubar,
 		miniToolbar,
 		disabled,
-		minHeight = 50,
+		minHeight = 150,
 		tinyToolbar,
 		stickyToolbar = true,
 	} = props;

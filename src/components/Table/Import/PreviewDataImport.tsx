@@ -82,10 +82,8 @@ const PreviewDataImport = (props: {
 									// Với kiểu số thì làm tròn đến 2 chữ số thập phân ???
 									else temp[col.field] = tmp === null ? tmp : Math.round(tmp * 100) / 100;
 									break;
-								// case 'String':
-								//   temp[col.field] = content?.toString();
-								//   break;
 								case 'Date':
+									// Thử xử lý convert text người dùng nhập thành dạng ISOString
 									tmp =
 										moment(content, 'DD/MM/YYYY').toISOString() ||
 										moment(content, 'D/M/YYYY').toISOString() ||
@@ -96,7 +94,7 @@ const PreviewDataImport = (props: {
 									valid = tmp !== invalidText;
 									break;
 								default:
-									temp[col.field] = content;
+									temp[col.field] = content?.toString();
 									break;
 							}
 						} catch {

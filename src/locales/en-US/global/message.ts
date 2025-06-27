@@ -1,8 +1,8 @@
 export default {
-	'global.message.themmoithanhcong': 'Thêm mới thành công',
-	'global.message.luuthanhcong': 'Lưu thành công',
-	'global.message.xoathanhcong': 'Xóa thành công',
-	'global.message.validated': 'Đã kiểm tra dữ liệu',
-	'global.message.imported': 'Đã nhập dữ liệu',
-	'global.message.formsubmiting': 'Đang gửi dữ liệu',
+	'global.message.themmoithanhcong': 'Inserted successfully',
+	'global.message.luuthanhcong': 'Saved successfully',
+	'global.message.xoathanhcong': 'Deleted successfully',
+	'global.message.validated': 'Data validated',
+	'global.message.imported': 'Data imported',
+	'global.message.formsubmiting': 'Submitting data',
 };

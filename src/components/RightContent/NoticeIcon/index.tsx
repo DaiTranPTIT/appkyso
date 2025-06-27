@@ -1,5 +1,5 @@
+import ModalExpandable from '@/components/Table/ModalExpandable';
 import ViewThongBao from '@/pages/ThongBao/components/ViewThongBao';
-import { Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import { useIntl, useModel } from 'umi';
 import NoticeIcon from './NoticeIcon';
@@ -65,7 +65,7 @@ const NoticeIconView = () => {
 				/>
 			</NoticeIcon>
 
-			<Modal
+			<ModalExpandable
 				width={800}
 				bodyStyle={{ padding: 0 }}
 				destroyOnClose
@@ -81,7 +81,7 @@ const NoticeIconView = () => {
 						setVisiblePopup(false);
 					}}
 				/>
-			</Modal>
+			</ModalExpandable>
 		</>
 	);
 };

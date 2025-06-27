@@ -41,8 +41,6 @@ a {
 	}
 }
 
-.ant-descriptions-item-label,
-.ant-descriptions-title,
 .fw500 {
 	font-weight: 600 !important;
 }
@@ -74,7 +72,25 @@ a {
 	display: flex;
 	gap: 12px;
 	justify-content: center;
+	flex-wrap: wrap;
 	margin-top: 12px;
+	text-align: center;
+}
+
+.ant-modal-footer {
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+	flex-wrap: wrap;
+	text-align: center;
+
+	.form-footer {
+		margin-top: 0;
+	}
+
+	.ant-btn+.ant-btn {
+		margin-left: 0 !important;
+	}
 }
 
 .ant-badge-status {
@@ -221,11 +237,18 @@ canvas {
 		height: 100vh;
 		overflow: hidden;
 
-		>.ant-modal-content {
+		>.ant-modal-content,
+		.ant-modal-body>.ant-card {
 			border-radius: 0;
+			height: 100vh;
+			display: flex;
+			flex-direction: column;
 
-			>.ant-modal-body {
-				height: 100vh;
+			>.ant-modal-body,
+			>.ant-card-body {
+				// height: 100vh;
+				overflow: auto;
+				flex: 1;
 			}
 		}
 	}
@@ -243,16 +266,77 @@ canvas {
 	}
 }
 
-.ant-divider-with-text-center {
+.ant-divider-horizontal {
+	font-weight: 600;
+
+	&.ant-divider-with-text-center {
+
+		&::before,
+		&::after {
+			flex: 1;
+		}
+	}
+
 	.ant-divider-inner-text {
-		font-weight: 600;
-		font-size: 14px;
+		white-space: break-spaces;
+	}
+
+	&.ant-divider-with-text-left {
+		&::before {
+			width: 0;
+			flex: 0;
+		}
+
+		&::after {
+			flex: 1;
+		}
+
+		.ant-divider-inner-text {
+			padding: 0 1em 0 0;
+		}
 	}
 }
 
-.ant-descriptions-bordered .ant-descriptions-item-label,
-.ant-descriptions-bordered .ant-descriptions-item-content {
-	padding: 13px 20px !important;
+.ant-descriptions {
+
+	.ant-descriptions-item-label,
+	.ant-descriptions-title {
+		font-weight: 600 !important;
+	}
+
+	.ant-descriptions-bordered .ant-descriptions-item-label,
+	.ant-descriptions-bordered .ant-descriptions-item-content {
+		padding: 13px 20px !important;
+	}
+
+	// Layout = vertical
+	&.highlight {
+		background-color: #f9f9f9;
+		padding: 16px 16px 4px 16px;
+		border-radius: 8px;
+
+		.ant-descriptions-item-label {
+			font-weight: 400 !important;
+			color: #666;
+		}
+
+		.ant-descriptions-row:nth-child(odd) {
+			.ant-descriptions-item {
+				padding-bottom: 0;
+			}
+		}
+
+		.ant-descriptions-row:nth-child(even) {
+			.ant-descriptions-item {
+				padding-bottom: 12px;
+
+				.ant-descriptions-item-content {
+					font-size: 16px;
+					font-weight: 600;
+				}
+			}
+		}
+	}
 }
 
 .ant-form-item-label>label {
@@ -335,20 +419,6 @@ canvas {
 		display: flex;
 		gap: 8px;
 		margin-bottom: 12px;
-	}
-
-	.ant-divider-horizontal.ant-divider-with-text-left {
-		margin: 12px 0 4px 0;
-		font-weight: 600;
-		font-size: 14px;
-
-		&::before {
-			width: 0;
-		}
-
-		.ant-divider-inner-text {
-			padding: 0;
-		}
 	}
 }
 
@@ -435,6 +505,21 @@ canvas {
 	color: var(--ant-error-color) !important;
 }
 
+.bg-success {
+	background-color: var(--ant-success-color) !important;
+	color: white;
+}
+
+.bg-error {
+	background-color: var(--ant-error-color) !important;
+	color: white;
+}
+
+.bg-warning {
+	background-color: var(--ant-warning-color) !important;
+	color: white;
+}
+
 .bg-highlight {
 	color: white;
 	background-color: #ffc069;
@@ -453,6 +538,15 @@ canvas {
 	.ant-alert-close-icon {
 		margin-left: 0;
 	}
+}
+
+// Hiệu ứng chuyển đổi cho mmodal và drawer khi nhấn Expand Button
+.ant-modal {
+	transition: top .3s ease, width .3s ease;
+}
+
+.ant-drawer-content-wrapper {
+	transition: top .3s ease, width .3s ease;
 }
 
 // Big calendar

@@ -2,6 +2,8 @@ export default {
 	'global.button.themmoi': 'Thêm mới',
 	'global.button.luulai': 'Lưu lại',
 	'global.button.huy': 'Hủy',
+	'global.button.dong': 'Đóng',
+	'global.button.xacnhan': 'Xác nhận',
 	'global.button.tieptheo': 'Tiếp theo',
 	'global.button.taixuongdulieu': 'Tải xuống dữ liệu',
 	'global.button.hoanthanh': 'Hoàn thành',
@@ -10,4 +12,5 @@ export default {
 	'global.button.tailai': 'Tải lại',
 	'global.button.boloctuychinh': 'Bộ lọc tùy chỉnh',
 	'global.button.tongso': 'Tổng số',
+	'global.button.chinhsua': 'Chỉnh sửa',
 };

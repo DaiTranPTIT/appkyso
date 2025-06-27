@@ -100,6 +100,40 @@
 	padding: 8px;
 }
 
+// Modal buttons: Close, Expand fullscreen, Collapse fullscreen
+.modal-buttons {
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	height: 56px;
+	padding: 18px;
+
+	@media (max-width: @screen-xs) {
+		padding: 12px;
+	}
+
+	.button {
+		color: rgba(0, 0, 0, .45);
+		line-height: 1;
+		text-decoration: none;
+		background: transparent;
+		border: 0;
+		outline: 0;
+		cursor: pointer;
+		transition: color .3s;
+		font-size: 16px;
+		padding: 0;
+
+		&:hover {
+			color: rgba(0, 0, 0, .75);
+		}
+	}
+}
+
 /* stylelint-disable-next-line no-duplicate-selectors */
 .ant-modal.modal-ho-so-nhan-su {
 	@media (min-width: @screen-md) {

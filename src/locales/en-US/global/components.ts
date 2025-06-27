@@ -26,9 +26,9 @@ export default {
 
 	//PreviewFile
 	'global.previewfile.message.saochep': 'Link copied!',
-	'global.previewfile.button.taixuong': 'Download',
+	'global.previewfile.button.taixuong': 'Download/View more',
 	'global.previewfile.button.saochep': 'Copy link',
-	'global.previewfile.button.morong': 'Expand',
+	'global.previewfile.button.morong': 'Open in new tab',
 	'global.previewfile.thongbao': 'File preview is not supported',
 
 	//RightContent
@@ -112,7 +112,7 @@ export default {
 	'global.table.index.button.nhapdulieu': 'Import data',
 	'global.table.index.button.xuatdulieu': 'Export data',
 	'global.table.index.button.xoa': 'Delete {count} items',
-	'global.table.index.button.xoa.title': 'Confirm deletion of ${count} selected items?',
+	'global.table.index.button.xoa.title': 'Confirm deletion of {count} selected items?',
 	'global.table.index.button.tailai': 'Reload',
 	'global.table.index.button.tailai.tooltip': 'Reload data',
 	'global.table.index.button.boloc': 'Custom filter',
@@ -147,7 +147,7 @@ export default {
 	'global.uploadfile.duongdan': 'File path',
 	'global.uploadfile.duongdan.placeholder': 'Enter file path',
 	'global.uploadfile.tailen': 'Upload',
-	'global.uploadfile.error.mb': 'File size must not exceed ${maxFileSize}Mb',
+	'global.uploadfile.error.mb': 'File size must not exceed {maxFileSize}Mb',
 	'global.uploadfile.error.format': 'File format not allowed',
 	'global.uploadfile.error.required': 'Please enter a file path',
 	'global.uploadfile.error.required.file': 'Please upload a file',

@@ -1,4 +1,17 @@
+import { primaryColor } from '@/services/base/constant';
 import Joyride, { type CallBackProps, STATUS, type Step } from 'react-joyride';
+
+const getCommonButtonStyle = (primary?: boolean) => {
+	return {
+		backgroundColor: primary ? primaryColor : '#fff',
+		color: primary ? '#fff' : '#000',
+		border: '1px solid #d9d9d9',
+		padding: '8px 15px',
+		fontSize: '14px',
+		cursor: 'pointer',
+		borderRadius: '4px',
+	};
+};
 
 interface JoyrideBaseProps {
 	/** State để chuyển hướng bản hướng dẫn */
@@ -16,7 +29,7 @@ const JoyrideBase = ({ run, setRun, customSteps = [], title }: JoyrideBaseProps)
 	const steps = [
 		{
 			content: <h2>{title ?? 'Bắt đầu hướng dẫn!'}</h2>,
-			locale: { skip: <strong aria-label='skip'>Đóng</strong> },
+			locale: { skip: 'Đóng' },
 			placement: 'center' as any,
 			target: 'body',
 			styles: {
@@ -55,9 +68,9 @@ const JoyrideBase = ({ run, setRun, customSteps = [], title }: JoyrideBaseProps)
 			}}
 			styles={{
 				options: { zIndex: 10000 },
-				buttonNext: { backgroundColor: '#1976d2', color: '#fff', borderRadius: '8px', fontWeight: 'bold' },
-				buttonBack: { color: '#d32f2f' },
-				buttonClose: { color: '#ff0000' },
+				buttonNext: getCommonButtonStyle(true),
+				buttonBack: getCommonButtonStyle(),
+				buttonSkip: getCommonButtonStyle(),
 			}}
 		/>
 	);

@@ -15,11 +15,15 @@ export type ModalImportProps = {
 	maskCloseableForm?: boolean;
 
 	/** Data thêm vào mỗi record khi validate và execute import */
-	extendData?: Record<string, string | number>;
+	extendData?: Record<string, string | number | boolean>;
 
 	/** Hàm gọi API để get file import mẫu */
 	getTemplate?: () => Promise<Blob>;
 
 	/** Tên file Excel mẫu, mặc định `File biểu mẫu.xlsx` */
 	titleTemplate?: string;
+
+	getHeader?: () => Promise<any[]>;
+
+	dependenciesHeader?: any[];
 };

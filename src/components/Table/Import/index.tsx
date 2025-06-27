@@ -1,6 +1,7 @@
-import { Empty, Modal, Steps } from 'antd';
+import { Empty, Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import { useIntl, useModel } from 'umi';
+import ModalExpandable from '../ModalExpandable';
 import ChooseFileImport from './ChooseFileImport';
 import MatchColumns from './MatchColumns';
 import PreviewDataImport from './PreviewDataImport';
@@ -9,19 +10,34 @@ import { type ModalImportProps } from './typing';
 
 const ModalImport = (props: ModalImportProps) => {
 	const intl = useIntl();
-	const { visible, onCancel, onOk, modelName, maskCloseableForm, extendData, getTemplate, titleTemplate } = props;
+	const {
+		visible,
+		onCancel,
+		onOk,
+		modelName,
+		maskCloseableForm,
+		extendData,
+		getTemplate,
+		titleTemplate,
+		dependenciesHeader = [],
+		getHeader,
+	} = props;
 	const { setFileData, setMatchedColumns, setDataImport } = useModel('import');
-	const { getImportHeaderModel, getImportTemplateModel, importHeaders } = useModel(modelName);
+	const { getImportHeaderModel, getImportTemplateModel, importHeaders, setImportHeaders } = useModel(modelName);
 	const [currentStep, setCurrentStep] = useState(0);
 	const [isGetHeader, setIsGetHeader] = useState<boolean>(false);
 
 	const getHeaders = () => {
-		if (getImportHeaderModel) getImportHeaderModel();
+		if (getHeader)
+			getHeader().then((headers) => {
+				setImportHeaders(headers);
+			});
+		else if (getImportHeaderModel) getImportHeaderModel();
 	};
 
 	useEffect(() => {
 		setIsGetHeader(false);
-	}, [modelName]);
+	}, [modelName, ...dependenciesHeader]);
 
 	useEffect(() => {
 		if (visible && !isGetHeader) {
@@ -39,7 +55,7 @@ const ModalImport = (props: ModalImportProps) => {
 	};
 
 	return (
-		<Modal
+		<ModalExpandable
 			title={intl.formatMessage({ id: 'global.table.import.index.title' })}
 			visible={visible}
 			onCancel={() => onCancelModal()}
@@ -93,7 +109,7 @@ const ModalImport = (props: ModalImportProps) => {
 			) : (
 				<Empty description={intl.formatMessage({ id: 'global.table.import.index.empty' })} />
 			)}
-		</Modal>
+		</ModalExpandable>
 	);
 };
 

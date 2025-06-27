@@ -26,9 +26,9 @@ export default {
 
 	//PreviewFile
 	'global.previewfile.message.saochep': 'Đã sao chép đường dẫn!',
-	'global.previewfile.button.taixuong': 'Tải xuống',
+	'global.previewfile.button.taixuong': 'Tải xuống/Xem thêm',
 	'global.previewfile.button.saochep': 'Sao chép đường dẫn',
-	'global.previewfile.button.morong': 'Mở rộng',
+	'global.previewfile.button.morong': 'Mở trong cửa sổ mới',
 	'global.previewfile.thongbao': 'Tệp tin không hỗ trợ hiển thị trực tiếp',
 
 	//RightContent
@@ -115,7 +115,7 @@ export default {
 	'global.table.index.button.nhapdulieu': 'Nhập dữ liệu',
 	'global.table.index.button.xuatdulieu': 'Xuất dữ liệu',
 	'global.table.index.button.xoa': 'Xóa {count} mục',
-	'global.table.index.button.xoa.title': 'Xác nhận xóa ${count} mục đã chọn?',
+	'global.table.index.button.xoa.title': 'Xác nhận xóa {count} mục đã chọn?',
 	'global.table.index.button.tailai': 'Tải lại',
 	'global.table.index.button.tailai.tooltip': 'Tải lại dữ liệu',
 	'global.table.index.button.boloc': 'Bộ lọc tùy chỉnh',
@@ -150,7 +150,7 @@ export default {
 	'global.uploadfile.duongdan': 'Đường dẫn',
 	'global.uploadfile.duongdan.placeholder': 'Nhập đường dẫn',
 	'global.uploadfile.tailen': 'Tải lên',
-	'global.uploadfile.error.mb': 'Dung lượng tập tin không được quá ${maxFileSize}Mb',
+	'global.uploadfile.error.mb': 'Dung lượng tập tin không được quá {maxFileSize}Mb',
 	'global.uploadfile.error.format': 'Định dạng tập tin không cho phép',
 	'global.uploadfile.error.required': 'Vui lòng nhập đường dẫn',
 	'global.uploadfile.error.required.file': 'Vui lòng tải lên tập tin',

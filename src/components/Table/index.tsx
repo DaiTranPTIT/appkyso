@@ -19,7 +19,6 @@ import {
 	Drawer,
 	Empty,
 	Input,
-	Modal,
 	Popconfirm,
 	Space,
 	Table,
@@ -38,6 +37,7 @@ import ButtonExtend from './ButtonExtend';
 import ModalExport from './Export';
 import ModalImport from './Import';
 import ModalCustomFilter from './ModalCustomFilter';
+import ModalExpandable from './ModalExpandable';
 import { EOperatorType } from './constant';
 import { findFiltersInColumns, updateSearchStorage } from './function';
 import './style.less';
@@ -627,14 +627,16 @@ const TableBase = (props: TableBaseProps) => {
 							destroyOnClose={destroyModal || false}
 						>
 							<Form title={title ?? ''} {...props.formProps} />
-							<CloseOutlined
-								onClick={() => setVisibleForm(false)}
-								style={{ position: 'absolute', top: 24, right: 24, cursor: 'pointer' }}
-							/>
+
+							<div className='modal-buttons'>
+								<button className='button' onClick={() => setVisibleForm(false)}>
+									<CloseOutlined />
+								</button>
+							</div>
 						</Drawer>
 					) : (
-						<Modal
-							className={widthDrawer === 'full' ? 'modal-full' : ''}
+						<ModalExpandable
+							fullScreen={widthDrawer === 'full'}
 							maskClosable={props.maskCloseableForm || false}
 							width={widthDrawer !== 'full' ? widthDrawer : undefined}
 							onCancel={() => setVisibleForm(false)}
@@ -642,9 +644,10 @@ const TableBase = (props: TableBaseProps) => {
 							bodyStyle={{ padding: 0 }}
 							visible={visibleForm}
 							destroyOnClose={destroyModal || false}
+							title={props.modalTitle}
 						>
 							<Form title={title ?? ''} {...props.formProps} />
-						</Modal>
+						</ModalExpandable>
 					)}
 				</>
 			)}
