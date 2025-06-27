@@ -6,7 +6,7 @@ FROM node:16-alpine AS development
 ENV APP_CONFIG_IP_ROOT=https://gwdu.vinhuni.edu.vn/
 ENV APP_CONFIG_ONE_SIGNAL_ID=
 ENV APP_CONFIG_SENTRY_DSN=
-ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://gwdu.vinhuni.edu.vn/realms/vinhuni
+ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://gwdu.vinhuni.edu.vn/sso/realms/vinhuni
 ENV APP_CONFIG_PREFIX_OF_KEYCLOAK_CLIENT_ID=vinhuni-
 ENV APP_CONFIG_APP_VERSION=250627.0830
 
@@ -29,7 +29,7 @@ ENV APP_CONFIG_URL_KHAO_THI=https://khaothi.vinhuni.edu.vn/
 ENV APP_CONFIG_URL_CORE=https://core.vinhuni.edu.vn/
 ENV APP_CONFIG_URL_CSVC=
 ENV APP_CONFIG_URL_THU_VIEN=
-ENV APP_CONFIG_URL_QLVB=https://gwdu.vinhuni.edu.vn/realms/vinhuni/protocol/openid-connect/auth?response_type=code&client_id=vinhuni-qlvb&redirect_uri=http%3A%2F%2Fqlvb.vinhuni.edu.vn%2Fauth_oauth%2Fsignin&scope=openid+profile+email&state=%7B%22d%22%3A+%22qlvb%22%2C+%22p%22%3A+4%2C+%22r%22%3A+%22http%253A%252F%252Fqlvb.vinhuni.edu.vn%252Fweb%22%7D
+ENV APP_CONFIG_URL_QLVB=https://gwdu.vinhuni.edu.vn/sso/realms/vinhuni/protocol/openid-connect/auth?response_type=code&client_id=vinhuni-qlvb&redirect_uri=http%3A%2F%2Fqlvb.vinhuni.edu.vn%2Fauth_oauth%2Fsignin&scope=openid+profile+email&state=%7B%22d%22%3A+%22qlvb%22%2C+%22p%22%3A+4%2C+%22r%22%3A+%22http%253A%252F%252Fqlvb.vinhuni.edu.vn%252Fweb%22%7D
 ENV APP_CONFIG_URL_VBCC=
 
 ENV APP_CONFIG_TITLE_LANDING='Cổng thông tin'
