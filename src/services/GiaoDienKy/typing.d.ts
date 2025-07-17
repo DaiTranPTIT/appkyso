@@ -1,0 +1,65 @@
+import { ETypeKy } from "./constant";
+
+export interface IGetSign {
+    founds: FileInfo[],
+    search_options: {
+        ordering: string
+        page: number
+        page_size: number
+        total_count: number
+    }
+}
+
+interface ICredential {
+    credential_id: string;
+    authorization_email: string | null;
+    authorization_phone: string | null;
+    valid_from: string | null;
+    valid_to: string | null;
+    purpose: string | null;
+    version: number;
+    status: "OPERATED" | string;
+    status_desc: string;
+}
+
+export interface SignHashRequest {
+    signature_id: string;
+    credential_id: string;
+    os: string;
+    width: number;
+    height: number;
+    point_x: number;
+    point_y: number;
+    page_sign: number;
+    computer_name: string;
+    mac: string;
+    merchant_id: string;
+    password: string;
+    user_Name: string;
+    sign_info_id: string;
+    phone: string;
+}
+
+export interface ISignInfo {
+    file_link: string;
+    file_upload_handler: string;
+    session_id: string;
+    jwt_token: string | null;
+    meta_data: MetaData[];
+    type: ETypeKy;
+}
+
+export interface FileInfo {
+  id: string;
+  file_path: string;
+  file_local: string;
+  file_name: string;
+  type: string; // hoặc cụ thể hơn: 'incoming_official_documents'
+  display: string; // hoặc cụ thể hơn: 'image'
+  signature_name: string | null;
+  credential_id: string;
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+  user_id: string;
+  name: string;
+}

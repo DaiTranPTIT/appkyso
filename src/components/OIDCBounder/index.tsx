@@ -69,7 +69,7 @@ const OIDCBounder_: FC = ({ children }) => {
 						window.location.replace(linkReplace);
 						return;
 					}
-					history.replace('/403');
+					//history.replace('/403');
 				} else {
 					if (window.location.pathname === '/' || window.location.pathname === '/user/login') redirectLocation();
 				}

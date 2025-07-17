@@ -104,7 +104,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 						window.location.replace(linkReplace);
 						return;
 					}
-					history.replace('/403');
+					//history.replace('/403');
 				}
 			}
 		},

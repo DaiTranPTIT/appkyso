@@ -5,6 +5,8 @@ const ipRoot = APP_CONFIG_IP_ROOT; // ip dev
 // Ip Chính => Mặc định dùng trong các useInitModel
 const ip3 = ipRoot + 'tcns'; // ip dev
 
+const ipServiceKy = APP_CONFIG_IP_KY_SO;
+
 // Ip khác
 const ipNotif = ipRoot + 'notification'; // ip dev
 const ipSlink = ipRoot + 'slink'; // ip dev
@@ -28,6 +30,7 @@ export {
 	currentRole,
 	replaceRole,
 	ip3,
+	ipServiceKy,
 	ipCore,
 	ipNotif,
 	ipSlink,

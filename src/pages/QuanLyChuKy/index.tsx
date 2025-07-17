@@ -1,0 +1,295 @@
+import UploadFile from "@/components/Upload/UploadFile";
+import { getDsKyApi, getListCredentialApi, suaChuKy, taoChuKy, xoaChuKy } from "@/services/GiaoDienKy/api";
+import { CKieuHienThi, CLoaiChuKy, EKieuHienThi, ELoaiChuKy } from "@/services/GiaoDienKy/constant";
+import { FileInfo } from "@/services/GiaoDienKy/typing";
+import { ipServiceKy } from "@/utils/ip";
+import rules from "@/utils/rules";
+import { DeleteOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons"
+import { Button, Card, Col, Form, Input, Modal, notification, Popconfirm, Radio, Row, Select, Spin, Table, Tag, Tooltip } from "antd"
+import { useForm } from "antd/lib/form/Form";
+import Password from "antd/lib/input/Password";
+import { ColumnsType } from "antd/lib/table";
+import moment from "moment";
+import { useEffect, useState } from "react"
+
+export default () => {
+    const [visibleForm, setVisibleForm] = useState<'NEW' | 'EDIT'>();
+    const [credForm] = useForm();
+    const [loading, setLoading] = useState(false);
+    const [form] = useForm();
+    const [userForm] = useForm();
+    const [dsKy, setDsKy] = useState<FileInfo[]>();
+    const [idEdit, setIdEdit] = useState<string>();
+
+    const onClose = () => {
+        form.resetFields();
+        setVisibleForm(undefined);
+        setIdEdit(undefined);
+    }
+
+    const getDsKy = async () => {
+        try {
+            setLoading(true);
+            const res = await getDsKyApi();
+            if (!res) return;
+            const ds = res.data.founds;
+            setDsKy(ds);
+        } catch (err) { }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    const remove = async (id: string) => {
+        try {
+            setLoading(true);
+            const res = await xoaChuKy(id);
+            if (res) {
+                notification.success({
+                    message: 'Xóa chữ ký thành công'
+                });
+                getDsKy();
+            }
+        } catch (err) {
+
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const columns: ColumnsType<FileInfo> = [
+        {
+            title: 'TT',
+            align: 'center',
+            width: 100,
+            render: (val, rec, index) => index + 1
+        },
+        { title: 'Tên', dataIndex: 'name', key: 'name' },
+        { title: 'Loại', dataIndex: 'type', key: 'type', render: (val: keyof typeof ELoaiChuKy) => ELoaiChuKy[val] },
+        { title: 'Kiểu hiển thị', dataIndex: 'display', key: 'display', render: (val: keyof typeof EKieuHienThi) => EKieuHienThi[val] },
+        { title: 'Ngày tạo', dataIndex: 'created_at', key: 'created_at', render: (val) => moment(val).format('HH:mm DD/MM/YYYY') },
+        { title: 'Chữ ký', dataIndex: 'file_path', align: 'center', render: (val) => <img style={{ height: '40px' }} src={`${ipServiceKy}${val}`} />},
+        {
+            title: 'Thao tác',
+            align: 'center',
+            width: 90,
+            fixed: 'right',
+            render: (record: FileInfo) => (
+                <>
+                    <Tooltip title="Chỉnh sửa">
+                        <Button onClick={() => {
+                            setIdEdit(record.id);
+                            setVisibleForm('EDIT');
+                            form.setFieldsValue({
+                                name: record.name,
+                                type: record.type,
+                                displayType: record.display,
+                                file: record.file_name,
+                                credential_id: record.credential_id
+                            })
+                        }} type="link" icon={<EditOutlined />} />
+                    </Tooltip>
+                    <Tooltip title="Xóa">
+                        <Popconfirm
+                            onConfirm={() => { remove(record.id) }}
+                            title="Bạn có chắc chắn muốn xóa chức vụ này?"
+                            placement="topLeft"
+                        >
+                            <Button danger type="link" icon={<DeleteOutlined />} />
+                        </Popconfirm>
+                    </Tooltip>
+                </>
+            ),
+        },
+    ];
+
+    useEffect(() => {
+        getDsKy();
+    }, [])
+
+    const submit = async (payload: any) => {
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append('name', payload.name);
+            formData.append('type', payload.type);
+            formData.append('display', payload.displayType);
+            formData.append('credential_id', payload.credential_id);
+            if (payload.file.fileList[0].originFileObj) formData.append('file_upload', payload.file.fileList[0].originFileObj);
+            if (idEdit) {
+                const res = await suaChuKy(formData, idEdit);
+                if (res) {
+                    notification.success({
+                        message: 'Sửa chữ ký thành công'
+                    })
+                }
+            } else {
+                const res = await taoChuKy(formData);
+                if (res) {
+                    notification.success({
+                        message: 'Tạo chữ ký thành công'
+                    })
+                }
+            }
+            onClose();
+            getDsKy();
+        } catch (err) {
+
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const getListCredential = async () => {
+        try {
+            setLoading(true);
+            await Modal.confirm({
+                title: 'Nhập thông tin tài khoản',
+                onOk: async () => {
+                    userForm
+                    .validateFields()
+                    .then(async val => {
+                        const res = await getListCredentialApi(val);
+                        if (res.data.code === 400) {
+                            notification.error({
+                                message: "Thất bại",
+                                description: "Tài khoản không tồn tại",
+                            });
+                            return;
+                        }
+                        Modal.confirm({
+                            width: 600,
+                            title: 'Chọn CRED',
+                            onOk: () => {
+                                return new Promise((resolve, reject) => {
+                                    credForm
+                                        .validateFields()
+                                        .then(values => {
+                                            console.log(values.credential_id)
+                                            form.setFieldsValue({
+                                                'credential_id': values.credential_id
+                                            })
+                                            resolve(null);
+                                        })
+                                        .catch(() => reject());
+                                });
+                            },
+                            content: (
+                                <Form form={credForm}>
+                                    <Form.Item name="credential_id" rules={[...rules.required]}>
+                                        <Radio.Group style={{ width: '100%' }}>
+                                            <Table
+                                                rowKey="credential_id"
+                                                columns={[
+                                                    {
+                                                        title: "",
+                                                        dataIndex: "credential_id",
+                                                        render: (_: any, record: any) => (
+                                                            <Radio value={record.credential_id} />
+                                                        ),
+                                                    },
+                                                    {
+                                                        title: "Cred",
+                                                        dataIndex: "credName",
+                                                    },
+                                                    {
+                                                        title: "Trạng thái",
+                                                        dataIndex: "status",
+                                                        render: val => {
+                                                            console.log(val);
+                                                            switch (val) {
+                                                                case "OPERATED":
+                                                                    return <Tag color="green">Hoạt động</Tag>;
+                                                                default:
+                                                                    return <Tag color="red">Không hoạt động</Tag>;
+                                                            }
+                                                        }
+                                                    },
+                                                ]}
+                                                dataSource={res.data.result.map((item: any) => {
+                                                    return {
+                                                        credential_id: item.credential_id,
+                                                        credName: item.credential_id,
+                                                        status: item.status
+                                                    }
+                                                })}
+                                                pagination={false}
+                                            />
+                                        </Radio.Group>
+                                    </Form.Item>
+                                </Form>
+                            )
+                        });
+                    })
+                },
+                content: (
+                    <Form form={userForm} layout="vertical">
+                        <Form.Item name="username" rules={[...rules.required]} label="Tên đăng nhập">
+                            <Input placeholder="Nhập tên đăng nhập" />
+                        </Form.Item>
+                        <Form.Item name="password" rules={[...rules.required]} label="Mật khẩu">
+                            <Password placeholder="Nhập mật khẩu" />
+                        </Form.Item>
+                    </Form>
+                )
+            });
+        } catch (err) {
+        } finally {
+            setLoading(false);
+
+        }
+    }
+
+    return <>
+        <h2 className="mb-4">Quản lý chữ ký số</h2>
+        <Card>
+            <Button icon={<FileAddOutlined />} type="primary" style={{ marginBottom: '10px' }} onClick={() => setVisibleForm('NEW')}>Thêm chữ ký</Button>
+            <Spin spinning={loading}><Table dataSource={dsKy} columns={columns} /></Spin>
+        </Card>
+
+        <Modal
+            width={800}
+            title={`Cập nhật thông tin chữ ký`}
+            visible={Boolean(visibleForm)}
+            onCancel={onClose}
+            okButtonProps={{ loading: loading }}
+            onOk={form.submit}
+
+        >
+            <Form form={form} onFinish={submit} layout="vertical">
+                <Row gutter={[16, 16]}>
+                    <Col span={24} md={12}>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <Form.Item name="credential_id" label="CRED" rules={[...rules.required]} style={{width: '100%'}}>
+                                <Input placeholder="Nhập CRED" style={{width: '100%'}}/>
+                            </Form.Item>
+                            <Button type="primary" onClick={getListCredential} style={{marginTop: '30px'}}>
+                                Lấy Cred
+                            </Button>
+                        </div>
+                    </Col>
+                    <Col span={24} md={12}>
+                        <Form.Item name="name" rules={[...rules.required]} label="Tên chữ ký">
+                            <Input placeholder="Nhập tên chữ ký" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24} md={12}>
+                        <Form.Item name="type" rules={[...rules.required]} label="Loại chữ ký">
+                            <Select options={CLoaiChuKy} placeholder="Chọn loại chữ ký" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24} md={12}>
+                        <Form.Item name="displayType" rules={[...rules.required]} label="Kiểu hiển thị">
+                            <Select options={CKieuHienThi} placeholder="Chọn kiểu hiển thị" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24} md={12}>
+                        <Form.Item name="file" rules={[...rules.required]} label="Hình ảnh chữ ký">
+                            <UploadFile accept=".jpg, .png" maxCount={1} />
+                        </Form.Item>
+                    </Col>
+                </Row>
+            </Form>
+        </Modal>
+    </>
+}

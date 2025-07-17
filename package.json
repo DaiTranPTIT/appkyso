@@ -100,7 +100,10 @@
     "tinymce": "^5.10.0",
     "umi": "~3.5.0",
     "umi-serve": "~1.9.10",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "react-draggable": "^4.4.6",
+    "react-resizable": "^3.0.5",
+    "@types/react-resizable": "^3.0.8"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",

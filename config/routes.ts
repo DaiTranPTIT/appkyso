@@ -30,20 +30,50 @@
 		component: './TienIch/GioiThieu',
 		hideInMenu: true,
 	},
+	{
+		icon: 'SubnodeOutlined',
+		path: '/log-ky',
+		name: 'logKy',
+		component: './LogKy'
+	},
+	{
+		path: '/sign/:id',
+		component: './Sign',
+	},
+	{
+		path: '/remote-signing/:id',
+		component: './RemoteSigning',
+		layout: false
+	},
+	{
+		path: '/sim/:id',
+		component: './SimSigning',
+		layout: false
+	},
+	{
+		path: '/usbtoken',
+		component: './USBToken',
+	},
+	{
+		icon: 'AppstoreAddOutlined',
+		path: '/quan-ly-chu-ky',
+		name: 'QuanLyChuKy',
+		component: './QuanLyChuKy'
+	},
 
 	// DANH MUC HE THONG
-	{
-		name: 'DanhMuc',
-		path: '/danh-muc',
-		icon: 'copy',
-		routes: [
-			{
-				name: 'ChucVu',
-				path: 'chuc-vu',
-				component: './DanhMuc/ChucVu',
-			},
-		],
-	},
+	// {
+	// 	name: 'DanhMuc',
+	// 	path: '/danh-muc',
+	// 	icon: 'copy',
+	// 	routes: [
+	// 		{
+	// 			name: 'ChucVu',
+	// 			path: 'chuc-vu',
+	// 			component: './DanhMuc/ChucVu',
+	// 		},
+	// 	],
+	// },
 
 	{
 		path: '/notification',
