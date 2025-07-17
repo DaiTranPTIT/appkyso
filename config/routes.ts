@@ -31,6 +31,12 @@
 		hideInMenu: true,
 	},
 	{
+		icon: 'AppstoreAddOutlined',
+		path: '/quan-ly-chu-ky',
+		name: 'QuanLyChuKy',
+		component: './QuanLyChuKy'
+	},
+	{
 		icon: 'SubnodeOutlined',
 		path: '/log-ky',
 		name: 'logKy',
@@ -54,12 +60,7 @@
 		path: '/usbtoken',
 		component: './USBToken',
 	},
-	{
-		icon: 'AppstoreAddOutlined',
-		path: '/quan-ly-chu-ky',
-		name: 'QuanLyChuKy',
-		component: './QuanLyChuKy'
-	},
+	
 
 	// DANH MUC HE THONG
 	// {

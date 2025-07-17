@@ -8,6 +8,6 @@ export default {
 
 	'menu.DanhMuc': 'Danh mục',
 	'menu.DanhMuc.ChucVu': 'Chức vụ',
-	'menu.logKy': 'Log ký số',
+	'menu.logKy': 'Lịch sử ký số',
 	'menu.QuanLyChuKy': 'Quản lý chữ ký',
 };
