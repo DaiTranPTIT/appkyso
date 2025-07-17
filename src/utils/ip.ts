@@ -12,7 +12,7 @@ const ipNotif = ipRoot + 'notification'; // ip dev
 const ipSlink = ipRoot + 'slink'; // ip dev
 const ipCore = ipRoot + 'core'; // ip dev
 
-const currentRole = EModuleKey.TCNS;
+const currentRole = EModuleKey.KY_SO;
 const replaceRole: EModuleKey | undefined = undefined; //EModuleKey.CONG_CAN_BO; // Thay đổi theo từng phân hệ
 const oneSignalRole = EModuleKey.CONG_CAN_BO;
 

@@ -49,6 +49,7 @@ declare const APP_CONFIG_URL_VBCC: string;
 
 declare const APP_CONFIG_TITLE_LANDING: string;
 declare const APP_CONFIG_TITLE_CONNECT: string;
+declare const APP_CONFIG_TITLE_KYSO: string;
 declare const APP_CONFIG_TITLE_CAN_BO: string;
 declare const APP_CONFIG_TITLE_DAO_TAO: string;
 declare const APP_CONFIG_TITLE_NHAN_SU: string;

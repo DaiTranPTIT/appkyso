@@ -28,4 +28,6 @@ interface FoundItem {
     file_link: string;
     file_upload_handler: string;
     user_id: string;
+    type: "remote",
+    function: "vgca_sign_approved",
 }

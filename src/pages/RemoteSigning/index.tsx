@@ -451,8 +451,7 @@ export default () => {
               {/*thêm nút tạo mới chữ ký */}
               <Tooltip title="Tạo chữ ký mới"> 
                 <Button 
-                  type="primary" 
-                  size="small" 
+                  type="primary"
                   icon={<FileAddOutlined />}
                   onClick={() => setShowCreateModal(true)}
                 >
