@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Demo</title>
+    
+    <script type="text/javascript" src="./vgcaplugin.js"></script>
+    <script type="text/javascript" src="./execute.js"></script>
+</head>
+<body>
+    <form id="message_form" runat="server">
+
+        <div id="page-wrapper">
+            <h1>Plugin Demo</h1>
+
+            <p><textarea id="_signature" cols="80" rows="10" readonly></textarea></p>
+
+            <p>
+                <button type="button" id="_Config" onclick="vgca_show_config();">Show config</button> <br />
+            </p>
+            <div>
+
+                <p>
+                    <h3>Lãnh đạo ký phê duyệt:</h3>
+                    <input type="text" id="file1" size="50" />
+                    <button type="button" id="_lanhdaoPheduyet" onclick="exc_sign_approved();">Ký phê duyệt</button>
+                </p>
+
+
+                <p>
+                    <h3>Văn thư ký phát hành:</h3>
+                    <input type="text" id="file2" size="50" />
+                    <button type="button" id="_vanthuphathanh" onclick="exc_sign_issued();">Đóng dấu Phát Hành</button>
+                </p>
+                <p>
+                    <h3>Văn thư ký công văn đến:</h3>
+                    <input type="text" id="file3" size="50" />
+                    <button type="button" id="_vanthukycongvanden" onclick="exc_sign_income();">Ký số công văn đến</button>
+                </p>
+                <p>
+                    <h3>Comment:</h3>
+                    <input type="text" id="file3" size="50" />
+                    <button type="button" id="_comment" onclick="exc_comment('');">Add Comment</button>
+                </p>
+
+                <p>
+                    <h3>Phụ lục/ Đính kèm:</h3>
+                    <input type="text" id="file3" size="50" />
+                    <button type="button" id="_comment" onclick="exc_appendix();">Ký tài liệu đính kèm</button>
+                </p>
+                <p>
+                    <h3>Ký số Bản sao điện tử:</h3>
+                    <input type="text" id="file3" size="50" />
+                    <button type="button" id="_Sacomment" onclick="exc_sign_copy();">Sao văn bản điện tử</button>
+                </p>
+                <p>
+                    <h3>Ký số Danh sách file:</h3>
+                <p><textarea id="_txtfiles" cols="80" rows="10"></textarea></p>
+                <button type="button" id="_SignFiles" onclick="exc_sign_lylich();">Ký Danh sách file!</button>
+                </p>
+            </div>
+
+
+        </div>
+    </form>
+</body>
+</html>

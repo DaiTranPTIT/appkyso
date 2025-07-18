@@ -445,7 +445,7 @@ export default () => {
       {!pdfLoaded ? <LoadingComponent /> : <div style={{ background: '#f4f4f4' }}>
         {isDragging && <div className="overlay"></div>}
         <div className="flex justify-between">
-          <div className="w-[400px] border-gray-500 px-3 py-4 bg-white">
+          <div className="lg:w-[400px] w-[300px] border-gray-500 px-3 py-4 bg-white">
             <div className="flex justify-between items-center mb-4">
               <h2><strong>Mẫu chữ ký</strong></h2>
               {/*thêm nút tạo mới chữ ký */}
@@ -488,8 +488,8 @@ export default () => {
               </Spin>
             </Card>
 
-            <div className="flex items-center">
-              <strong>Gợi ý trang ký khả dụng: </strong>
+            {signatureAreas?.length > 0 && <div className="flex items-center">
+              <strong>Gợi ý trang ký khả dụng </strong>
               <ul className="signature-areas">
                 {
                   signatureAreas?.map((item: any, index: number) => {
@@ -501,12 +501,12 @@ export default () => {
                   })
                 }
               </ul>
-            </div>
+            </div>}
 
           </div>
 
-          <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto">
-            <div className="flex justify-between items-center topbar-control px-4 py-2">
+          <div className="lg:w-[calc(100%-400px)] w-[calc(100%-300px)] margin-[auto] h-[100vh] overflow-auto">
+            <div className="flex justify-between items-center topbar-control px-4 py-2 pt-[16px]">
               <Pagination size="small" simple current={currentPage} total={numPages} onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
               <Button disabled={!chuKyDrop} type="primary" onClick={showModalUsernamePassword} icon={<ContactsFilled />}>Ký số</Button>
             </div>
@@ -545,7 +545,7 @@ export default () => {
                       height={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.height * (pdfContainerRef.current?.getBoundingClientRect().height) / 100 : 100}
                       minConstraints={[40, 40]}
                       maxConstraints={[200, 200]}
-                      resizeHandles={['se']}
+                      resizeHandles={['se', 'sw', 'ne', 'nw']}
                       lockAspectRatio={true}
                       onResizeStop={(e: any, data: any) => {
                         // Cập nhật lại width/height vào state

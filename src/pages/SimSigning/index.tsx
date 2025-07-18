@@ -321,8 +321,8 @@ export default () => {
               </Spin>
             </Card>
 
-            <div className="flex items-center">
-              <strong>Gợi ý trang ký khả dụng: </strong>
+            {signatureAreas?.length > 0 && <div className="flex items-center">
+              <strong>Gợi ý trang ký khả dụng </strong>
               <ul className="signature-areas">
                 {
                   signatureAreas?.map((item: any) => {
@@ -334,7 +334,7 @@ export default () => {
                   })
                 }
               </ul>
-            </div>
+            </div>}
             
           </div>
 
@@ -378,7 +378,7 @@ export default () => {
                       height={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.height * (pdfContainerRef.current?.getBoundingClientRect().height) / 100 : 100}
                       minConstraints={[40, 40]}
                       maxConstraints={[200, 200]}
-                      resizeHandles={['se']}
+                      resizeHandles={['se', 'sw', 'ne', 'nw']}
                       lockAspectRatio={true}
                       onResizeStop={(e, data) => {
                         // Cập nhật lại width/height vào state
