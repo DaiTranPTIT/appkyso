@@ -65,8 +65,16 @@ export default () => {
             render: (val, rec, index) => index + 1
         },
         { title: 'Tên', dataIndex: 'name', key: 'name' },
-        { title: 'Loại', dataIndex: 'type', key: 'type', render: (val: keyof typeof ELoaiChuKy) => ELoaiChuKy[val] },
-        { title: 'Kiểu hiển thị', dataIndex: 'display', key: 'display', render: (val: keyof typeof EKieuHienThi) => EKieuHienThi[val] },
+        { title: 'Loại', dataIndex: 'type', key: 'type', filters: Object.entries(ELoaiChuKy).map(([key, label]) => ({
+            text: label,
+            value: key,
+        })),
+        onFilter: (value, record) => record.type === value, render: (val: keyof typeof ELoaiChuKy) => ELoaiChuKy[val] },
+        { title: 'Kiểu hiển thị', filters: Object.entries(EKieuHienThi).map(([key, label]) => ({
+            text: label,
+            value: key,
+        })),
+        onFilter: (value, record) => record.display === value, dataIndex: 'display', key: 'display', render: (val: keyof typeof EKieuHienThi) => EKieuHienThi[val] },
         { title: 'Ngày tạo', dataIndex: 'created_at', key: 'created_at', render: (val) => moment(val).format('HH:mm DD/MM/YYYY') },
         { title: 'Chữ ký', dataIndex: 'file_path', align: 'center', render: (val) => <img style={{ height: '40px' }} src={`${ipServiceKy}${val}`} />},
         {

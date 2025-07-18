@@ -528,7 +528,7 @@ export default () => {
                   onStop={() => setIsDragging(false)}
                   onStart={() => setIsDragging(true)}
                   bounds={"parent"}
-                  handle=".cursor-move"
+                  handle=".cursor-move" 
                   defaultPosition={{
                     x: signaturePosition.x,
                     y: signaturePosition.y - (pdfContainerRef.current?.getBoundingClientRect().height || 0)

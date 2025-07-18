@@ -64,12 +64,22 @@ export default () => {
       dataIndex: 'type',
       width: 80,
       render: (val: keyof typeof ETypeKy) => ETypeKy[val],
+      filters: Object.entries(ETypeKy).map(([key, label]) => ({
+        text: label,
+        value: key,
+      })),
+      onFilter: (value, record) => record.type === value,
     },
     {
       title: 'Phương thức ký',
-      align: 'center',
-      dataIndex: 'function',
-      width: 80,
+        align: 'center',
+        dataIndex: 'function',
+        width: 80,
+        filters: Object.entries(EFunctionKy).map(([key, label]) => ({
+        text: label,
+        value: key,
+      })),
+      onFilter: (value, record) => record.function === value,
       render: (val: keyof typeof EFunctionKy) => EFunctionKy[val],
     },
     {
@@ -78,6 +88,11 @@ export default () => {
       align: 'center',
       width: 80,
       sortable: true,
+      filters: [
+        { text: 'Đã ký', value: true },
+        { text: 'Chưa ký', value: false },
+      ],
+      onFilter: (value, record) => record.signed === value,
       render: (val, rec) => <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
         <Tag color={val? 'green': 'orange'}>{val? 'Đã ký': 'Chưa ký'}</Tag>
         {val && <p style={{marginTop: '8px'}}>Thời gian ký: {moment(rec.signed_time).format('HH:mm DD/MM/YYYY')}</p>}
