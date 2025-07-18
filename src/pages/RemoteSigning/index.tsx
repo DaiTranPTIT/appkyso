@@ -468,21 +468,19 @@ export default () => {
                         setChuKyDrag(item);
                         setChuKyDrop({ chuKy: item, page: currentPage });
                       }}
-                        className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKyDrop?.chuKy && 'active'}`}>
-                        <div className="flex items-center gap-[10px]">
-                          <div
-                            onDrag={e => handleDragStart(e, item)}
-                            onDragEnd={e => {
-                              setIsDragging(false);
-                              dragStartPosition.current = null;
-                            }}
-                            draggable="true"
-                          >
-                            <img src={`${ipServiceKy}${item.file_path}`} style={{ height: '40px', objectFit: 'contain', background: 'white' }} alt="Signature" />
-                          </div>
-                          <strong>{item.name}</strong>
-                        </div>
-                      </Col>)
+                      className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKyDrop?.chuKy && 'active'}`}>
+                      <div className="flex items-center gap-[10px]"
+                        onDrag={e => handleDragStart(e, item)}
+                        onDragEnd={e => {
+                          setIsDragging(false);
+                          dragStartPosition.current = null;
+                        }}
+                        draggable="true"
+                      >
+                        <img src={`${ipServiceKy}${item.file_path}`} style={{ height: '40px', objectFit: 'contain', background: 'white' }} alt="Signature" />
+                        <strong>{item.name}</strong>
+                      </div>
+                    </Col>)
                   }
                 </Row>
               </Spin>
