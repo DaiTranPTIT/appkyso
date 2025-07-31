@@ -1,7 +1,6 @@
 import ErrorInfo from "@/components/ErrorInfo";
+import { getSignInfoApi } from "@/services/GiaoDienKy/api";
 import { ETypeKy } from "@/services/GiaoDienKy/constant";
-import { ipRoot } from "@/utils/ip";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { history } from 'umi';
@@ -22,7 +21,7 @@ export default () => {
 
     const getSignInfo = async (id: string) => {
         try {
-            const res: any = await axios.get(`${ipRoot}/sign-info/${id}`);
+            const res: any = await getSignInfoApi(id);
             if (!res.data) return;
             const signInfo: any = res.data;
             switch (signInfo.type) {

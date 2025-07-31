@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Button, Card, Col, Form, Input, Modal, notification, Pagination, PaginationProps, Row, Spin, Tag, Select, Tooltip } from "antd";
+import { Button, Card, Col, Form, Input, Modal, notification, Pagination, Row, Spin, Tag, Select, Tooltip, Radio, Table } from "antd";
 import { getFileFromServer } from "@/utils/function";
 import Draggable from "react-draggable";
-import { IChuKy, SignHashRequest } from "@/services/GiaoDienKy/typing";
+import { FileInfo, SignHashRequest } from "@/services/GiaoDienKy/typing";
 import { apiKy, getDsKyApi, getListCredentialApi, taoChuKy } from "@/services/GiaoDienKy/api";
-import { CloseOutlined, ContactsFilled, FileAddOutlined, PlusOutlined } from "@ant-design/icons";
+import { CloseOutlined, ContactsFilled, FileAddOutlined } from "@ant-design/icons";
 import './style.less';
-import { ipRoot } from "@/utils/ip";
+import { ipServiceKy } from "@/utils/ip";
 import { useParams } from "react-router";
 import { useForm } from "antd/lib/form/Form";
 import rules from "@/utils/rules";
@@ -19,8 +19,7 @@ import "react-resizable/css/styles.css";
 
 //thêm mới chữ kí vào trực tiếp trình ký
 import UploadFile from "@/components/Upload/UploadFile";
-import { CKieuHienThi, CLoaiChuKy, EKieuHienThi, ELoaiChuKy } from "@/services/GiaoDienKy/constant";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons"
+import { CKieuHienThi, CLoaiChuKy } from "@/services/GiaoDienKy/constant";
 
 type ParamsType = {
   id: string;
@@ -37,7 +36,7 @@ export default () => {
   const [credForm] = useForm();
   const [userForm] = useForm();
   const [numPages, setNumPages] = useState<number>(0);
-  const [dsKy, setDsKy] = useState<IChuKy[]>([]);
+  const [dsKy, setDsKy] = useState<FileInfo[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -47,10 +46,10 @@ export default () => {
   const [signatureAreas, setSignatureAreas] = useState<any>();
   const [signatureArea, setSignatureArea] = useState<any>();
 
-  const [chuKyDrag, setChuKyDrag] = useState<IChuKy>();
+  const [chuKyDrag, setChuKyDrag] = useState<FileInfo>();
   const [chuKyDrop, setChuKyDrop] = useState<
     {
-      chuKy: IChuKy,
+      chuKy: FileInfo,
       page: number
     }>();
 
@@ -127,7 +126,7 @@ export default () => {
 
   const getSignInfo = async () => {
     try {
-      const file = await getFileFromServer(`${ipRoot}/sign-info/file_content/${id}`, auth.user?.access_token);
+      const file = await getFileFromServer(`${ipServiceKy}/sign-info/file_content/${id}`, auth.user?.access_token);
       if (!file) return;
       setPdfFile(file.fileContent);
       setSignatureAreas(file.signatureAreas);
@@ -137,7 +136,7 @@ export default () => {
     }
   }
 
-  const handleDragStart = (e: React.DragEvent, chuKy: IChuKy) => {
+  const handleDragStart = (e: React.DragEvent, chuKy: FileInfo) => {
     if (!dragStartPosition.current) {
       const rect = e.currentTarget.getBoundingClientRect();
       const offsetX = e.clientX - rect.left;
@@ -273,7 +272,8 @@ export default () => {
         mac: "00-00-00-00-00-00",
         merchant_id: "VIETTEL",
         password: acc.password,
-        user_Name: acc.username
+        user_Name: acc.username,
+        phone: ''
       }
 
       try {
@@ -445,14 +445,13 @@ export default () => {
       {!pdfLoaded ? <LoadingComponent /> : <div style={{ background: '#f4f4f4' }}>
         {isDragging && <div className="overlay"></div>}
         <div className="flex justify-between">
-          <div className="w-[400px] border-gray-500 px-3 py-4 bg-white">
+          <div className="lg:w-[400px] w-[300px] border-gray-500 px-3 py-4 bg-white">
             <div className="flex justify-between items-center mb-4">
               <h2><strong>Mẫu chữ ký</strong></h2>
               {/*thêm nút tạo mới chữ ký */}
               <Tooltip title="Tạo chữ ký mới"> 
                 <Button 
-                  type="primary" 
-                  size="small" 
+                  type="primary"
                   icon={<FileAddOutlined />}
                   onClick={() => setShowCreateModal(true)}
                 >
@@ -469,28 +468,26 @@ export default () => {
                         setChuKyDrag(item);
                         setChuKyDrop({ chuKy: item, page: currentPage });
                       }}
-                        className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKyDrop?.chuKy && 'active'}`}>
-                        <div className="flex items-center gap-[10px]">
-                          <div
-                            onDrag={e => handleDragStart(e, item)}
-                            onDragEnd={e => {
-                              setIsDragging(false);
-                              dragStartPosition.current = null;
-                            }}
-                            draggable="true"
-                          >
-                            <img src={`${ipRoot}${item.file_path}`} style={{ height: '40px', objectFit: 'contain', background: 'white' }} alt="Signature" />
-                          </div>
-                          <strong>{item.name}</strong>
-                        </div>
-                      </Col>)
+                      className={`bg-white border-gray-500 p-2 rounded shadow-md chu-ky ${item === chuKyDrop?.chuKy && 'active'}`}>
+                      <div className="flex items-center gap-[10px]"
+                        onDrag={e => handleDragStart(e, item)}
+                        onDragEnd={e => {
+                          setIsDragging(false);
+                          dragStartPosition.current = null;
+                        }}
+                        draggable="true"
+                      >
+                        <img src={`${ipServiceKy}${item.file_path}`} style={{ height: '40px', objectFit: 'contain', background: 'white' }} alt="Signature" />
+                        <strong>{item.name}</strong>
+                      </div>
+                    </Col>)
                   }
                 </Row>
               </Spin>
             </Card>
 
-            <div className="flex items-center">
-              <strong>Gợi ý trang ký khả dụng: </strong>
+            {signatureAreas?.length > 0 && <div className="flex items-center">
+              <strong>Gợi ý trang ký khả dụng </strong>
               <ul className="signature-areas">
                 {
                   signatureAreas?.map((item: any, index: number) => {
@@ -502,12 +499,12 @@ export default () => {
                   })
                 }
               </ul>
-            </div>
+            </div>}
 
           </div>
 
-          <div className="w-[calc(100%-400px)] margin-[auto] h-[100vh] overflow-auto">
-            <div className="flex justify-between items-center topbar-control px-4 py-2">
+          <div className="lg:w-[calc(100%-400px)] w-[calc(100%-300px)] margin-[auto] h-[100vh] overflow-auto">
+            <div className="flex justify-between items-center topbar-control px-4 py-2 pt-[16px]">
               <Pagination size="small" simple current={currentPage} total={numPages} onChange={(e) => setCurrentPage(Number(e))} defaultPageSize={1} />
               <Button disabled={!chuKyDrop} type="primary" onClick={showModalUsernamePassword} icon={<ContactsFilled />}>Ký số</Button>
             </div>
@@ -529,7 +526,7 @@ export default () => {
                   onStop={() => setIsDragging(false)}
                   onStart={() => setIsDragging(true)}
                   bounds={"parent"}
-                  handle=".cursor-move"
+                  handle=".cursor-move" 
                   defaultPosition={{
                     x: signaturePosition.x,
                     y: signaturePosition.y - (pdfContainerRef.current?.getBoundingClientRect().height || 0)
@@ -546,9 +543,9 @@ export default () => {
                       height={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.height * (pdfContainerRef.current?.getBoundingClientRect().height) / 100 : 100}
                       minConstraints={[40, 40]}
                       maxConstraints={[200, 200]}
-                      resizeHandles={['se']}
+                      resizeHandles={['se', 'sw', 'ne', 'nw']}
                       lockAspectRatio={true}
-                      onResizeStop={(e, data) => {
+                      onResizeStop={(e: any, data: any) => {
                         // Cập nhật lại width/height vào state
                         setPointInSign(prev => ({
                           ...prev,
@@ -557,7 +554,7 @@ export default () => {
                         }));
                       }}
                     >
-                      <img className="cursor-move" style={{ width: '100%', height: '100%', objectFit: 'fill' }} src={`${ipRoot}${chuKyDrop?.chuKy?.file_path}`} alt="Signature" />
+                      <img className="cursor-move" style={{ width: '100%', height: '100%', objectFit: 'fill' }} src={`${ipServiceKy}${chuKyDrop?.chuKy?.file_path}`} alt="Signature" />
                     </ResizableBox>
 
                   </div>

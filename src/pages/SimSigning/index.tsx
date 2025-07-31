@@ -1,17 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Button, Card, Col, Form, Input, Modal, notification, Pagination, PaginationProps, Row, Spin, Tag } from "antd";
+import { Button, Card, Col, Form, Input, Modal, notification, Pagination, Row, Spin, Tag } from "antd";
 import { getFileFromServer } from "@/utils/function";
 import Draggable from "react-draggable";
-import { IChuKy, SignHashRequest } from "@/services/GiaoDienKy/typing";
+import { FileInfo } from "@/services/GiaoDienKy/typing";
 import { apiKy, getDsKyApi } from "@/services/GiaoDienKy/api";
 import { CloseOutlined, ContactsFilled } from "@ant-design/icons";
 import './style.less';
-import { ipRoot } from "@/utils/ip";
+import { ipServiceKy } from "@/utils/ip";
 import { useParams } from "react-router";
 import { useForm } from "antd/lib/form/Form";
 import rules from "@/utils/rules";
-import Password from "antd/lib/input/Password";
 import { useAuth } from "react-oidc-context";
 import LoadingComponent from "@/components/LoadingComponent";
 import { ResizableBox } from "react-resizable";
@@ -28,7 +27,7 @@ export default () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [form] = useForm();
   const [numPages, setNumPages] = useState<number>(0);
-  const [dsKy, setDsKy] = useState<IChuKy[]>([]);
+  const [dsKy, setDsKy] = useState<FileInfo[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -38,10 +37,10 @@ export default () => {
   const [signatureAreas, setSignatureAreas] = useState<any>();
   const [signatureArea, setSignatureArea] = useState<any>();
 
-  const [chuKyDrag, setChuKyDrag] = useState<IChuKy>();
+  const [chuKyDrag, setChuKyDrag] = useState<FileInfo>();
   const [chuKyDrop, setChuKyDrop] = useState<
   {
-    chuKy: IChuKy,
+    chuKy: FileInfo,
     page: number
   }>();
 
@@ -117,7 +116,7 @@ export default () => {
 
   const getSignInfo = async () => {
     try {
-      const file = await getFileFromServer(`${ipRoot}/sign-info/file_content/${id}`, auth.user?.access_token);
+      const file = await getFileFromServer(`${ipServiceKy}/sign-info/file_content/${id}`, auth.user?.access_token);
       if (!file) return;
       setPdfFile(file.fileContent);
       setSignatureAreas(file.signatureAreas);
@@ -127,7 +126,7 @@ export default () => {
     }
   }
 
-  const handleDragStart = (e: React.DragEvent, chuKy: IChuKy) => {
+  const handleDragStart = (e: React.DragEvent, chuKy: FileInfo) => {
     if (!dragStartPosition.current) {
       const rect = e.currentTarget.getBoundingClientRect();
       const offsetX = e.clientX - rect.left;
@@ -312,7 +311,7 @@ export default () => {
                           }}
                           draggable="true"
                         >
-                          <img src={`${ipRoot}${item.file_path}`} style={{height: '40px', objectFit: 'contain', background: 'white'}} alt="Signature" />
+                          <img src={`${ipServiceKy}${item.file_path}`} style={{height: '40px', objectFit: 'contain', background: 'white'}} alt="Signature" />
                         </div>
                         <strong>{item.name}</strong>
                       </div>
@@ -322,8 +321,8 @@ export default () => {
               </Spin>
             </Card>
 
-            <div className="flex items-center">
-              <strong>Gợi ý trang ký khả dụng: </strong>
+            {signatureAreas?.length > 0 && <div className="flex items-center">
+              <strong>Gợi ý trang ký khả dụng </strong>
               <ul className="signature-areas">
                 {
                   signatureAreas?.map((item: any) => {
@@ -335,7 +334,7 @@ export default () => {
                   })
                 }
               </ul>
-            </div>
+            </div>}
             
           </div>
 
@@ -379,7 +378,7 @@ export default () => {
                       height={initialLocation && pdfContainerRef.current?.getBoundingClientRect() ? initialLocation?.height * (pdfContainerRef.current?.getBoundingClientRect().height) / 100 : 100}
                       minConstraints={[40, 40]}
                       maxConstraints={[200, 200]}
-                      resizeHandles={['se']}
+                      resizeHandles={['se', 'sw', 'ne', 'nw']}
                       lockAspectRatio={true}
                       onResizeStop={(e, data) => {
                         // Cập nhật lại width/height vào state
@@ -390,7 +389,7 @@ export default () => {
                         }));
                       }}
                     >
-                      <img className="cursor-move" style={{width: '100%', height: '100%', objectFit: 'fill'}} src={`${ipRoot}${chuKyDrop?.chuKy?.file_path}`} alt="Signature" />
+                      <img className="cursor-move" style={{width: '100%', height: '100%', objectFit: 'fill'}} src={`${ipServiceKy}${chuKyDrop?.chuKy?.file_path}`} alt="Signature" />
                     </ResizableBox>
                     
                   </div>

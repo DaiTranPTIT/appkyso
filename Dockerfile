@@ -4,6 +4,7 @@ FROM node:16-alpine AS development
 
 # Set environment variables
 ENV APP_CONFIG_IP_ROOT=https://gwdu.ptit.edu.vn/
+ENV APP_CONFIG_IP_KY_SO=https://digital-signature.vinhuni.edu.vn/api
 ENV APP_CONFIG_ONE_SIGNAL_ID=
 ENV APP_CONFIG_SENTRY_DSN=
 ENV APP_CONFIG_KEYCLOAK_AUTHORITY=https://gwdu.ptit.edu.vn/sso/realms/ptit

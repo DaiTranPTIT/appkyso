@@ -1,20 +1,7 @@
 import { ETypeKy } from "./constant";
 
-interface IChuKy {
-    id: string;
-    file_path: string;
-    file_name: string;
-    type: string;
-    display: string;
-    created_at: string;
-    updated_at: string;
-    user_id: string;
-    name: string;
-    credential_id: string;
-}
-
 export interface IGetSign {
-    founds: IChuKy[],
+    founds: FileInfo[],
     search_options: {
         ordering: string
         page: number
@@ -60,4 +47,19 @@ export interface ISignInfo {
     jwt_token: string | null;
     meta_data: MetaData[];
     type: ETypeKy;
+}
+
+export interface FileInfo {
+  id: string;
+  file_path: string;
+  file_local: string;
+  file_name: string;
+  type: string; // hoặc cụ thể hơn: 'incoming_official_documents'
+  display: string; // hoặc cụ thể hơn: 'image'
+  signature_name: string | null;
+  credential_id: string;
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+  user_id: string;
+  name: string;
 }

@@ -2,7 +2,7 @@ import UploadFile from "@/components/Upload/UploadFile";
 import { getDsKyApi, getListCredentialApi, suaChuKy, taoChuKy, xoaChuKy } from "@/services/GiaoDienKy/api";
 import { CKieuHienThi, CLoaiChuKy, EKieuHienThi, ELoaiChuKy } from "@/services/GiaoDienKy/constant";
 import { FileInfo } from "@/services/GiaoDienKy/typing";
-import { ipRoot } from "@/utils/ip";
+import { ipServiceKy } from "@/utils/ip";
 import rules from "@/utils/rules";
 import { DeleteOutlined, EditOutlined, FileAddOutlined } from "@ant-design/icons"
 import { Button, Card, Col, Form, Input, Modal, notification, Popconfirm, Radio, Row, Select, Spin, Table, Tag, Tooltip } from "antd"
@@ -32,8 +32,8 @@ export default () => {
             setLoading(true);
             const res = await getDsKyApi();
             if (!res) return;
-            console.log(res.data.founds);
-            setDsKy(res.data.founds);
+            const ds = res.data.founds;
+            setDsKy(ds);
         } catch (err) { }
         finally {
             setLoading(false);
@@ -65,10 +65,18 @@ export default () => {
             render: (val, rec, index) => index + 1
         },
         { title: 'Tên', dataIndex: 'name', key: 'name' },
-        { title: 'Loại', dataIndex: 'type', key: 'type', render: (val: ELoaiChuKy) => ELoaiChuKy[val] },
-        { title: 'Kiểu hiển thị', dataIndex: 'display', key: 'display', render: (val: EKieuHienThi) => EKieuHienThi[val] },
+        { title: 'Loại', dataIndex: 'type', key: 'type', filters: Object.entries(ELoaiChuKy).map(([key, label]) => ({
+            text: label,
+            value: key,
+        })),
+        onFilter: (value, record) => record.type === value, render: (val: keyof typeof ELoaiChuKy) => ELoaiChuKy[val] },
+        { title: 'Kiểu hiển thị', filters: Object.entries(EKieuHienThi).map(([key, label]) => ({
+            text: label,
+            value: key,
+        })),
+        onFilter: (value, record) => record.display === value, dataIndex: 'display', key: 'display', render: (val: keyof typeof EKieuHienThi) => EKieuHienThi[val] },
         { title: 'Ngày tạo', dataIndex: 'created_at', key: 'created_at', render: (val) => moment(val).format('HH:mm DD/MM/YYYY') },
-        { title: 'Chữ ký', align: 'center', render: (val, rec) => <img style={{ height: '40px' }} src={`${ipRoot}${rec.file_path}`} /> },
+        { title: 'Chữ ký', dataIndex: 'file_path', align: 'center', render: (val) => <img style={{ height: '40px' }} src={`${ipServiceKy}${val}`} />},
         {
             title: 'Thao tác',
             align: 'center',
@@ -145,86 +153,82 @@ export default () => {
             setLoading(true);
             await Modal.confirm({
                 title: 'Nhập thông tin tài khoản',
-                onOk: () => {
-                    return new Promise((resolve, reject) => {
-                        userForm
-                            .validateFields()
-                            .then(async val => {
-                                resolve(null);
-                                const res = await getListCredentialApi(val);
-                                if (res.data.code === 400) {
-                                    notification.error({
-                                        message: "Thất bại",
-                                        description: "Tài khoản không tồn tại",
-                                    });
-                                    return;
-                                }
-                                Modal.confirm({
-                                    width: 600,
-                                    title: 'Chọn CRED',
-                                    onOk: () => {
-                                        return new Promise((resolve, reject) => {
-                                            credForm
-                                                .validateFields()
-                                                .then(values => {
-                                                    console.log(values.credential_id)
-                                                    form.setFieldsValue({
-                                                        'credential_id': values.credential_id
-                                                    })
-                                                    resolve(null);
-                                                })
-                                                .catch(() => reject());
-                                        });
-                                    },
-                                    content: (
-                                        <Form form={credForm}>
-                                            <Form.Item name="credential_id" rules={[...rules.required]}>
-                                                <Radio.Group style={{ width: '100%' }}>
-                                                    <Table
-                                                        rowKey="credential_id"
-                                                        columns={[
-                                                            {
-                                                                title: "",
-                                                                dataIndex: "credential_id",
-                                                                render: (_: any, record: any) => (
-                                                                    <Radio value={record.credential_id} />
-                                                                ),
-                                                            },
-                                                            {
-                                                                title: "Cred",
-                                                                dataIndex: "credName",
-                                                            },
-                                                            {
-                                                                title: "Trạng thái",
-                                                                dataIndex: "status",
-                                                                render: val => {
-                                                                    console.log(val);
-                                                                    switch (val) {
-                                                                        case "OPERATED":
-                                                                            return <Tag color="green">Hoạt động</Tag>;
-                                                                        default:
-                                                                            return <Tag color="red">Không hoạt động</Tag>;
-                                                                    }
-                                                                }
-                                                            },
-                                                        ]}
-                                                        dataSource={res.data.result.map((item: any) => {
-                                                            return {
-                                                                credential_id: item.credential_id,
-                                                                credName: item.credential_id,
-                                                                status: item.status
-                                                            }
-                                                        })}
-                                                        pagination={false}
-                                                    />
-                                                </Radio.Group>
-                                            </Form.Item>
-                                        </Form>
-                                    )
+                onOk: async () => {
+                    userForm
+                    .validateFields()
+                    .then(async val => {
+                        const res = await getListCredentialApi(val);
+                        if (res.data.code === 400) {
+                            notification.error({
+                                message: "Thất bại",
+                                description: "Tài khoản không tồn tại",
+                            });
+                            return;
+                        }
+                        Modal.confirm({
+                            width: 600,
+                            title: 'Chọn CRED',
+                            onOk: () => {
+                                return new Promise((resolve, reject) => {
+                                    credForm
+                                        .validateFields()
+                                        .then(values => {
+                                            console.log(values.credential_id)
+                                            form.setFieldsValue({
+                                                'credential_id': values.credential_id
+                                            })
+                                            resolve(null);
+                                        })
+                                        .catch(() => reject());
                                 });
-                            })
-                            .catch(() => reject());
-                    });
+                            },
+                            content: (
+                                <Form form={credForm}>
+                                    <Form.Item name="credential_id" rules={[...rules.required]}>
+                                        <Radio.Group style={{ width: '100%' }}>
+                                            <Table
+                                                rowKey="credential_id"
+                                                columns={[
+                                                    {
+                                                        title: "",
+                                                        dataIndex: "credential_id",
+                                                        render: (_: any, record: any) => (
+                                                            <Radio value={record.credential_id} />
+                                                        ),
+                                                    },
+                                                    {
+                                                        title: "Cred",
+                                                        dataIndex: "credName",
+                                                    },
+                                                    {
+                                                        title: "Trạng thái",
+                                                        dataIndex: "status",
+                                                        render: val => {
+                                                            console.log(val);
+                                                            switch (val) {
+                                                                case "OPERATED":
+                                                                    return <Tag color="green">Hoạt động</Tag>;
+                                                                default:
+                                                                    return <Tag color="red">Không hoạt động</Tag>;
+                                                            }
+                                                        }
+                                                    },
+                                                ]}
+                                                dataSource={res.data.result.map((item: any) => {
+                                                    return {
+                                                        credential_id: item.credential_id,
+                                                        credName: item.credential_id,
+                                                        status: item.status
+                                                    }
+                                                })}
+                                                pagination={false}
+                                            />
+                                        </Radio.Group>
+                                    </Form.Item>
+                                </Form>
+                            )
+                        });
+                    })
                 },
                 content: (
                     <Form form={userForm} layout="vertical">
