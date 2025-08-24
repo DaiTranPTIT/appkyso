@@ -71,3 +71,20 @@ export type ColorType = {
 	name: string;
 	hexColor: string;
 };
+
+interface ICMCSignInfo {
+  sign_info_id: string;
+  message: string;
+  page_width: string;
+  page_height: string;
+  point_x: string;
+  point_y: string;
+  width: string;
+  height: string;
+}
+
+interface ICMCSign {
+	sign_info_id: string; // required
+  	session_id: string;   // required
+  	otp: string;          // required
+}

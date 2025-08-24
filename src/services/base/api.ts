@@ -1,6 +1,7 @@
 import axios from '@/utils/axios';
 import {
 	ip3,
+	ipServiceKy,
 	ipNotif,
 	keycloakClientID,
 	keycloakTokenEndpoint,
@@ -9,7 +10,7 @@ import {
 } from '@/utils/ip';
 import queryString from 'query-string';
 import type { ESettingKey } from './constant';
-import type { ISetting } from './typing';
+import type { ICMCSign, ICMCSignInfo, ISetting } from './typing';
 
 // export async function getInfo() {
 //   return axios.get(`${ip3}/user/me`);
@@ -81,4 +82,25 @@ export async function updateSetting(id: string, payload: { key: ESettingKey; val
 
 export async function createSetting(payload: { key: ESettingKey; value: any }, ip?: string) {
 	return axios.post(`${ip ?? ip3}/setting`, payload);
+}
+
+export async function requestSignCMC(payload: ICMCSignInfo) {
+	const formData = new FormData();
+	formData.append("sign_info_id", payload.sign_info_id);
+	formData.append("message", payload.message);
+	formData.append("page_width", String(payload.page_width));
+	formData.append("page_height", String(payload.page_height));
+	formData.append("point_x", String(payload.point_x));
+	formData.append("point_y", String(payload.point_y));
+	formData.append("width", String(payload.width));
+	formData.append("height", String(payload.height));
+	return axios.post(`${ipServiceKy}/sign/cmc_requests_sign`, formData);
+}
+
+export async function cmcSign(params: ICMCSign) {
+	const formData = new FormData();
+	formData.append("sign_info_id", params.sign_info_id);
+	formData.append("session_id", params.session_id);
+	formData.append("otp", params.otp);
+	return axios.post(`${ipServiceKy}/sign/cmc_sign`, formData);
 }
