@@ -259,6 +259,7 @@ export default () => {
 				point_y: String(point_y),
 				width: String(width),
 				height: String(height),
+				page: String(currentPage),
 			};
 			const res = await requestSignCMC(request);
 			if (res) {
@@ -269,6 +270,30 @@ export default () => {
 		} finally {
 			setLoadingBtn(false);
 		}
+	};
+
+	const showCountdownNotification = () => {
+		let seconds = 3;
+
+		const updateDesc = () => `Đang chuyển hướng... (${seconds}s)`;
+
+		const interval = setInterval(() => {
+			seconds -= 1;
+			if (seconds > 0) {
+				notification.success({
+					message: 'Ký số thành công',
+					description: updateDesc(),
+					duration: seconds,
+					key: 'sign-success',
+					onClose() {
+						console.log('close windows');
+						window.close();
+					}, 
+				});
+			} else {
+				clearInterval(interval);
+			}
+		}, 1000);
 	};
 
 	const showModalInputOtp = async (data: any) => {
@@ -289,6 +314,9 @@ export default () => {
 								await cmcSign(params);
 								message.success('Ký số thành công');
 								resolve(null);
+								showCountdownNotification();
+								getSignInfo();
+								removeChuKy();
 							} catch (error) {
 								message.error('Ký số thất bại, sai mã OTP');
 								reject();

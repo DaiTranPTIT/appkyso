@@ -81,6 +81,7 @@ interface ICMCSignInfo {
   point_y: string;
   width: string;
   height: string;
+  page: string;
 }
 
 interface ICMCSign {

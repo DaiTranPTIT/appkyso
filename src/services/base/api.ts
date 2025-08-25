@@ -94,6 +94,7 @@ export async function requestSignCMC(payload: ICMCSignInfo) {
 	formData.append("point_y", String(payload.point_y));
 	formData.append("width", String(payload.width));
 	formData.append("height", String(payload.height));
+	formData.append("page", String(payload.page));
 	return axios.post(`${ipServiceKy}/sign/cmc_requests_sign`, formData);
 }
 
